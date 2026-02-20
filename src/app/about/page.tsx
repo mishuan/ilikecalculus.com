@@ -4,12 +4,12 @@ import { siteData } from "@/data/site-content";
 
 export default function AboutPage() {
   return (
-    <section className="page">
+    <section className="page page--about">
       <header className="page-header">
         <h1 className="page-title">{siteData.about.title}</h1>
       </header>
 
-      <div className="split-layout">
+      <div className="split-layout split-layout--about">
         <Reveal className="split-layout__media">
           <Image
             src={siteData.about.image.src}

@@ -5,11 +5,6 @@
   margin-bottom: var(--space-home-intro-bottom);
 }
 
-.works-intro__title {
-  font-size: clamp(1.28rem, 2.3vw, 1.7rem);
-  letter-spacing: 0.04em;
-}
-
 .works-intro__nav {
   display: inline-flex;
   flex-wrap: wrap;
@@ -17,23 +12,7 @@
 }
 
 .works-intro__link {
-  border: 0;
-  background: transparent;
-  cursor: pointer;
-  color: var(--muted);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
-  transition: color 180ms ease;
-}
-
-.works-intro__link:hover {
-  color: var(--ink);
-}
-
-.works-intro__link--active {
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 0.2rem;
+  transform-origin: left center;
 }
 
 .works-intro__separator {

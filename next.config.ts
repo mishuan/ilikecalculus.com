@@ -17,6 +17,11 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/blog",
+        destination: "https://ilikecalculus.substack.com/",
+        permanent: true,
+      },
+      {
         source: "/urban-courts",
         destination: "/works/personal/urban-courts",
         permanent: true,

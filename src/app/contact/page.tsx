@@ -1,10 +1,11 @@
+import { ContactForm } from "@/components/contact-form";
 import Image from "next/image";
 import { Reveal } from "@/components/reveal";
 import { siteData } from "@/data/site-content";
 
 export default function ContactPage() {
   return (
-    <section className="page">
+    <section className="page page--contact">
       <header className="page-header">
         <h1 className="page-title">Let&apos;s Talk</h1>
       </header>
@@ -25,27 +26,13 @@ export default function ContactPage() {
         <div className="contact-copy">
           {siteData.contact.paragraphs.map((paragraph) => (
             <Reveal key={paragraph}>
-              <p className="body-copy">{paragraph}</p>
+              <p className="body-copy contact-copy__paragraph">{paragraph}</p>
             </Reveal>
           ))}
         </div>
 
         <Reveal>
-          <div className="contact-panel">
-            <h2 className="panel-title">Best Channels</h2>
-            <p>
-              For collaborations and inquiries, reach out on Instagram first. Blog posts and updates live on
-              Substack.
-            </p>
-            <div className="panel-actions">
-              <a href={siteData.site.instagramUrl} target="_blank" rel="noreferrer" className="button-link">
-                Instagram
-              </a>
-              <a href={siteData.site.blogUrl} target="_blank" rel="noreferrer" className="button-link">
-                Substack
-              </a>
-            </div>
-          </div>
+          <ContactForm />
         </Reveal>
       </div>
     </section>

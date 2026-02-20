@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { Project } from "@/data/site-content";
+import { TextActionButton, TextActionLabel } from "@/components/ui/text-action";
 
 type NeighborProject = {
   href: string;
@@ -110,37 +111,26 @@ export function ProjectSlideshow({
         <header className="viewer-topbar">
           <div className="viewer-topbar__project">
             {nextProject ? (
-              <button
-                type="button"
-                className="viewer-text-link viewer-text-link--project"
-                onClick={() => pushOnce(nextProject.href)}
-              >
+              <TextActionButton className="viewer-text-link viewer-text-link--project" onClick={() => pushOnce(nextProject.href)}>
                 next project: {nextProject.title}
-              </button>
+              </TextActionButton>
             ) : (
-              <span className="viewer-text-link viewer-text-link--project viewer-text-link--disabled">
+              <TextActionLabel
+                className="viewer-text-link viewer-text-link--project viewer-text-link--disabled"
+                aria-disabled="true"
+              >
                 next project
-              </span>
+              </TextActionLabel>
             )}
           </div>
 
           <div className="viewer-topbar__actions">
-            <button
-              type="button"
-              className="viewer-text-link"
-              onClick={goToPrevious}
-              disabled={index === 0 && !previousProject}
-            >
+            <TextActionButton className="viewer-text-link" onClick={goToPrevious} disabled={index === 0 && !previousProject}>
               back
-            </button>
-            <button
-              type="button"
-              className="viewer-text-link"
-              onClick={goToNext}
-              disabled={index === total - 1 && !nextProject}
-            >
+            </TextActionButton>
+            <TextActionButton className="viewer-text-link" onClick={goToNext} disabled={index === total - 1 && !nextProject}>
               next
-            </button>
+            </TextActionButton>
             <button
               type="button"
               className="viewer-text-link viewer-close"

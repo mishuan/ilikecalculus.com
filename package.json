@@ -9,7 +9,8 @@
     "lint": "eslint src tests",
     "test:e2e": "playwright test",
     "project:new": "node scripts/new-project.mjs",
-    "media:organize": "node scripts/organize-project-media.mjs"
+    "media:organize": "node scripts/organize-project-media.mjs",
+    "media:compress": "node scripts/compress-media.mjs"
   },
   "dependencies": {
     "next": "16.1.6",

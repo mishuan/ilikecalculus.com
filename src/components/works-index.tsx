@@ -3,6 +3,7 @@
 import { Fragment, useMemo, useState } from "react";
 import { ProjectCollageRow } from "@/components/project-collage-row";
 import { Reveal } from "@/components/reveal";
+import { TextActionButton } from "@/components/ui/text-action";
 import {
   categoryLabels,
   categoryOrder,
@@ -37,13 +38,14 @@ export function WorksIndex() {
           {filterOptions.map((option, index) => (
             <Fragment key={option.value}>
               {index > 0 ? <span className="works-intro__separator" aria-hidden="true">-</span> : null}
-              <button
-                type="button"
-                className={`works-intro__link${activeFilter === option.value ? " works-intro__link--active" : ""}`}
+              <TextActionButton
+                className="works-intro__link"
+                tone={activeFilter === option.value ? "default" : "muted"}
+                underline={activeFilter === option.value ? "underline" : "none"}
                 onClick={() => setActiveFilter(option.value)}
               >
                 {option.label}
-              </button>
+              </TextActionButton>
             </Fragment>
           ))}
         </div>

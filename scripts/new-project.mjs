@@ -111,8 +111,9 @@ async function run() {
   console.log(`Created:\n- ${manifestPath}\n- ${mediaDir}`);
   console.log("\nNext steps:");
   console.log("1) Add your photos to the media folder.");
-  console.log("2) Fill width/height metadata in src/data/site-content.ts.");
-  console.log("3) Add the project entry in src/data/site-content.ts.");
+  console.log("2) Run `npm run media:compress` to keep photos under 500 KB.");
+  console.log("3) Fill width/height metadata in src/data/site-content.ts.");
+  console.log("4) Add the project entry in src/data/site-content.ts.");
 }
 
 run().catch((error) => {

@@ -9,10 +9,25 @@
 
   --font-size-root: 15px;
   --line-height-base: 1.5;
+  --font-size-body: 0.94rem;
+  --line-height-copy: 1.38;
+  --font-size-page-title: clamp(1.28rem, 2.3vw, 1.7rem);
+  --font-weight-page-title: 700;
+  --letter-spacing-page-title: 0.04em;
+  --line-height-page-title: 1.05;
+
+  --font-size-text-action: 0.8rem;
+  --font-weight-text-action: 400;
+  --letter-spacing-text-action: 0.08em;
+  --underline-offset-text-action: 0.2rem;
+  --hover-scale-text-action: 1.05;
+  --duration-text-action: 180ms;
 
   --space-content-x: clamp(1.4rem, 3.3vw, 3.1rem);
   --space-content-top: 1.55rem;
   --space-content-bottom: 3.2rem;
+  --size-page-max: 1024px;
+  --size-page-max-wide: 1280px;
 
   --space-home-intro-bottom: 2.2rem;
   --space-work-row-gap: 2.45rem;
@@ -27,4 +42,6 @@
   --size-viewer-max-height: 930px;
 
   --size-collage-row-height: clamp(90px, 11vw, 132px);
+  --space-contact-split-gap: clamp(1.4rem, 2.8vw, 2.6rem);
+  --size-contact-message-min-height: 118px;
 }

@@ -43,18 +43,24 @@ export function Sidebar() {
       <div className="top-nav__inner">
         <nav aria-label="Main navigation" className="top-nav__links">
           {navItems.map((item) => {
+            const isExternal = "external" in item && item.external;
             const isActive =
+              !isExternal &&
               isHydrated &&
               (item.href === "/"
                 ? pathname === "/"
                 : pathname === item.href || pathname.startsWith(`${item.href}/`));
 
+            if (isExternal) {
+              return (
+                <a key={item.label} href={item.href} className="nav-link">
+                  {item.label}
+                </a>
+              );
+            }
+
             return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`nav-link${isActive ? " nav-link--active" : ""}`}
-              >
+              <Link key={item.href} href={item.href} className={`nav-link${isActive ? " nav-link--active" : ""}`}>
                 {item.label}
               </Link>
             );

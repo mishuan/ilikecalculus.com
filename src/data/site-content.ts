@@ -31,15 +31,15 @@ export const siteData = {
   "about": {
     "title": "About",
     "paragraphs": [
-      "Hey there, thanks for visiting! My name is Michael Yuan, and you're probably wondering - what's with the name \"ilikecalculus\"? Well, math has always been my favourite subject throughout school. 17-Year-old me thought calculus was the pinnacle of mathematics. Mostly because the equations looked hardcore, so I felt like Einstein was solving them. At the same time, I was playing a lot of video games and often struggled to come up with in-game names. Since I could never think of any witty names, I opted for dumb names - at least it beat being bland and generic. I needed something sufficiently unique that no one would ever think of. Thus, the name \"ilikecalculus\" was born one day when I was trying to come up with a new in-game handle, and my calculus homework happened to be open on my desk. Unsurprisingly, I never ran into issues with the name being claimed for any game.",
-      "However, after pursuing a career in software engineering, I quickly realized calculus wasn't very useful for general software development. As such, calculus life is behind me now. Maybe I'll pick it up as a hobby sometime in the future.",
-      "Currently, I'm a professional software engineer. Outside of work, I like to lift weights to keep my mind zen. Also, I take pictures sometimes.",
-      "Feel free to reach out to me, I'd love to chat :)"
+      "Hey there — I’m Michael Yuan.",
+      "You might be wondering about the name “ilikecalculus.” In school, math was my favorite subject, and 17-year-old me thought calculus was the pinnacle of it all (mostly because it looked intense). I also played a lot of video games and needed a handle that was unique, so one day — with my calculus homework open on my desk — “ilikecalculus” happened. It stuck, and I never had to worry about it being taken.",
+      "These days I split my time between building software and making art.",
+      "Feel free to reach out — I’d love to chat."
     ],
     "image": {
-      "src": "/media/about/portrait.jpg",
-      "width": 2500,
-      "height": 3750,
+      "src": "/media/about/about-20240831-dscf6193.jpg",
+      "width": 4365,
+      "height": 5456,
       "alt": "About portrait"
     }
   },
@@ -1063,7 +1063,7 @@ export const navItems = [
   { label: "home", href: "/" },
   { label: "projects", href: "/works" },
   { label: "about", href: "/about" },
-  { label: "blog", href: "/blog" },
+  { label: "blog", href: siteData.site.blogUrl, external: true },
   { label: "contact", href: "/contact" },
   { label: "press", href: "/press" },
 ] as const;

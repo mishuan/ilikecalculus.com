@@ -40,6 +40,9 @@ All project/page content is maintained in:
    - `images` array (`src`, `width`, `height`, `alt`)
 4. Routes are generated as `/works/<category>/<slug>`.
 5. Optionally add the slug to `featuredProjectSlugs` for homepage highlighting.
+6. Always compress photos before committing:
+   - `npm run media:compress`
+   - Target is under `500 KB` per image.
 
 ### Project organization workflow
 
@@ -62,6 +65,12 @@ To normalize existing project assets into foldered sequential names, run:
 npm run media:organize
 ```
 
+Then compress all media:
+
+```bash
+npm run media:compress
+```
+
 ## Image hosting status
 
 All Squarespace image URLs used by the site were migrated to local hosted assets under:
@@ -77,6 +86,12 @@ Configured in:
 - `/Users/michaelyuan/src/ilikecalculus.com/next.config.ts`
 
 Includes legacy URL redirects (`/projects`, `/urban-courts`, `/dustin`, `/figma`, `/figma-2023`, `/shop`).
+
+## Design system
+
+UI token and component conventions are documented in:
+
+- `/Users/michaelyuan/src/ilikecalculus.com/docs/design-system.md`
 
 ## Tests
 
@@ -99,3 +114,11 @@ Covers:
 2. Import into Vercel.
 3. Connect domain `ilikecalculus.com`.
 4. Configure DNS to Vercel.
+
+### Contact form environment variables
+
+For `/contact` form email delivery, configure these in Vercel Project Settings:
+
+- `RESEND_API_KEY` (required)
+- `CONTACT_TO_EMAIL` (optional, defaults to `michael@ilikecalculus.com`)
+- `CONTACT_FROM_EMAIL` (optional, must be a verified sender in Resend)

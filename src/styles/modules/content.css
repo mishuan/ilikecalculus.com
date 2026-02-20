@@ -93,6 +93,35 @@
   align-items: start;
 }
 
+.page--about {
+  height: 100%;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+}
+
+.split-layout--about {
+  min-height: 0;
+  height: 100%;
+  grid-template-columns: minmax(0, 0.84fr) minmax(0, 1.16fr);
+  gap: clamp(1.4rem, 2.8vw, 2.4rem);
+  align-items: stretch;
+}
+
+.split-layout--about .split-layout__media {
+  min-height: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+}
+
+.split-layout--about .split-layout__content {
+  min-height: 0;
+  overflow: auto;
+  padding-right: 0.3rem;
+  gap: 0.9rem;
+  align-content: start;
+}
+
 .split-layout__content {
   display: grid;
   gap: 1rem;
@@ -107,41 +136,191 @@
   background: var(--paper);
 }
 
+.split-layout--about .portrait-image {
+  width: min(100%, 560px);
+  max-width: 100%;
+  max-height: min(74dvh, 760px);
+  height: auto;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.split-layout--about .body-copy {
+  line-height: var(--line-height-copy);
+}
+
 .contact-grid {
-  margin-top: 1.2rem;
+  margin-top: 1.6rem;
   display: grid;
-  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
-  gap: 1.1rem;
+  grid-template-columns: minmax(0, 0.95fr) minmax(330px, 1.05fr);
+  gap: var(--space-contact-split-gap);
+  align-items: stretch;
 }
 
 .contact-copy {
   display: grid;
   gap: 1rem;
+  align-content: start;
 }
 
 .body-copy {
-  font-size: 0.94rem;
+  font-size: var(--font-size-body);
+}
+
+.page--about .body-copy,
+.page--contact .body-copy {
+  line-height: var(--line-height-copy);
+}
+
+.contact-copy__paragraph {
+  max-width: 60ch;
 }
 
 .contact-panel {
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--paper);
-  padding: 1rem;
+  border: 0;
+  border-left: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  padding: 0 0 0 clamp(1.1rem, 2.3vw, 2rem);
   display: grid;
-  gap: 0.8rem;
+  gap: 0.95rem;
+  align-content: start;
 }
 
 .panel-title {
-  font-family: var(--font-display), Georgia, serif;
-  font-size: 1.28rem;
-  font-weight: 500;
+  font-family: var(--font-ui), "Segoe UI", sans-serif;
+  font-size: clamp(1.3rem, 2.05vw, 1.72rem);
+  font-weight: 700;
+  letter-spacing: var(--letter-spacing-page-title);
+  line-height: var(--line-height-page-title);
 }
 
-.panel-actions {
+.contact-panel__description {
+  max-width: 44ch;
+  color: var(--ink);
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-copy);
+}
+
+.contact-panel__links {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.contact-panel__link {
+  transform-origin: left center;
+}
+
+.contact-panel__divider {
+  color: var(--muted);
+  font-size: 0.74rem;
+}
+
+.contact-form {
+  display: grid;
+  gap: 0.8rem;
+  margin-top: 0.95rem;
+}
+
+.contact-form__row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.85rem;
+}
+
+.contact-form__field {
+  display: grid;
+  gap: 0.38rem;
+}
+
+.contact-form__field span {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  text-transform: lowercase;
+}
+
+.contact-form__field input,
+.contact-form__field textarea {
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 94%, transparent);
+  border-radius: 0;
+  padding: 0.4rem 0.05rem 0.52rem;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--font-size-body);
+  transition: border-color 220ms ease;
+}
+
+.contact-form__field textarea {
+  resize: none;
+  min-height: 2.25rem;
+  overflow: hidden;
+}
+
+.contact-form__field input:focus-visible,
+.contact-form__field textarea:focus-visible {
+  outline: 0;
+  border-color: var(--accent);
+}
+
+.contact-form__honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.contact-form__footer {
   display: flex;
-  flex-wrap: wrap;
-  gap: 0.7rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: 0.15rem;
+}
+
+.contact-form__submit {
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--paper);
+  padding: 0.52rem 1rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: lowercase;
+  cursor: pointer;
+  transition: transform 220ms ease, background-color 220ms ease, color 220ms ease;
+}
+
+.contact-form__submit:hover {
+  transform: translateY(-1px);
+  background: transparent;
+  color: var(--ink);
+}
+
+.contact-form__submit[disabled] {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.contact-form__status {
+  font-size: 0.8rem;
+  text-align: right;
+  flex: 1;
+}
+
+.contact-form__status.is-success {
+  color: #2f6b3b;
+}
+
+.contact-form__status.is-error {
+  color: #a3483e;
 }
 
 .button-link {
@@ -163,7 +342,6 @@
 .press-list {
   display: grid;
   gap: 0;
-  border-top: 1px solid var(--line);
 }
 
 .press-item {
@@ -182,9 +360,9 @@
 }
 
 .press-item__link {
-  font-family: var(--font-display), Georgia, serif;
-  font-size: 1.12rem;
-  line-height: 1.2;
+  font-family: var(--font-ui), "Segoe UI", sans-serif;
+  font-size: var(--font-size-body);
+  line-height: var(--line-height-copy);
 }
 
 .press-item__link:hover {
