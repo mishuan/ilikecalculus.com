@@ -53,11 +53,15 @@
 }
 
 .collage-row__title a {
-  transition: color 180ms ease;
+  display: inline-flex;
+  color: var(--ink);
+  transform-origin: left center;
+  transition: transform var(--duration-text-action) ease, color var(--duration-text-action) ease;
 }
 
 .collage-row__title a:hover {
-  color: var(--accent);
+  color: var(--ink);
+  transform: scale(var(--hover-scale-text-action));
 }
 
 .collage-track {
