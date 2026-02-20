@@ -1,0 +1,30 @@
+:root,
+[data-ui-skin="default"] {
+  --bg: #f4f3f0;
+  --paper: #fdfdfc;
+  --ink: #171717;
+  --muted: #66625d;
+  --line: #ddd8d1;
+  --accent: #b34a3d;
+
+  --font-size-root: 15px;
+  --line-height-base: 1.5;
+
+  --space-content-x: clamp(1.4rem, 3.3vw, 3.1rem);
+  --space-content-top: 1.55rem;
+  --space-content-bottom: 3.2rem;
+
+  --space-home-intro-bottom: 2.2rem;
+  --space-work-row-gap: 2.45rem;
+  --space-work-title-gap: 0.7rem;
+  --space-photo-gap: 1.02rem;
+
+  --space-header-bottom: 2rem;
+  --space-viewer-header-bottom: 2.6rem;
+  --space-viewer-stack-gap: 1.1rem;
+  --space-viewer-layout-gap: clamp(0.7rem, 1.4vw, 1.2rem);
+  --size-viewer-min-height: 420px;
+  --size-viewer-max-height: 930px;
+
+  --size-collage-row-height: clamp(90px, 11vw, 132px);
+}

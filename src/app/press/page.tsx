@@ -5,7 +5,6 @@ export default function PressPage() {
   return (
     <section className="page">
       <header className="page-header">
-        <p className="eyebrow">Press</p>
         <h1 className="page-title">Press Coverage</h1>
       </header>
 

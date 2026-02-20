@@ -6,13 +6,16 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "test:e2e": "playwright test"
+    "lint": "eslint src tests",
+    "test:e2e": "playwright test",
+    "project:new": "node scripts/new-project.mjs",
+    "media:organize": "node scripts/organize-project-media.mjs"
   },
   "dependencies": {
     "next": "16.1.6",
     "react": "19.2.3",
-    "react-dom": "19.2.3"
+    "react-dom": "19.2.3",
+    "sharp": "^0.34.5"
   },
   "devDependencies": {
     "@playwright/test": "^1.58.2",

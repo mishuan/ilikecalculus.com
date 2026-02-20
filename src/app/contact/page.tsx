@@ -6,7 +6,6 @@ export default function ContactPage() {
   return (
     <section className="page">
       <header className="page-header">
-        <p className="eyebrow">Contact</p>
         <h1 className="page-title">Let&apos;s Talk</h1>
       </header>
 

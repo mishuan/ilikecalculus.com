@@ -6,7 +6,6 @@ export default function AboutPage() {
   return (
     <section className="page">
       <header className="page-header">
-        <p className="eyebrow">About</p>
         <h1 className="page-title">{siteData.about.title}</h1>
       </header>
 

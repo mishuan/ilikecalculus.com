@@ -3,7 +3,7 @@
 This is a Next.js rebuild of `ilikecalculus.com` with the requested structure:
 
 - `/works`
-- `/works/<project>`
+- `/works/<category>/<project>`
 - `/about`
 - `/contact`
 - `/press`
@@ -27,16 +27,40 @@ All project/page content is maintained in:
 ### Add a new work page
 
 1. Add image files to:
-   - `/Users/michaelyuan/src/ilikecalculus.com/public/media`
+   - `/Users/michaelyuan/src/ilikecalculus.com/public/media/projects/<slug>`
+   - Use sequential names: `01.jpg`, `02.jpg`, `03.jpg`
 2. Add a new project object to `siteData.projects` in:
    - `/Users/michaelyuan/src/ilikecalculus.com/src/data/site-content.ts`
 3. Required fields per project:
    - `slug`
+   - `categories` (one or both: `portrait`, `personal`)
    - `title`
    - `description`
    - `coverImage` (`src`, `width`, `height`, `alt`)
    - `images` array (`src`, `width`, `height`, `alt`)
-4. Optionally add the slug to `featuredProjectSlugs` for homepage highlighting.
+4. Routes are generated as `/works/<category>/<slug>`.
+5. Optionally add the slug to `featuredProjectSlugs` for homepage highlighting.
+
+### Project organization workflow
+
+Use the scaffold command:
+
+```bash
+npm run project:new -- --slug your-project --title "your project" --categories portrait,personal
+```
+
+This creates:
+
+- `/Users/michaelyuan/src/ilikecalculus.com/content/projects/<slug>.json`
+- `/Users/michaelyuan/src/ilikecalculus.com/public/media/projects/<slug>/`
+
+See `/Users/michaelyuan/src/ilikecalculus.com/content/projects/README.md` for conventions.
+
+To normalize existing project assets into foldered sequential names, run:
+
+```bash
+npm run media:organize
+```
 
 ## Image hosting status
 
@@ -65,8 +89,8 @@ npm run test:e2e
 Covers:
 
 - primary navigation
-- `/works/<project>` image rendering
-- scroll interaction
+- `/works/<category>/<project>` image rendering
+- slideshow progression across projects
 - `/blog` redirect behavior
 
 ## Deploy to Vercel (Hobby)

@@ -1,0 +1,136 @@
+.site-shell {
+  min-height: 100vh;
+}
+
+.top-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  background: rgba(253, 253, 252, 0.88);
+  backdrop-filter: blur(4px);
+}
+
+.top-nav__inner {
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 0.78rem clamp(0.95rem, 2vw, 1.9rem);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.2rem;
+}
+
+.top-nav__identity {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.62rem;
+}
+
+.top-nav__brand {
+  display: inline-flex;
+}
+
+.top-nav__name {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.16rem;
+  line-height: 1.05;
+  letter-spacing: 0.03em;
+}
+
+.top-nav__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: 0.62rem 0.95rem;
+}
+
+.nav-link {
+  width: fit-content;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  transition: color 180ms ease;
+}
+
+.nav-link:hover {
+  color: var(--accent);
+}
+
+.nav-link--active {
+  color: var(--accent);
+}
+
+.instagram-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: transform 180ms ease, color 180ms ease;
+}
+
+.instagram-link:hover {
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.content-shell {
+  padding: var(--space-content-top) var(--space-content-x) var(--space-content-bottom);
+  min-height: 0;
+}
+
+.content-shell:has(.page--viewer) {
+  --space-content-top: 0.78rem;
+  --space-content-bottom: 0.78rem;
+  height: 100dvh;
+  overflow: hidden;
+}
+
+.page {
+  max-width: 1024px;
+  margin: 0 auto;
+  animation: fade-in 420ms ease;
+}
+
+.page--wide {
+  max-width: 1280px;
+}
+
+.page--viewer {
+  max-width: none;
+  width: 100%;
+  height: min(max(calc(100dvh - var(--space-content-top) - var(--space-content-bottom)), var(--size-viewer-min-height)), var(--size-viewer-max-height));
+  overflow: hidden;
+}
+
+.page-header {
+  margin-bottom: var(--space-header-bottom);
+}
+
+.page-header--hero {
+  margin-bottom: 2.6rem;
+}
+
+.eyebrow {
+  margin-bottom: 0.5rem;
+  color: var(--muted);
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+}
+
+.page-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.85rem, 3.25vw, 2.6rem);
+  font-weight: 500;
+  line-height: 1.05;
+  margin-bottom: 0.42rem;
+}
+
+.page-intro {
+  color: var(--muted);
+  font-size: 0.94rem;
+  max-width: 64ch;
+}
+
+.page--viewer .page-header {
+  margin-bottom: var(--space-viewer-header-bottom);
+}

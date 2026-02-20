@@ -1,16 +1,19 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Project } from "@/data/site-content";
+import { projectHref, type Project, type ProjectCategory } from "@/data/site-content";
 
 type ProjectCardProps = {
   project: Project;
   priority?: boolean;
+  preferredCategory?: ProjectCategory;
 };
 
-export function ProjectCard({ project, priority = false }: ProjectCardProps) {
+export function ProjectCard({ project, priority = false, preferredCategory }: ProjectCardProps) {
+  const href = projectHref(project, preferredCategory);
+
   return (
     <article className="work-card">
-      <Link href={`/works/${project.slug}`} className="work-card__media" aria-label={`Open ${project.title}`}>
+      <Link href={href} className="work-card__media" aria-label={`Open ${project.title}`}>
         <Image
           src={project.coverImage.src}
           alt={project.coverImage.alt || project.title}
@@ -24,7 +27,7 @@ export function ProjectCard({ project, priority = false }: ProjectCardProps) {
 
       <div className="work-card__meta">
         <h2 className="work-card__title">
-          <Link href={`/works/${project.slug}`}>{project.title}</Link>
+          <Link href={href}>{project.title}</Link>
         </h2>
         {project.description ? <p className="work-card__description">{project.description}</p> : null}
         <p className="work-card__count">{project.images.length} photos</p>

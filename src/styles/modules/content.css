@@ -1,0 +1,221 @@
+.work-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.4rem;
+}
+
+.works-category-block {
+  margin-bottom: 2rem;
+}
+
+.works-category-block__title {
+  margin-bottom: 0.7rem;
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.35rem;
+  font-weight: 500;
+}
+
+.work-card {
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  box-shadow: 0 14px 40px -30px rgba(0, 0, 0, 0.35);
+  transform-origin: center center;
+  transition: transform 260ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 260ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.work-card__media {
+  display: block;
+  overflow: hidden;
+}
+
+.work-card__image {
+  width: 100%;
+  height: auto;
+  transition: transform 500ms cubic-bezier(0.22, 1, 0.36, 1), filter 400ms ease;
+}
+
+.work-card:hover .work-card__image {
+  transform: scale(1.03);
+  filter: contrast(1.03);
+}
+
+.work-card:hover {
+  transform: scale(1.012);
+  box-shadow: 0 18px 46px -30px rgba(0, 0, 0, 0.42);
+}
+
+.work-card__meta {
+  padding: 0.95rem 1rem 1.1rem;
+}
+
+.work-card__title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.28rem;
+  font-weight: 500;
+}
+
+.work-card__description {
+  margin-top: 0.25rem;
+  color: var(--muted);
+}
+
+.work-card__count {
+  margin-top: 0.4rem;
+  color: var(--muted);
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+}
+
+.project-gallery {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.project-figure {
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.project-image {
+  width: 100%;
+  height: auto;
+}
+
+.split-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: clamp(1.2rem, 3vw, 2.4rem);
+  align-items: start;
+}
+
+.split-layout__content {
+  display: grid;
+  gap: 1rem;
+}
+
+.portrait-image,
+.banner-image {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+}
+
+.contact-grid {
+  margin-top: 1.2rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 1.1rem;
+}
+
+.contact-copy {
+  display: grid;
+  gap: 1rem;
+}
+
+.body-copy {
+  font-size: 0.94rem;
+}
+
+.contact-panel {
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  background: var(--paper);
+  padding: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.panel-title {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.28rem;
+  font-weight: 500;
+}
+
+.panel-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+
+.button-link {
+  width: fit-content;
+  display: inline-block;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0.5rem 0.95rem;
+  background: white;
+  transition: border-color 220ms ease, color 220ms ease, transform 220ms ease;
+}
+
+.button-link:hover {
+  color: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-1px);
+}
+
+.press-list {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.press-item {
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  padding: 0.95rem 0;
+}
+
+.press-item__outlet {
+  color: var(--muted);
+  font-size: 0.82rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.25rem;
+}
+
+.press-item__link {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: 1.12rem;
+  line-height: 1.2;
+}
+
+.press-item__link:hover {
+  color: var(--accent);
+}
+
+.top-nav__name,
+.nav-link,
+.eyebrow,
+.page-title,
+.works-intro__title,
+.works-intro__link,
+.category-section__title,
+.collage-row__title,
+.works-category-block__title,
+.work-card__title,
+.work-card__count,
+.panel-title,
+.press-item__outlet,
+.slideshow__counter,
+.button-link {
+  text-transform: lowercase;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 640ms ease, transform 640ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
