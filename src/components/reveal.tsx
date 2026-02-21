@@ -5,9 +5,16 @@ import { useEffect, useRef, useState } from "react";
 type RevealProps = {
   children: React.ReactNode;
   className?: string;
+  rootMargin?: string;
+  threshold?: number;
 };
 
-export function Reveal({ children, className = "" }: RevealProps) {
+export function Reveal({
+  children,
+  className = "",
+  rootMargin = "0px 0px -80px",
+  threshold = 0.14,
+}: RevealProps) {
   const ref = useRef<HTMLDivElement | null>(null);
   const [visible, setVisible] = useState(false);
 
@@ -27,8 +34,8 @@ export function Reveal({ children, className = "" }: RevealProps) {
         });
       },
       {
-        threshold: 0.14,
-        rootMargin: "0px 0px -80px",
+        threshold,
+        rootMargin,
       },
     );
 
@@ -37,7 +44,7 @@ export function Reveal({ children, className = "" }: RevealProps) {
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [rootMargin, threshold]);
 
   return (
     <div ref={ref} className={`reveal${visible ? " is-visible" : ""} ${className}`.trim()}>

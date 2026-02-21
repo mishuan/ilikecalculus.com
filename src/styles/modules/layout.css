@@ -91,6 +91,10 @@
   min-height: 0;
 }
 
+.content-shell:has(.page--wide) {
+  --space-content-bottom: clamp(1rem, 1.7vh, 1.6rem);
+}
+
 .content-shell:has(.page--viewer) {
   --space-content-top: 0.78rem;
   --space-content-bottom: 0.78rem;

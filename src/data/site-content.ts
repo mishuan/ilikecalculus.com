@@ -1063,7 +1063,7 @@ export const navItems = [
   { label: "home", href: "/" },
   { label: "projects", href: "/works" },
   { label: "about", href: "/about" },
-  { label: "blog", href: siteData.site.blogUrl, external: true },
   { label: "contact", href: "/contact" },
   { label: "press", href: "/press" },
+  { label: "blog", href: siteData.site.blogUrl, external: true },
 ] as const;

@@ -53,7 +53,13 @@ export function Sidebar() {
 
             if (isExternal) {
               return (
-                <a key={item.label} href={item.href} className="nav-link">
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="nav-link"
+                  target="_blank"
+                  rel="noreferrer noopener"
+                >
                   {item.label}
                 </a>
               );

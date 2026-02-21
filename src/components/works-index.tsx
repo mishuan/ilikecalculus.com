@@ -53,7 +53,7 @@ export function WorksIndex() {
 
       <div className="category-section__rows">
         {filteredProjects.map((project) => (
-          <Reveal key={`${activeFilter}-${project.slug}`}>
+          <Reveal key={`${activeFilter}-${project.slug}`} rootMargin="0px 0px 220px">
             <ProjectCollageRow
               project={project}
               preferredCategory={activeFilter === "all" ? undefined : activeFilter}

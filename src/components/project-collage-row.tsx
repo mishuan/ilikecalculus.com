@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useLayoutEffect, useMemo, useRef, useState } from "react";
 import { projectHref, type Project, type ProjectCategory } from "@/data/site-content";
 
 type ProjectCollageRowProps = {
@@ -10,22 +10,17 @@ type ProjectCollageRowProps = {
   preferredCategory?: ProjectCategory;
 };
 
-const CELL_GAP_PX = 14;
-const MIN_ROW_HEIGHT = 90;
-const MAX_ROW_HEIGHT = 132;
-
-function getRowHeight(viewportWidth: number) {
-  return Math.max(MIN_ROW_HEIGHT, Math.min(MAX_ROW_HEIGHT, viewportWidth * 0.12));
-}
+const DEFAULT_CELL_GAP_PX = 14;
 
 export function ProjectCollageRow({ project, preferredCategory }: ProjectCollageRowProps) {
   const href = projectHref(project, preferredCategory);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
-  const [viewportWidth, setViewportWidth] = useState(1280);
+  const [rowHeight, setRowHeight] = useState(0);
+  const [gapPx, setGapPx] = useState(DEFAULT_CELL_GAP_PX);
   const previewImages = project.images;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const node = trackRef.current;
     if (!node) {
       return;
@@ -38,8 +33,13 @@ export function ProjectCollageRow({ project, preferredCategory }: ProjectCollage
       }
 
       const width = currentNode.clientWidth;
+      const styles = window.getComputedStyle(currentNode);
+      const resolvedRowHeight = Number.parseFloat(styles.getPropertyValue("--row-height"));
+      const resolvedGap = Number.parseFloat(styles.columnGap || styles.gap || "");
+
       setContainerWidth(width);
-      setViewportWidth(window.innerWidth);
+      setRowHeight(Number.isFinite(resolvedRowHeight) ? resolvedRowHeight : currentNode.clientHeight);
+      setGapPx(Number.isFinite(resolvedGap) ? resolvedGap : DEFAULT_CELL_GAP_PX);
     }
 
     const observer = new ResizeObserver(refresh);
@@ -55,8 +55,11 @@ export function ProjectCollageRow({ project, preferredCategory }: ProjectCollage
   }, []);
 
   const fittedImages = useMemo(() => {
-    const rowHeight = getRowHeight(viewportWidth);
-    const availableWidth = containerWidth > 0 ? containerWidth : 1280;
+    if (containerWidth <= 0 || rowHeight <= 0) {
+      return [];
+    }
+
+    const availableWidth = containerWidth;
     const images: Array<{ image: (typeof previewImages)[number]; width: number }> = [];
     let usedWidth = 0;
 
@@ -64,18 +67,18 @@ export function ProjectCollageRow({ project, preferredCategory }: ProjectCollage
       const ratio = image.width / image.height;
       const rawWidth = rowHeight * ratio;
       const fittedWidth = Math.max(58, Math.min(rawWidth, availableWidth));
-      const nextWidth = images.length === 0 ? fittedWidth : fittedWidth + CELL_GAP_PX;
+      const nextWidth = images.length === 0 ? fittedWidth : fittedWidth + gapPx;
 
       if (usedWidth + nextWidth > availableWidth) {
         break;
       }
 
-      images.push({ image, width: Math.round(fittedWidth) });
+      images.push({ image, width: fittedWidth });
       usedWidth += nextWidth;
     }
 
     return images;
-  }, [containerWidth, previewImages, viewportWidth]);
+  }, [containerWidth, gapPx, previewImages, rowHeight]);
 
   return (
     <article className="collage-row">
