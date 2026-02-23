@@ -1,9 +1,14 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import type { Project } from "@/data/site-content";
+import {
+  projectThumbnailsHref,
+  type Project,
+  type ProjectCategory,
+} from "@/data/site-content";
 import { TextActionButton, TextActionLabel } from "@/components/ui/text-action";
 
 type NeighborProject = {
@@ -13,6 +18,7 @@ type NeighborProject = {
 
 type ProjectSlideshowProps = {
   project: Project;
+  activeCategory: ProjectCategory;
   initialIndex?: number;
   nextProject: NeighborProject;
   previousProject: NeighborProject;
@@ -24,6 +30,7 @@ function clampIndex(index: number, total: number) {
 
 export function ProjectSlideshow({
   project,
+  activeCategory,
   initialIndex = 0,
   nextProject,
   previousProject,
@@ -35,6 +42,7 @@ export function ProjectSlideshow({
   const indexRef = useRef(resolvedInitialIndex);
   const navigatingRef = useRef(false);
   const goHome = useCallback(() => router.push("/"), [router]);
+  const thumbnailsHref = `${projectThumbnailsHref(project, activeCategory)}?photo=${index + 1}`;
 
   const activeImage = project.images[index];
 
@@ -170,7 +178,15 @@ export function ProjectSlideshow({
 
         <footer className="viewer-bottom">
           <div className="viewer-bottom__meta">
-            <h1 className="viewer-bottom__title">{project.title}</h1>
+            <h1 className="viewer-bottom__title">
+              <Link
+                href={thumbnailsHref}
+                className="viewer-bottom__title-link"
+                data-testid="slideshow-title-thumbnails-link"
+              >
+                {project.title}
+              </Link>
+            </h1>
             {project.description ? (
               <p className="viewer-bottom__description">{project.description}</p>
             ) : (
@@ -180,9 +196,18 @@ export function ProjectSlideshow({
             )}
           </div>
 
-          <p className="slideshow__counter">
-            {index + 1} / {total}
-          </p>
+          <div className="viewer-bottom__status">
+            <p className="slideshow__counter">
+              {index + 1} / {total}
+            </p>
+            <Link
+              href={thumbnailsHref}
+              className="text-action text-action--default text-action--underline viewer-bottom__thumbnail-link"
+              data-testid="slideshow-thumbnail-view-link"
+            >
+              thumbnails
+            </Link>
+          </div>
         </footer>
       </article>
     </section>

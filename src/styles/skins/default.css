@@ -15,6 +15,8 @@
   --font-weight-page-title: 700;
   --letter-spacing-page-title: 0.04em;
   --line-height-page-title: 1.05;
+  --space-page-title-bottom: 0.42rem;
+  --space-page-title-to-intro: 1.65rem;
 
   --font-size-text-action: 0.8rem;
   --font-weight-text-action: 400;

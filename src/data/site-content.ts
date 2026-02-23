@@ -117,13 +117,13 @@ export const siteData = {
     {
       "slug": "the-bridge-reconstructed",
       "categories": ["personal"],
-      "title": "The Bridge, Reconstructed",
+      "title": "The Bridge",
       "description": "A new perspective on an iconic subject.",
       "coverImage": {
         "src": "/media/projects/the-bridge-reconstructed/01.jpg",
         "width": 2500,
         "height": 3750,
-        "alt": "The Bridge, Reconstructed"
+        "alt": "The Bridge"
       },
       "images": [
         {
@@ -1057,6 +1057,10 @@ export function projectHref(project: Project, preferredCategory?: ProjectCategor
       : project.categories[0];
 
   return `/works/${category}/${project.slug}`;
+}
+
+export function projectThumbnailsHref(project: Project, preferredCategory?: ProjectCategory) {
+  return `${projectHref(project, preferredCategory)}/thumbnails`;
 }
 
 export const navItems = [

@@ -2,18 +2,40 @@
   "name": "ilikecalculus.com",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "npm@10.2.4",
   "engines": {
-    "node": ">=20.9.0",
+    "node": "24.x",
     "npm": ">=10.0.0"
   },
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "24.x",
+      "onFail": "error"
+    },
+    "packageManager": {
+      "name": "npm",
+      "version": ">=10.0.0",
+      "onFail": "error"
+    }
+  },
   "scripts": {
+    "check:runtime": "node scripts/check-runtime.mjs",
+    "predev": "node scripts/check-runtime.mjs",
     "dev": "next dev",
+    "prebuild": "node scripts/check-runtime.mjs",
     "build": "next build",
+    "prestart": "node scripts/check-runtime.mjs",
     "start": "next start",
+    "prelint": "node scripts/check-runtime.mjs",
     "lint": "eslint src tests",
+    "pretest:e2e": "node scripts/check-runtime.mjs",
     "test:e2e": "playwright test",
+    "preproject:new": "node scripts/check-runtime.mjs",
     "project:new": "node scripts/new-project.mjs",
+    "premedia:organize": "node scripts/check-runtime.mjs",
     "media:organize": "node scripts/organize-project-media.mjs",
+    "premedia:compress": "node scripts/check-runtime.mjs",
     "media:compress": "node scripts/compress-media.mjs"
   },
   "dependencies": {

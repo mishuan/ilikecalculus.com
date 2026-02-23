@@ -79,6 +79,7 @@
   height: 100%;
   width: 100%;
   padding: 0;
+  z-index: 1;
 }
 
 .slideshow__image {
@@ -97,6 +98,7 @@
   background: transparent;
   cursor: pointer;
   outline: none;
+  z-index: 2;
 }
 
 .slideshow__tap--left {
@@ -159,11 +161,23 @@
 }
 
 .viewer-bottom__title {
-  font-family: var(--font-display), Georgia, serif;
+  font-family: var(--font-ui), "Segoe UI", sans-serif;
   font-size: 0.98rem;
   font-weight: 500;
   line-height: 1.14;
   text-transform: lowercase;
+}
+
+.viewer-bottom__title-link {
+  display: inline-flex;
+  color: var(--ink);
+  transform-origin: left center;
+  transition: transform var(--duration-text-action) ease, color var(--duration-text-action) ease;
+}
+
+.viewer-bottom__title-link:hover {
+  color: var(--ink);
+  transform: scale(var(--hover-scale-text-action));
 }
 
 .viewer-bottom__description {
@@ -172,9 +186,20 @@
   line-height: 1.35;
 }
 
+.viewer-bottom__status {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.88rem;
+}
+
 .slideshow__counter {
   font-size: 0.72rem;
   letter-spacing: 0.06em;
   color: var(--muted);
   text-transform: lowercase;
+}
+
+.viewer-bottom__thumbnail-link {
+  font-size: 0.72rem;
+  letter-spacing: 0.06em;
 }

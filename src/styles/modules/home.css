@@ -101,3 +101,32 @@
 .collage-cell:hover .collage-cell__image {
   transform: scale(1.02);
 }
+
+.project-collage-grid {
+  --row-height: var(--size-collage-row-height);
+  display: grid;
+  gap: var(--space-work-row-gap);
+}
+
+.project-thumbnails__actions {
+  display: inline-flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 0.65rem 1rem;
+  margin-top: 0.12rem;
+}
+
+.project-collage-grid__row {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-photo-gap);
+  min-height: var(--row-height);
+}
+
+.project-collage-grid .collage-cell {
+  background: transparent;
+}
+
+.project-collage-grid .collage-cell__image {
+  object-fit: cover;
+}

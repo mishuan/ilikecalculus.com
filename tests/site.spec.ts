@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { projectsBySlug } from "../src/data/site-content";
 
 test("home filters rows by category", async ({ page }) => {
   await page.goto("/");
@@ -40,7 +41,7 @@ test("primary navigation routes work", async ({ page }) => {
 
 test("works project page slideshow advances into next project", async ({ page }) => {
   await page.goto("/works/personal/the-bridge-reconstructed");
-  await expect(page.getByRole("heading", { name: "The Bridge, Reconstructed" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "The Bridge" })).toBeVisible();
 
   const counter = page.locator(".slideshow__counter");
   await expect(counter).toBeVisible();
@@ -57,6 +58,83 @@ test("works project page slideshow advances into next project", async ({ page })
 
   await page.keyboard.press("ArrowRight");
   await expect(page).toHaveURL(/\/works\/personal\/urban-courts$/);
+});
+
+test("slideshow next project button opens next project in slideshow view", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed?photo=3");
+  await expect(page.locator(".slideshow__counter")).toContainText(/^3\s*\/\s*\d+$/);
+
+  await page.getByRole("button", { name: /next project:\s*urban courts/i }).click();
+  await expect(page).toHaveURL(/\/works\/personal\/urban-courts$/);
+});
+
+test("slideshow left tap moves back one photo", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed");
+  const counter = page.locator(".slideshow__counter");
+  await expect(counter).toContainText(/^1\s*\/\s*\d+$/);
+
+  await page.locator(".slideshow__tap--right").click();
+  await expect(counter).toContainText(/^2\s*\/\s*\d+$/);
+
+  await page.locator(".slideshow__tap--left").click();
+  await expect(counter).toContainText(/^1\s*\/\s*\d+$/);
+});
+
+test("works title opens project thumbnails route", async ({ page }) => {
+  await page.goto("/");
+
+  const firstProjectTitle = page.locator(".collage-row__title a").first();
+  const titleText = await firstProjectTitle.innerText();
+  await firstProjectTitle.click();
+
+  await expect(page).toHaveURL(/\/works\/[^/]+\/[^/]+\/thumbnails$/);
+  await expect(page.getByRole("heading", { name: new RegExp(titleText, "i") })).toBeVisible();
+});
+
+test("slideshow thumbnail view link opens thumbnails with current photo", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed?photo=3");
+  await expect(page.locator(".slideshow__counter")).toContainText(/^3\s*\/\s*\d+$/);
+  await expect(page.getByTestId("slideshow-thumbnail-view-link")).toHaveText("thumbnails");
+
+  await page.getByTestId("slideshow-thumbnail-view-link").click();
+  await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\/thumbnails\?photo=3$/);
+});
+
+test("slideshow title opens thumbnails with current photo", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed?photo=4");
+  await expect(page.locator(".slideshow__counter")).toContainText(/^4\s*\/\s*\d+$/);
+
+  await page.getByTestId("slideshow-title-thumbnails-link").click();
+  await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\/thumbnails\?photo=4$/);
+});
+
+test("project thumbnails page renders all project images", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed/thumbnails");
+
+  await expect(page.getByRole("heading", { name: /the bridge/i })).toBeVisible();
+  await expect(page.getByText("A new perspective on an iconic subject.")).toBeVisible();
+  await expect(page.getByTestId("thumbnail-page-slideshow-link")).toBeVisible();
+  await expect(page.getByTestId("thumbnail-page-next-project-link")).toContainText(
+    /next project:\s*urban courts/i,
+  );
+  await expect(page.locator("[data-testid^='project-thumbnail-']")).toHaveCount(
+    projectsBySlug["the-bridge-reconstructed"].images.length,
+  );
+});
+
+test("thumbnail page next project link stays in thumbnails view", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed/thumbnails");
+
+  await page.getByTestId("thumbnail-page-next-project-link").click();
+  await expect(page).toHaveURL(/\/works\/personal\/urban-courts\/thumbnails$/);
+});
+
+test("clicking a project thumbnail opens slideshow at the same photo", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed/thumbnails");
+
+  await page.getByTestId("project-thumbnail-5").click();
+  await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\?photo=5$/);
+  await expect(page.locator(".slideshow__counter")).toContainText(/^5\s*\/\s*\d+$/);
 });
 
 test("clicking a thumbnail opens slideshow at that photo", async ({ page }) => {

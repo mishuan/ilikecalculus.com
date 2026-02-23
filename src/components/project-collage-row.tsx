@@ -3,7 +3,12 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
-import { projectHref, type Project, type ProjectCategory } from "@/data/site-content";
+import {
+  projectHref,
+  projectThumbnailsHref,
+  type Project,
+  type ProjectCategory,
+} from "@/data/site-content";
 
 type ProjectCollageRowProps = {
   project: Project;
@@ -13,7 +18,8 @@ type ProjectCollageRowProps = {
 const DEFAULT_CELL_GAP_PX = 14;
 
 export function ProjectCollageRow({ project, preferredCategory }: ProjectCollageRowProps) {
-  const href = projectHref(project, preferredCategory);
+  const slideshowHref = projectHref(project, preferredCategory);
+  const thumbnailsHref = projectThumbnailsHref(project, preferredCategory);
   const trackRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [rowHeight, setRowHeight] = useState(0);
@@ -83,14 +89,14 @@ export function ProjectCollageRow({ project, preferredCategory }: ProjectCollage
   return (
     <article className="collage-row">
       <h3 className="collage-row__title">
-        <Link href={href}>{project.title}</Link>
+        <Link href={thumbnailsHref}>{project.title}</Link>
       </h3>
 
       <div className="collage-track" ref={trackRef}>
         {fittedImages.map(({ image, width }, index) => (
           <Link
             key={`${project.slug}-${image.src}-${index}`}
-            href={`${href}?photo=${index + 1}`}
+            href={`${slideshowHref}?photo=${index + 1}`}
             className="collage-cell"
             style={{ width }}
             aria-label={`Open ${project.title}`}

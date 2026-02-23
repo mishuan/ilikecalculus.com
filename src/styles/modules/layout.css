@@ -153,7 +153,11 @@
 }
 
 .page-title {
-  margin-bottom: 0.42rem;
+  margin-bottom: var(--space-page-title-bottom);
+}
+
+.page-header:has(.page-intro) .page-title {
+  margin-bottom: var(--space-page-title-to-intro);
 }
 
 .page-intro {

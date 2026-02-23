@@ -1,16 +1,17 @@
 import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
-import { ProjectSlideshow } from "@/components/project-slideshow";
+import { ProjectThumbnailsView } from "@/components/project-thumbnails-view";
 import {
   categoryOrder,
   projectHref,
+  projectThumbnailsHref,
   projects,
   type ProjectCategory,
   projectsByCategoryAndSlug,
   projectsBySlug,
 } from "@/data/site-content";
 
-type ProjectPageProps = {
+type ProjectThumbnailsPageProps = {
   params: Promise<{
     category: string;
     project: string;
@@ -29,7 +30,9 @@ export async function generateStaticParams() {
   );
 }
 
-export async function generateMetadata({ params }: ProjectPageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: ProjectThumbnailsPageProps): Promise<Metadata> {
   const { category, project } = await params;
   const currentProject = projectsByCategoryAndSlug[`${category}/${project}`];
 
@@ -45,9 +48,10 @@ export async function generateMetadata({ params }: ProjectPageProps): Promise<Me
   };
 }
 
-const projectOrder = projects;
-
-export default async function ProjectPage({ params, searchParams }: ProjectPageProps) {
+export default async function ProjectThumbnailsPage({
+  params,
+  searchParams,
+}: ProjectThumbnailsPageProps) {
   const { category, project } = await params;
   const rawSearchParams = searchParams ? await searchParams : undefined;
   const currentProject = projectsByCategoryAndSlug[`${category}/${project}`];
@@ -66,33 +70,26 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
   const activeCategory = currentProject.categories.some((item) => item === requestedCategory)
     ? requestedCategory
     : currentProject.categories[0];
-
-  const projectIndex = projectOrder.findIndex((item) => item.slug === currentProject.slug);
-  const previousProject = projectIndex > 0 ? projectOrder[projectIndex - 1] : null;
-  const nextProject = projectIndex >= 0 && projectIndex < projectOrder.length - 1
-    ? projectOrder[projectIndex + 1]
-    : null;
   const photoParam = Array.isArray(rawSearchParams?.photo)
     ? rawSearchParams?.photo[0]
     : rawSearchParams?.photo;
-  const requestedPhoto = Number.parseInt(photoParam ?? "1", 10);
-  const initialIndex = Number.isNaN(requestedPhoto)
-    ? 0
-    : Math.min(Math.max(requestedPhoto - 1, 0), currentProject.images.length - 1);
+  const requestedPhoto = Number.parseInt(photoParam ?? "", 10);
+  const activePhoto = Number.isNaN(requestedPhoto)
+    ? undefined
+    : Math.min(Math.max(requestedPhoto, 1), currentProject.images.length);
+  const projectIndex = projects.findIndex((item) => item.slug === currentProject.slug);
+  const nextProject =
+    projectIndex >= 0 && projectIndex < projects.length - 1 ? projects[projectIndex + 1] : null;
 
   return (
-    <ProjectSlideshow
-      key={`${currentProject.slug}-${initialIndex}`}
+    <ProjectThumbnailsView
       project={currentProject}
       activeCategory={activeCategory}
-      initialIndex={initialIndex}
-      previousProject={
-        previousProject
-          ? { href: projectHref(previousProject, activeCategory), title: previousProject.title }
-          : null
-      }
+      activePhoto={activePhoto}
       nextProject={
-        nextProject ? { href: projectHref(nextProject, activeCategory), title: nextProject.title } : null
+        nextProject
+          ? { href: projectThumbnailsHref(nextProject, activeCategory), title: nextProject.title }
+          : null
       }
     />
   );

@@ -12,8 +12,25 @@ This is a Next.js rebuild of `ilikecalculus.com` with the requested structure:
 ## Run locally
 
 ```bash
+nvm install
+nvm use
 npm install
 npm run dev
+```
+
+Runtime policy:
+
+- Node is pinned to `24` in `/Users/michaelyuan/src/ilikecalculus.com/.nvmrc` and `/Users/michaelyuan/src/ilikecalculus.com/.node-version`.
+- `package.json` enforces `engines.node = 24.x`.
+- `/Users/michaelyuan/src/ilikecalculus.com/.npmrc` has `engine-strict=true` to fail fast on wrong Node versions.
+- `npm run dev` (and other npm scripts) run a runtime precheck via `/Users/michaelyuan/src/ilikecalculus.com/scripts/check-runtime.mjs`.
+- Vercel should also be configured to Node `24.x` to match local development.
+
+Recommended one-time local setup:
+
+```bash
+nvm install 24
+nvm alias default 24
 ```
 
 ## Manual content workflow
