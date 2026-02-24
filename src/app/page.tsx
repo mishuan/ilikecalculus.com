@@ -1,5 +1,10 @@
+import { Suspense } from "react";
 import { WorksIndex } from "@/components/works-index";
 
 export default function HomePage() {
-  return <WorksIndex />;
+  return (
+    <Suspense fallback={null}>
+      <WorksIndex />
+    </Suspense>
+  );
 }

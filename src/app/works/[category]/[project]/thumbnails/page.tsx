@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { notFound, redirect } from "next/navigation";
 import { ProjectThumbnailsView } from "@/components/project-thumbnails-view";
 import {
@@ -74,11 +75,13 @@ export default async function ProjectThumbnailsPage({
   const { nextProjectThumbnails } = projectNeighbors(currentProject.slug, activeCategory);
 
   return (
-    <ProjectThumbnailsView
-      project={currentProject}
-      activeCategory={activeCategory}
-      activePhoto={activePhoto}
-      nextProject={nextProjectThumbnails}
-    />
+    <Suspense fallback={null}>
+      <ProjectThumbnailsView
+        project={currentProject}
+        activeCategory={activeCategory}
+        activePhoto={activePhoto}
+        nextProject={nextProjectThumbnails}
+      />
+    </Suspense>
   );
 }
