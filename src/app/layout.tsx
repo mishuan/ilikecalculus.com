@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Cormorant_Garamond, Manrope } from "next/font/google";
 import { DevEditorToggle } from "@/components/dev-editor-toggle";
 import { Sidebar } from "@/components/sidebar";
@@ -36,7 +37,9 @@ export default function RootLayout({
         data-ui-skin={ACTIVE_UI_SKIN}
         className={`${uiFont.variable} ${displayFont.variable}`}
       >
-        <DevEditorToggle />
+        <Suspense fallback={null}>
+          <DevEditorToggle />
+        </Suspense>
         <div className="site-shell">
           <Sidebar />
           <main className="content-shell">{children}</main>
