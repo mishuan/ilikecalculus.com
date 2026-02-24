@@ -50,7 +50,7 @@ All project/page content is maintained in:
    - `/Users/michaelyuan/src/ilikecalculus.com/src/data/site-content.ts`
 3. Required fields per project:
    - `slug`
-   - `categories` (one or both: `portrait`, `personal`)
+   - `categories` (`film`, `portrait`, `personal`; choose one or more)
    - `title`
    - `description`
    - `coverImage` (`src`, `width`, `height`, `alt`)
@@ -66,7 +66,7 @@ All project/page content is maintained in:
 Use the scaffold command:
 
 ```bash
-npm run project:new -- --slug your-project --title "your project" --categories portrait,personal
+npm run project:new -- --slug your-project --title "your project" --categories film,portrait
 ```
 
 This creates:

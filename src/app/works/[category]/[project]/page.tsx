@@ -69,8 +69,8 @@ export default async function ProjectPage({ params, searchParams }: ProjectPageP
 
   const projectIndex = projectOrder.findIndex((item) => item.slug === currentProject.slug);
   const previousProject = projectIndex > 0 ? projectOrder[projectIndex - 1] : null;
-  const nextProject = projectIndex >= 0 && projectIndex < projectOrder.length - 1
-    ? projectOrder[projectIndex + 1]
+  const nextProject = projectIndex >= 0 && projectOrder.length > 1
+    ? projectOrder[(projectIndex + 1) % projectOrder.length]
     : null;
   const photoParam = Array.isArray(rawSearchParams?.photo)
     ? rawSearchParams?.photo[0]

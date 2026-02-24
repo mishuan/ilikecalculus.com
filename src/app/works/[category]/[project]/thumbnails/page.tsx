@@ -78,8 +78,9 @@ export default async function ProjectThumbnailsPage({
     ? undefined
     : Math.min(Math.max(requestedPhoto, 1), currentProject.images.length);
   const projectIndex = projects.findIndex((item) => item.slug === currentProject.slug);
-  const nextProject =
-    projectIndex >= 0 && projectIndex < projects.length - 1 ? projects[projectIndex + 1] : null;
+  const nextProject = projectIndex >= 0 && projects.length > 1
+    ? projects[(projectIndex + 1) % projects.length]
+    : null;
 
   return (
     <ProjectThumbnailsView

@@ -3,7 +3,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const VALID_CATEGORIES = ["portrait", "personal"];
+const VALID_CATEGORIES = ["film", "portrait", "personal"];
 
 function parseArgs(argv) {
   const parsed = {};
@@ -42,7 +42,7 @@ function parseCategories(rawValue) {
   const invalid = unique.filter((value) => !VALID_CATEGORIES.includes(value));
 
   if (invalid.length > 0) {
-    throw new Error(`Invalid categories: ${invalid.join(", ")}. Use portrait and/or personal.`);
+    throw new Error(`Invalid categories: ${invalid.join(", ")}. Use film, portrait, and/or personal.`);
   }
 
   if (unique.length === 0) {
