@@ -1,0 +1,100 @@
+{
+  "slug": "desolate-sands",
+  "categories": [
+    "personal"
+  ],
+  "title": "Desolate Sands",
+  "description": "A look into the empty resorts in Cuba during slow seasons.",
+  "coverImage": {
+    "src": "/media/projects/desolate-sands/01.jpg",
+    "width": 2500,
+    "height": 1406,
+    "alt": "Desolate Sands"
+  },
+  "images": [
+    {
+      "src": "/media/projects/desolate-sands/01.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "The Roaming Dog"
+    },
+    {
+      "src": "/media/projects/desolate-sands/03.jpg",
+      "width": 2500,
+      "height": 1667,
+      "alt": "The Empty Hotel"
+    },
+    {
+      "src": "/media/projects/desolate-sands/10.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "Garbage Can and Tiki Umbrella"
+    },
+    {
+      "src": "/media/projects/desolate-sands/12.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "Opposite Directions"
+    },
+    {
+      "src": "/media/projects/desolate-sands/02.jpg",
+      "width": 2500,
+      "height": 2500,
+      "alt": "Three Outdoor Showers (Wet)"
+    },
+    {
+      "src": "/media/projects/desolate-sands/13.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "A Single Wave"
+    },
+    {
+      "src": "/media/projects/desolate-sands/04.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "Highway Palm Tree"
+    },
+    {
+      "src": "/media/projects/desolate-sands/06.jpg",
+      "width": 2500,
+      "height": 1667,
+      "alt": "The President Suite"
+    },
+    {
+      "src": "/media/projects/desolate-sands/05.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "The Tumbling Donut"
+    },
+    {
+      "src": "/media/projects/desolate-sands/07.jpg",
+      "width": 2500,
+      "height": 1667,
+      "alt": "Stranded Boats"
+    },
+    {
+      "src": "/media/projects/desolate-sands/08.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "Off Duty"
+    },
+    {
+      "src": "/media/projects/desolate-sands/09.jpg",
+      "width": 2500,
+      "height": 1667,
+      "alt": "Off Duty"
+    },
+    {
+      "src": "/media/projects/desolate-sands/11.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "Eighteen Tiki Umbrellas "
+    },
+    {
+      "src": "/media/projects/desolate-sands/14.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "The Escape"
+    }
+  ]
+}

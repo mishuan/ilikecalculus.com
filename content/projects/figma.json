@@ -1,0 +1,106 @@
+{
+  "slug": "figma",
+  "categories": [
+    "portrait"
+  ],
+  "title": "Figma 2022",
+  "description": "",
+  "coverImage": {
+    "src": "/media/projects/figma/01.jpg",
+    "width": 2500,
+    "height": 3750,
+    "alt": "20220608-DSCF7438.jpg"
+  },
+  "images": [
+    {
+      "src": "/media/projects/figma/01.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220608-DSCF7438.jpg"
+    },
+    {
+      "src": "/media/projects/figma/02.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220608-DSCF7431.jpg"
+    },
+    {
+      "src": "/media/projects/figma/03.jpg",
+      "width": 2500,
+      "height": 3125,
+      "alt": "20220607-DSCF6776.jpg"
+    },
+    {
+      "src": "/media/projects/figma/04.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF7109.jpg"
+    },
+    {
+      "src": "/media/projects/figma/05.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF6933.jpg"
+    },
+    {
+      "src": "/media/projects/figma/06.jpg",
+      "width": 2500,
+      "height": 3125,
+      "alt": "20220607-DSCF6879.jpg"
+    },
+    {
+      "src": "/media/projects/figma/07.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF6903.jpg"
+    },
+    {
+      "src": "/media/projects/figma/08.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220714-DSCF7875.jpg"
+    },
+    {
+      "src": "/media/projects/figma/09.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF6798.jpg"
+    },
+    {
+      "src": "/media/projects/figma/10.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF6725.jpg"
+    },
+    {
+      "src": "/media/projects/figma/11.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF6917.jpg"
+    },
+    {
+      "src": "/media/projects/figma/12.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF6936.jpg"
+    },
+    {
+      "src": "/media/projects/figma/13.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF7115.jpg"
+    },
+    {
+      "src": "/media/projects/figma/14.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20220607-DSCF7150.jpg"
+    },
+    {
+      "src": "/media/projects/figma/15.jpg",
+      "width": 2500,
+      "height": 1667,
+      "alt": "20220608-DSCF7458.jpg"
+    }
+  ]
+}

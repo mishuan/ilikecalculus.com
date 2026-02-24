@@ -2,6 +2,7 @@
 
 use this structure for every new project:
 
+- workspace metadata: `content/workspace.json`
 - project metadata template: `content/projects/<slug>.json`
 - project photos: `public/media/projects/<slug>/`
 - route target: `/works/<category>/<slug>`
@@ -14,8 +15,8 @@ npm run project:new -- --slug your-project --title "your project" --categories f
 
 notes:
 
-- categories can be `film`, `portrait`, `personal`, or any combination.
+- categories are defined by `content/workspace.json` and can be expanded in edit mode or by editing the file.
 - image file naming convention is sequential: `01.jpg`, `02.jpg`, `03.jpg`, ...
+- always regenerate runtime data after content updates: `npm run content:build`.
 - always run compression before commit: `npm run media:compress` (target under `500 KB` per image).
-- keep source exports in `src/data/site-content.ts` as the runtime source of truth for now.
-- use the manifest json as the intake/organization layer so image files and project metadata stay grouped.
+- generated runtime data is written to `src/data/generated-site-data.ts`.

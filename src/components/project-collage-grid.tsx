@@ -8,21 +8,36 @@ import { projectHref, type Project, type ProjectCategory } from "@/data/site-con
 type ProjectCollageGridProps = {
   project: Project;
   activeCategory: ProjectCategory;
+  editMode?: boolean;
+  deletingPhotoSrc?: string | null;
+  isReorderingPhotos?: boolean;
+  onDeletePhoto?: (src: string) => void;
+  onReorderPhoto?: (draggingSrc: string, targetSrc: string) => void;
 };
 
-type RowItem = {
+type GridTile = {
   image: Project["images"][number];
   width: number;
   index: number;
+  key: string;
 };
 
 const DEFAULT_CELL_GAP_PX = 14;
 
-export function ProjectCollageGrid({ project, activeCategory }: ProjectCollageGridProps) {
+export function ProjectCollageGrid({
+  project,
+  activeCategory,
+  editMode = false,
+  deletingPhotoSrc = null,
+  isReorderingPhotos = false,
+  onDeletePhoto,
+  onReorderPhoto,
+}: ProjectCollageGridProps) {
   const gridRef = useRef<HTMLDivElement | null>(null);
   const [containerWidth, setContainerWidth] = useState(0);
   const [rowHeight, setRowHeight] = useState(0);
   const [gapPx, setGapPx] = useState(DEFAULT_CELL_GAP_PX);
+  const [draggingPhotoSrc, setDraggingPhotoSrc] = useState<string | null>(null);
   const slideshowHref = projectHref(project, activeCategory);
 
   useLayoutEffect(() => {
@@ -60,11 +75,11 @@ export function ProjectCollageGrid({ project, activeCategory }: ProjectCollageGr
 
   const rows = useMemo(() => {
     if (containerWidth <= 0 || rowHeight <= 0) {
-      return [] as RowItem[][];
+      return [] as GridTile[][];
     }
 
-    const nextRows: RowItem[][] = [];
-    let currentRow: RowItem[] = [];
+    const nextRows: GridTile[][] = [];
+    let currentRow: GridTile[] = [];
     let usedWidth = 0;
 
     project.images.forEach((image, index) => {
@@ -79,7 +94,13 @@ export function ProjectCollageGrid({ project, activeCategory }: ProjectCollageGr
         usedWidth = 0;
       }
 
-      currentRow.push({ image, width: fittedWidth, index });
+      currentRow.push({
+        image,
+        width: fittedWidth,
+        index,
+        key: `${project.slug}-${image.src}-${index}`,
+      });
+
       usedWidth += currentRow.length === 1 ? fittedWidth : fittedWidth + gapPx;
     });
 
@@ -88,32 +109,72 @@ export function ProjectCollageGrid({ project, activeCategory }: ProjectCollageGr
     }
 
     return nextRows;
-  }, [containerWidth, gapPx, project.images, rowHeight]);
+  }, [containerWidth, gapPx, project.images, project.slug, rowHeight]);
 
   return (
     <div className="project-collage-grid" ref={gridRef}>
       {rows.map((row, rowIndex) => (
         <div key={`${project.slug}-row-${rowIndex}`} className="project-collage-grid__row">
-          {row.map(({ image, width, index }) => {
+          {row.map((tile) => {
+            const { image, index } = tile;
+            const isEditable = editMode && !isReorderingPhotos;
+
             return (
-              <Link
-                key={`${project.slug}-${image.src}-${index}`}
-                href={`${slideshowHref}?photo=${index + 1}`}
-                className="collage-cell"
-                style={{ width }}
-                aria-label={`Open ${project.title} photo ${index + 1}`}
-                data-testid={`project-thumbnail-${index + 1}`}
+              <div
+                key={tile.key}
+                className={`collage-cell-wrapper${editMode ? " collage-cell-wrapper--editable" : ""}`}
+                style={{ width: tile.width }}
+                draggable={isEditable}
+                onDragStart={() => {
+                  if (!isEditable) {
+                    return;
+                  }
+                  setDraggingPhotoSrc(image.src);
+                }}
+                onDragOver={(event) => {
+                  if (!isEditable || !draggingPhotoSrc || draggingPhotoSrc === image.src) {
+                    return;
+                  }
+                  event.preventDefault();
+                }}
+                onDrop={() => {
+                  if (!isEditable || !draggingPhotoSrc || draggingPhotoSrc === image.src) {
+                    return;
+                  }
+                  onReorderPhoto?.(draggingPhotoSrc, image.src);
+                  setDraggingPhotoSrc(null);
+                }}
+                onDragEnd={() => setDraggingPhotoSrc(null)}
               >
-                <Image
-                  src={image.src}
-                  alt={image.alt || `${project.title} preview ${index + 1}`}
-                  width={image.width}
-                  height={image.height}
-                  className="collage-cell__image"
-                  sizes="(max-width: 960px) 42vw, 20vw"
-                  priority={rowIndex === 0 && index < 3}
-                />
-              </Link>
+                <Link
+                  href={`${slideshowHref}?photo=${index + 1}`}
+                  className="collage-cell"
+                  aria-label={`Open ${project.title} photo ${index + 1}`}
+                  data-testid={`project-thumbnail-${index + 1}`}
+                >
+                  <Image
+                    src={image.src}
+                    alt={image.alt || `${project.title} preview ${index + 1}`}
+                    width={image.width}
+                    height={image.height}
+                    className="collage-cell__image"
+                    sizes="(max-width: 960px) 42vw, 20vw"
+                    priority={rowIndex === 0 && index < 3}
+                  />
+                </Link>
+
+                {editMode ? (
+                  <button
+                    type="button"
+                    className="collage-cell__delete"
+                    aria-label={`Delete photo ${index + 1}`}
+                    disabled={deletingPhotoSrc === image.src || isReorderingPhotos}
+                    onClick={() => onDeletePhoto?.(image.src)}
+                  >
+                    {deletingPhotoSrc === image.src ? "…" : "x"}
+                  </button>
+                ) : null}
+              </div>
             );
           })}
         </div>

@@ -1,14 +1,21 @@
+#!/usr/bin/env node
+
 import fs from "node:fs/promises";
 import path from "node:path";
+import { execFile } from "node:child_process";
+import { promisify } from "node:util";
 import sharp from "sharp";
 
 const PROJECT_ROOT = process.cwd();
 const MEDIA_DIR = path.join(PROJECT_ROOT, "public", "media");
-const CONTENT_PATH = path.join(PROJECT_ROOT, "src", "data", "site-content.ts");
+const CONTENT_DIR = path.join(PROJECT_ROOT, "content");
+const CONTENT_PROJECTS_DIR = path.join(CONTENT_DIR, "projects");
+const WORKSPACE_PATH = path.join(CONTENT_DIR, "workspace.json");
 const TARGET_BYTES = 500 * 1024;
 
 const SCALE_STEPS = [1, 0.9, 0.8, 0.72, 0.64, 0.56, 0.5];
 const QUALITY_STEPS = [82, 76, 70, 64, 58, 52, 46, 40, 34];
+const runExecFile = promisify(execFile);
 
 function roundDimension(value) {
   return Math.max(1, Math.round(value));
@@ -137,21 +144,47 @@ async function collectMediaFiles(directory, relativeBase = "") {
   return output;
 }
 
+function applyDimensions(image, dimensionsBySrc) {
+  if (!image) {
+    return image;
+  }
+  const dimensions = dimensionsBySrc.get(image.src);
+  if (!dimensions) {
+    return image;
+  }
+  return {
+    ...image,
+    width: dimensions.width,
+    height: dimensions.height,
+  };
+}
+
 async function updateContentDimensions(dimensionsBySrc) {
-  let content = await fs.readFile(CONTENT_PATH, "utf8");
+  const workspace = JSON.parse(await fs.readFile(WORKSPACE_PATH, "utf8"));
+  workspace.about.image = applyDimensions(workspace.about.image, dimensionsBySrc);
+  workspace.contact.image = applyDimensions(workspace.contact.image, dimensionsBySrc);
+  await fs.writeFile(WORKSPACE_PATH, `${JSON.stringify(workspace, null, 2)}\n`, "utf8");
 
-  content = content.replace(
-    /("src":\s*"([^"]+)",\s*"width":\s*)(\d+)(,\s*"height":\s*)(\d+)/g,
-    (full, prefix, src, width, middle, height) => {
-      const dims = dimensionsBySrc.get(src);
-      if (!dims) {
-        return full;
-      }
-      return `${prefix}${dims.width}${middle}${dims.height}`;
-    },
-  );
+  const projectFiles = (await fs.readdir(CONTENT_PROJECTS_DIR))
+    .filter((fileName) => fileName.endsWith(".json"))
+    .sort((a, b) => a.localeCompare(b));
 
-  await fs.writeFile(CONTENT_PATH, content, "utf8");
+  for (const fileName of projectFiles) {
+    const filePath = path.join(CONTENT_PROJECTS_DIR, fileName);
+    const project = JSON.parse(await fs.readFile(filePath, "utf8"));
+
+    project.coverImage = applyDimensions(project.coverImage, dimensionsBySrc);
+    project.images = project.images.map((image) => applyDimensions(image, dimensionsBySrc));
+
+    await fs.writeFile(filePath, `${JSON.stringify(project, null, 2)}\n`, "utf8");
+  }
+}
+
+async function rebuildGeneratedData() {
+  await runExecFile("node", ["scripts/build-site-data.mjs"], {
+    cwd: PROJECT_ROOT,
+    env: process.env,
+  });
 }
 
 async function run() {
@@ -170,6 +203,7 @@ async function run() {
   }
 
   await updateContentDimensions(dimensionsBySrc);
+  await rebuildGeneratedData();
 
   const beforeBytes = results.reduce((sum, item) => sum + item.beforeBytes, 0);
   const afterBytes = results.reduce((sum, item) => sum + item.afterBytes, 0);

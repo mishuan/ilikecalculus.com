@@ -3,8 +3,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-const VALID_CATEGORIES = ["film", "portrait", "personal"];
-
 function parseArgs(argv) {
   const parsed = {};
 
@@ -28,9 +26,9 @@ function parseArgs(argv) {
   return parsed;
 }
 
-function parseCategories(rawValue) {
+function parseCategories(rawValue, validCategories) {
   if (!rawValue) {
-    return ["personal"];
+    return [validCategories[0]];
   }
 
   const categories = rawValue
@@ -39,14 +37,16 @@ function parseCategories(rawValue) {
     .filter(Boolean);
 
   const unique = [...new Set(categories)];
-  const invalid = unique.filter((value) => !VALID_CATEGORIES.includes(value));
+  const invalid = unique.filter((value) => !validCategories.includes(value));
 
   if (invalid.length > 0) {
-    throw new Error(`Invalid categories: ${invalid.join(", ")}. Use film, portrait, and/or personal.`);
+    throw new Error(
+      `Invalid categories: ${invalid.join(", ")}. Use one or more of: ${validCategories.join(", ")}.`,
+    );
   }
 
   if (unique.length === 0) {
-    return ["personal"];
+    return [validCategories[0]];
   }
 
   return unique;
@@ -66,7 +66,6 @@ async function run() {
   const slug = (args.slug || "").trim().toLowerCase();
   const title = (args.title || "").trim();
   const description = (args.description || "").trim();
-  const categories = parseCategories(args.categories);
 
   if (!slug || !/^[a-z0-9-]+$/.test(slug)) {
     throw new Error("`--slug` is required and must match [a-z0-9-].");
@@ -77,6 +76,14 @@ async function run() {
   }
 
   const root = process.cwd();
+  const workspacePath = path.join(root, "content", "workspace.json");
+  const workspace = JSON.parse(await fs.readFile(workspacePath, "utf8"));
+  const validCategories = workspace.categories;
+  if (!Array.isArray(validCategories) || validCategories.length === 0) {
+    throw new Error("workspace.json must define at least one category before creating projects.");
+  }
+
+  const categories = parseCategories(args.categories, validCategories);
   const mediaDir = path.join(root, "public", "media", "projects", slug);
   const manifestDir = path.join(root, "content", "projects");
   const manifestPath = path.join(manifestDir, `${slug}.json`);
@@ -94,26 +101,19 @@ async function run() {
     title,
     description,
     categories,
-    coverImage: {
-      src: `/media/projects/${slug}/01.jpg`,
-      alt: title,
-    },
-    images: [
-      {
-        src: `/media/projects/${slug}/01.jpg`,
-        alt: `${title} 01`,
-      },
-    ],
+    coverImage: null,
+    images: [],
   };
 
   await fs.writeFile(manifestPath, `${JSON.stringify(manifest, null, 2)}\n`, "utf8");
+  workspace.projectOrder = [...workspace.projectOrder, slug];
+  await fs.writeFile(workspacePath, `${JSON.stringify(workspace, null, 2)}\n`, "utf8");
 
-  console.log(`Created:\n- ${manifestPath}\n- ${mediaDir}`);
+  console.log(`Created:\n- ${manifestPath}\n- ${mediaDir}\n- ${workspacePath} (updated projectOrder)`);
   console.log("\nNext steps:");
-  console.log("1) Add your photos to the media folder.");
-  console.log("2) Run `npm run media:compress` to keep photos under 500 KB.");
-  console.log("3) Fill width/height metadata in src/data/site-content.ts.");
-  console.log("4) Add the project entry in src/data/site-content.ts.");
+  console.log("1) Add photos in dev edit mode on the project thumbnails page.");
+  console.log("2) Run `npm run media:compress` to keep photos under 500 KB and update dimensions.");
+  console.log("3) Run `npm run content:build` to regenerate src/data/generated-site-data.ts.");
 }
 
 run().catch((error) => {

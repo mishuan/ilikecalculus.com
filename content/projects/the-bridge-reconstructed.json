@@ -1,0 +1,178 @@
+{
+  "slug": "the-bridge-reconstructed",
+  "categories": [
+    "personal"
+  ],
+  "title": "The Bridge",
+  "description": "A new perspective on an iconic subject.",
+  "coverImage": {
+    "src": "/media/projects/the-bridge-reconstructed/01.jpg",
+    "width": 2500,
+    "height": 3750,
+    "alt": "The Bridge"
+  },
+  "images": [
+    {
+      "src": "/media/projects/the-bridge-reconstructed/01.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20180217-DSCF1489.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/02.jpg",
+      "width": 2500,
+      "height": 3749,
+      "alt": "20190210-DSCF7837-Edit.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/03.jpg",
+      "width": 2500,
+      "height": 1667,
+      "alt": "20190901-DSCF4044.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/04.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20190901-DSCF3823.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/06.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20190210-DSCF8005-Edit.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/16.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20190210-DSCF7769.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/15.jpg",
+      "width": 2500,
+      "height": 1250,
+      "alt": "20191005-DSCF4665.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/05.jpg",
+      "width": 2500,
+      "height": 3125,
+      "alt": "20200501-DSCF1365.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/14.jpg",
+      "width": 2000,
+      "height": 4000,
+      "alt": "20191005-DSCF4669.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/27.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "20190210-DSCF7872.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/23.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "20190210-DSCF7719-Edit.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/11.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20200617-DSCF1967.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/10.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20191005-DSCF4685.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/20.jpg",
+      "width": 2000,
+      "height": 3000,
+      "alt": "20200704-DSCF2203.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/21.jpg",
+      "width": 2000,
+      "height": 3000,
+      "alt": "20200704-DSCF2215.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/12.jpg",
+      "width": 2500,
+      "height": 1667,
+      "alt": "20200501-DSCF1379.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/13.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20200501-DSCF1370.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/17.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20190210-DSCF7957.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/19.jpg",
+      "width": 2500,
+      "height": 1786,
+      "alt": "20191005-DSCF4632.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/18.jpg",
+      "width": 2500,
+      "height": 1786,
+      "alt": "20200119-DSCF8049.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/07.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20191005-DSCF4589.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/08.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20191005-DSCF4605.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/09.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "20190513-DSCF1492.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/22.jpg",
+      "width": 2500,
+      "height": 3749,
+      "alt": "20200704-DSCF2235.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/24.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20190210-DSCF7732.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/25.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20190210-DSCF7737.jpg"
+    },
+    {
+      "src": "/media/projects/the-bridge-reconstructed/26.jpg",
+      "width": 2000,
+      "height": 2800,
+      "alt": "20200704-DSCF2241.jpg"
+    }
+  ]
+}

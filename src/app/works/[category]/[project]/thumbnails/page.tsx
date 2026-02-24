@@ -2,14 +2,13 @@ import type { Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { ProjectThumbnailsView } from "@/components/project-thumbnails-view";
 import {
-  categoryOrder,
-  projectHref,
-  projectThumbnailsHref,
   projects,
-  type ProjectCategory,
-  projectsByCategoryAndSlug,
-  projectsBySlug,
 } from "@/data/site-content";
+import {
+  projectMetadataDescription,
+  projectNeighbors,
+  resolveProjectRoute,
+} from "@/lib/project-resolver";
 
 type ProjectThumbnailsPageProps = {
   params: Promise<{
@@ -34,17 +33,17 @@ export async function generateMetadata({
   params,
 }: ProjectThumbnailsPageProps): Promise<Metadata> {
   const { category, project } = await params;
-  const currentProject = projectsByCategoryAndSlug[`${category}/${project}`];
+  const resolved = resolveProjectRoute(category, project);
 
-  if (!currentProject) {
+  if (resolved.kind !== "resolved") {
     return {
       title: "Project Not Found",
     };
   }
 
   return {
-    title: `${currentProject.title} | Michael Yuan`,
-    description: currentProject.description || `Photography project: ${currentProject.title}`,
+    title: `${resolved.project.title} | Michael Yuan`,
+    description: projectMetadataDescription(resolved.project),
   };
 }
 
@@ -54,44 +53,32 @@ export default async function ProjectThumbnailsPage({
 }: ProjectThumbnailsPageProps) {
   const { category, project } = await params;
   const rawSearchParams = searchParams ? await searchParams : undefined;
-  const currentProject = projectsByCategoryAndSlug[`${category}/${project}`];
+  const resolved = resolveProjectRoute(category, project);
 
-  if (!currentProject) {
-    const bySlug = projectsBySlug[project];
-    if (bySlug) {
-      redirect(projectHref(bySlug));
-    }
+  if (resolved.kind === "redirect") {
+    redirect(resolved.href);
+  }
+
+  if (resolved.kind === "not-found") {
     notFound();
   }
 
-  const requestedCategory = categoryOrder.includes(category as ProjectCategory)
-    ? (category as ProjectCategory)
-    : currentProject.categories[0];
-  const activeCategory = currentProject.categories.some((item) => item === requestedCategory)
-    ? requestedCategory
-    : currentProject.categories[0];
+  const { project: currentProject, activeCategory } = resolved;
   const photoParam = Array.isArray(rawSearchParams?.photo)
     ? rawSearchParams?.photo[0]
     : rawSearchParams?.photo;
   const requestedPhoto = Number.parseInt(photoParam ?? "", 10);
-  const activePhoto = Number.isNaN(requestedPhoto)
+  const activePhoto = Number.isNaN(requestedPhoto) || currentProject.images.length === 0
     ? undefined
     : Math.min(Math.max(requestedPhoto, 1), currentProject.images.length);
-  const projectIndex = projects.findIndex((item) => item.slug === currentProject.slug);
-  const nextProject = projectIndex >= 0 && projects.length > 1
-    ? projects[(projectIndex + 1) % projects.length]
-    : null;
+  const { nextProjectThumbnails } = projectNeighbors(currentProject.slug, activeCategory);
 
   return (
     <ProjectThumbnailsView
       project={currentProject}
       activeCategory={activeCategory}
       activePhoto={activePhoto}
-      nextProject={
-        nextProject
-          ? { href: projectThumbnailsHref(nextProject, activeCategory), title: nextProject.title }
-          : null
-      }
+      nextProject={nextProjectThumbnails}
     />
   );
 }

@@ -4,39 +4,22 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const ROOT = process.cwd();
-const CONTENT_PATH = path.join(ROOT, "src", "data", "site-content.ts");
-const MEDIA_ROOT = path.join(ROOT, "public", "media");
-
-function extractSiteDataLiteral(source) {
-  const startToken = "export const siteData = ";
-  const endToken = "} as const;";
-  const start = source.indexOf(startToken);
-  const end = source.indexOf(endToken, start);
-
-  if (start < 0 || end < 0) {
-    throw new Error("Unable to parse siteData object from site-content.ts");
-  }
-
-  return source.slice(start + startToken.length, end + 1);
-}
+const CONTENT_PROJECTS_DIR = path.join(ROOT, "content", "projects");
+const MEDIA_ROOT = path.join(ROOT, "public", "media", "projects");
 
 function extensionFor(filePath) {
-  const ext = path.extname(filePath).toLowerCase();
-  if (ext === ".jpeg") {
+  const extension = path.extname(filePath).toLowerCase();
+  if (extension === ".jpeg") {
     return ".jpg";
   }
-  return ext || ".jpg";
+  return extension || ".jpg";
 }
 
-function projectMediaPath(slug, fileName) {
+function mediaSrc(slug, fileName) {
   return `/media/projects/${slug}/${fileName}`;
 }
 
-async function ensureDir(dirPath) {
-  await fs.mkdir(dirPath, { recursive: true });
-}
-
-async function fileExists(filePath) {
+async function exists(filePath) {
   try {
     await fs.access(filePath);
     return true;
@@ -45,80 +28,108 @@ async function fileExists(filePath) {
   }
 }
 
+async function readProjectManifests() {
+  const files = (await fs.readdir(CONTENT_PROJECTS_DIR))
+    .filter((fileName) => fileName.endsWith(".json"))
+    .sort((a, b) => a.localeCompare(b));
+
+  const projects = [];
+  for (const fileName of files) {
+    const filePath = path.join(CONTENT_PROJECTS_DIR, fileName);
+    const project = JSON.parse(await fs.readFile(filePath, "utf8"));
+    projects.push({ filePath, project });
+  }
+
+  return projects;
+}
+
+async function moveWithTemporaryPath(sourcePath, destinationPath) {
+  if (sourcePath === destinationPath) {
+    return;
+  }
+
+  const temporaryPath = `${destinationPath}.${Date.now()}.tmp`;
+  await fs.rename(sourcePath, temporaryPath);
+  await fs.rename(temporaryPath, destinationPath);
+}
+
 async function run() {
-  const source = await fs.readFile(CONTENT_PATH, "utf8");
-  const objectLiteral = extractSiteDataLiteral(source);
-  const siteData = Function(`"use strict"; return (${objectLiteral});`)();
+  const manifests = await readProjectManifests();
+  let updatedProjects = 0;
 
-  const replacements = new Map();
-  const physicalSourceByOriginalSrc = new Map();
+  for (const entry of manifests) {
+    const { filePath, project } = entry;
+    const projectDir = path.join(MEDIA_ROOT, project.slug);
+    await fs.mkdir(projectDir, { recursive: true });
 
-  for (const project of siteData.projects) {
-    const projectDir = path.join(MEDIA_ROOT, "projects", project.slug);
-    await ensureDir(projectDir);
+    const srcMapping = new Map();
+    const imagePlan = project.images.map((image, index) => {
+      const extension = extensionFor(image.src);
+      const nextFileName = `${String(index + 1).padStart(2, "0")}${extension}`;
+      const nextSrc = mediaSrc(project.slug, nextFileName);
+      const currentAbsolutePath = path.join(ROOT, "public", image.src);
+      const nextAbsolutePath = path.join(ROOT, "public", nextSrc);
 
-    const seenProjectSrc = new Map();
-    const projectImages = project.images;
-
-    for (let index = 0; index < projectImages.length; index += 1) {
-      const image = projectImages[index];
-      const oldSrc = image.src;
-      const srcFileName = path.basename(oldSrc);
-      const ext = extensionFor(srcFileName);
-      const nextName = `${String(index + 1).padStart(2, "0")}${ext}`;
-      const nextSrc = projectMediaPath(project.slug, nextName);
-      const destination = path.join(MEDIA_ROOT, "projects", project.slug, nextName);
-
-      if (!seenProjectSrc.has(oldSrc)) {
-        seenProjectSrc.set(oldSrc, nextSrc);
+      if (!srcMapping.has(image.src)) {
+        srcMapping.set(image.src, nextSrc);
       }
 
-      replacements.set(oldSrc, seenProjectSrc.get(oldSrc));
+      return {
+        currentAbsolutePath,
+        nextAbsolutePath,
+        currentSrc: image.src,
+        nextSrc,
+      };
+    });
 
-      if (seenProjectSrc.get(oldSrc) !== nextSrc) {
+    const stageMoves = [];
+    for (const plan of imagePlan) {
+      if (plan.currentAbsolutePath === plan.nextAbsolutePath) {
         continue;
       }
-
-      const oldAbsolutePath = path.join(ROOT, "public", oldSrc);
-      let sourcePath = oldAbsolutePath;
-
-      if (!(await fileExists(sourcePath))) {
-        sourcePath = physicalSourceByOriginalSrc.get(oldSrc) || sourcePath;
+      if (!(await exists(plan.currentAbsolutePath))) {
+        throw new Error(`Missing source image for ${project.slug}: ${plan.currentSrc}`);
       }
-
-      if (!(await fileExists(sourcePath))) {
-        throw new Error(`Missing source image for ${oldSrc}`);
-      }
-
-      if (!(await fileExists(destination))) {
-        await fs.rename(sourcePath, destination);
-      } else if (sourcePath !== destination && (await fileExists(sourcePath))) {
-        await fs.unlink(sourcePath);
-      }
-
-      physicalSourceByOriginalSrc.set(oldSrc, destination);
+      stageMoves.push(plan);
     }
 
-    const firstImage = project.images[0];
-    if (firstImage) {
-      const mappedCover = replacements.get(firstImage.src);
-      if (mappedCover) {
-        replacements.set(project.coverImage.src, mappedCover);
-      }
+    // Stage files out of the way first to avoid name collisions during rename.
+    const staged = [];
+    for (const plan of stageMoves) {
+      const temporaryPath = `${plan.currentAbsolutePath}.staged.${Date.now()}`;
+      await fs.rename(plan.currentAbsolutePath, temporaryPath);
+      staged.push({ ...plan, temporaryPath });
     }
-  }
 
-  let nextSource = source;
-  for (const [oldSrc, nextSrc] of replacements.entries()) {
-    nextSource = nextSource.split(`"${oldSrc}"`).join(`"${nextSrc}"`);
-  }
+    for (const plan of staged) {
+      await moveWithTemporaryPath(plan.temporaryPath, plan.nextAbsolutePath);
+    }
 
-  await fs.writeFile(CONTENT_PATH, nextSource, "utf8");
+    const nextImages = project.images.map((image) => ({
+      ...image,
+      src: srcMapping.get(image.src) || image.src,
+    }));
+    const nextCoverImage = project.coverImage
+      ? {
+          ...project.coverImage,
+          src: srcMapping.get(project.coverImage.src) || project.coverImage.src,
+        }
+      : null;
+
+    const nextProject = {
+      ...project,
+      images: nextImages,
+      coverImage: nextCoverImage,
+    };
+
+    await fs.writeFile(filePath, `${JSON.stringify(nextProject, null, 2)}\n`, "utf8");
+    updatedProjects += 1;
+  }
 
   console.log(
     JSON.stringify(
       {
-        updatedPaths: replacements.size,
+        projectsUpdated: updatedProjects,
       },
       null,
       2,
@@ -127,6 +138,6 @@ async function run() {
 }
 
 run().catch((error) => {
-  console.error(error);
+  console.error(error instanceof Error ? error.message : error);
   process.exit(1);
 });

@@ -1,0 +1,76 @@
+{
+  "slug": "figma-2023",
+  "categories": [
+    "portrait"
+  ],
+  "title": "Figma 2023",
+  "description": "",
+  "coverImage": {
+    "src": "/media/projects/figma-2023/01.jpg",
+    "width": 2500,
+    "height": 3750,
+    "alt": "20230808-DSCF3302.jpg"
+  },
+  "images": [
+    {
+      "src": "/media/projects/figma-2023/01.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230808-DSCF3302.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/02.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230808-DSCF3419.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/03.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230809-DSCF3650.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/04.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230726-DSCF2482.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/05.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230726-DSCF2619.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/06.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230809-DSCF3637.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/07.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230809-DSCF3540.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/08.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230726-DSCF2565.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/09.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230726-DSCF2424.jpg"
+    },
+    {
+      "src": "/media/projects/figma-2023/10.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230726-DSCF2519.jpg"
+    }
+  ]
+}

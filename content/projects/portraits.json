@@ -1,0 +1,124 @@
+{
+  "slug": "portraits",
+  "categories": [
+    "portrait"
+  ],
+  "title": "Portraits",
+  "description": "A selection of portraits, in and out of studios.",
+  "coverImage": {
+    "src": "/media/projects/portraits/01.jpg",
+    "width": 2500,
+    "height": 3750,
+    "alt": "Portraits"
+  },
+  "images": [
+    {
+      "src": "/media/projects/portraits/01.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20200321-DSCF0968.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/02.jpg",
+      "width": 2500,
+      "height": 2000,
+      "alt": "20200321-DSCF0969.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/03.jpg",
+      "width": 2500,
+      "height": 1064,
+      "alt": "20200321-DSCF0937.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/04.jpg",
+      "width": 2500,
+      "height": 1667,
+      "alt": "20200410-DSCF1132.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/05.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "20200410-DSCF1118.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/06.jpg",
+      "width": 2500,
+      "height": 1406,
+      "alt": "20200410-DSCF1126.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/09.jpg",
+      "width": 2500,
+      "height": 3125,
+      "alt": "20200318-DSCF0855.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/08.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20190928-DSCF4373.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/15.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230810-DSCF4002.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/17.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230913-DSCF3388.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/14.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230808-DSCF3426.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/16.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230913-FUJIFILM X-T5 7728x5152_003418.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/10.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20200321-DSCF0989.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/11.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20200321-DSCF0982.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/13.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230809-DSCF3675.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/22.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20231002-DSCF5345.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/23.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230930-DSCF4831.jpg"
+    },
+    {
+      "src": "/media/projects/portraits/24.jpg",
+      "width": 2500,
+      "height": 3750,
+      "alt": "20230811-DSCF4084-2.jpg"
+    }
+  ]
+}

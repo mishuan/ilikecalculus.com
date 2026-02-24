@@ -1,0 +1,115 @@
+{
+  "site": {
+    "name": "Michael Yuan | Photography",
+    "shortName": "Michael Yuan",
+    "tagline": "Photography",
+    "instagramUrl": "https://instagram.com/ilikecalculus",
+    "blogUrl": "https://ilikecalculus.substack.com/"
+  },
+  "about": {
+    "title": "About",
+    "paragraphs": [
+      "Hey there — I’m Michael Yuan.",
+      "You might be wondering about the name “ilikecalculus.” In school, math was my favorite subject, and 17-year-old me thought calculus was the pinnacle of it all (mostly because it looked intense). I also played a lot of video games and needed a handle that was unique, so one day — with my calculus homework open on my desk — “ilikecalculus” happened. It stuck, and I never had to worry about it being taken.",
+      "These days I split my time between building software and making art.",
+      "Feel free to reach out — I’d love to chat."
+    ],
+    "image": {
+      "src": "/media/about/about-20240831-dscf6193.jpg",
+      "width": 4365,
+      "height": 5456,
+      "alt": "About portrait"
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "paragraphs": [
+      "I am a visual artist working in the medium of photography. I am motivated by challenging common perspectives of our world. Through photography, I shrink, flatten, and contort the objects of our civilization to draw out the subtle presence of humanity and its relationship with the world. I am drawn to the quiet solitude and memories of places, things, and people that have become more invisible after shifts in time and culture.",
+      "Looking to collaborate? Got questions? Got suggestions? Or just want to say hi? Shoot me a message, I'd love to hear from you! Don't spam me, though."
+    ],
+    "image": {
+      "src": "/media/contact/banner.jpg",
+      "width": 2500,
+      "height": 833,
+      "alt": "Contact portrait"
+    }
+  },
+  "press": [
+    {
+      "outlet": "Leica Blog",
+      "title": "Michael Yuan: The Bridge",
+      "url": "https://lfi-online.de/ceemes/en/blog/michael-yuan-the-bridge-2693.html"
+    },
+    {
+      "outlet": "SFGate",
+      "title": "See the Golden Gate Bridge like you never have before",
+      "url": "https://www.sfgate.com/living/article/Golden-Gate-Bridge-photographer-Michael-Yuan-15668793.php"
+    },
+    {
+      "outlet": "PetaPixel",
+      "title": "The Bridge, Reconstructed: A Different Perspective of the Golden Gate Bridge",
+      "url": "https://petapixel.com/2020/10/05/the-bridge-reconstructed-a-different-perspective-of-the-golden-gate-bridge/"
+    },
+    {
+      "outlet": "LifeFramer",
+      "title": "Reimagining an Icon",
+      "url": "https://www.life-framer.com/michael-yuan/"
+    },
+    {
+      "outlet": "Artwort",
+      "title": "The Bridge, Reconstructed – Il Golden Gate Bridge da ricostruire nelle fotografie di Michael Yuan",
+      "url": "https://www.artwort.com/2020/11/03/fotografia/the-bridge-reconstructed-michael-yuan/"
+    },
+    {
+      "outlet": "Plain Magazine",
+      "title": "The Golden Gate Bridge, Deconstructed and Delightfully Unrecognizable",
+      "url": "https://plainmagazine.com/michael-yuan-golden-gate-bridge/"
+    },
+    {
+      "outlet": "Architectural Photography Almanac",
+      "title": "Math Aficionado Michael Yuan Hones in on the Golden Ratios of the Golden Gate Bridge",
+      "url": "https://apalmanac.com/potw/math-aficionado-michael-yuan-hones-in-on-the-golden-ratios-of-the-golden-gate-bridge-13773"
+    },
+    {
+      "outlet": "Dodho Magazine",
+      "title": "Golden Gate; The Bridge, Reconstructed by Michael Yuan",
+      "url": "https://www.dodho.com/golden-gate-the-bridge-reconstructed-by-michael-yuan/"
+    },
+    {
+      "outlet": "The Photo Argus",
+      "title": "Incredible Pictures of Basketball Courts – “Urban Courts” by Michael Yuan",
+      "url": "https://www.thephotoargus.com/incredible-pictures-of-basketball-courts-urban-courts-by-michael-yuan/"
+    },
+    {
+      "outlet": "Le Blog de Fabien Ribery",
+      "title": "The Bridge, l’âme du métal, par Michael Yuan, ingénieur photographe",
+      "url": "https://lintervalle.blog/2022/08/03/the-bridge-lame-du-metal-par-michael-yuan-ingenieur-photographe/"
+    },
+    {
+      "outlet": "Glasstire",
+      "title": "A Shockingly Modernist Project and Others: Four Books of Photographs",
+      "url": "https://glasstire.com/2023/01/04/a-shockingly-modernist-project-and-others-four-books-of-photographs/"
+    }
+  ],
+  "categories": [
+    "personal",
+    "film",
+    "portrait"
+  ],
+  "projectOrder": [
+    "the-bridge-reconstructed",
+    "urban-courts",
+    "desolate-sands",
+    "portraits",
+    "dustin",
+    "figma",
+    "figma-2023",
+    "yukimi-justin"
+  ],
+  "featuredProjectSlugs": [
+    "the-bridge-reconstructed",
+    "portraits",
+    "desolate-sands",
+    "urban-courts"
+  ]
+}

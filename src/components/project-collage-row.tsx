@@ -13,11 +13,24 @@ import {
 type ProjectCollageRowProps = {
   project: Project;
   preferredCategory?: ProjectCategory;
+  editMode?: boolean;
+  reorderEnabled?: boolean;
+  onProjectDragStart?: (slug: string) => void;
+  onProjectDrop?: (targetSlug: string) => void;
+  onProjectDragEnd?: () => void;
 };
 
 const DEFAULT_CELL_GAP_PX = 14;
 
-export function ProjectCollageRow({ project, preferredCategory }: ProjectCollageRowProps) {
+export function ProjectCollageRow({
+  project,
+  preferredCategory,
+  editMode = false,
+  reorderEnabled = false,
+  onProjectDragStart,
+  onProjectDrop,
+  onProjectDragEnd,
+}: ProjectCollageRowProps) {
   const slideshowHref = projectHref(project, preferredCategory);
   const thumbnailsHref = projectThumbnailsHref(project, preferredCategory);
   const trackRef = useRef<HTMLDivElement | null>(null);
@@ -87,31 +100,65 @@ export function ProjectCollageRow({ project, preferredCategory }: ProjectCollage
   }, [containerWidth, gapPx, previewImages, rowHeight]);
 
   return (
-    <article className="collage-row">
+    <article
+      className={`collage-row${editMode ? " collage-row--editable" : ""}`}
+      draggable={reorderEnabled}
+      onDragStart={() => {
+        if (!reorderEnabled) {
+          return;
+        }
+        onProjectDragStart?.(project.slug);
+      }}
+      onDragOver={(event) => {
+        if (!reorderEnabled) {
+          return;
+        }
+        event.preventDefault();
+      }}
+      onDrop={() => {
+        if (!reorderEnabled) {
+          return;
+        }
+        onProjectDrop?.(project.slug);
+      }}
+      onDragEnd={() => onProjectDragEnd?.()}
+    >
       <h3 className="collage-row__title">
+        {editMode && reorderEnabled ? <span className="collage-row__drag-handle">::</span> : null}
         <Link href={thumbnailsHref}>{project.title}</Link>
       </h3>
 
       <div className="collage-track" ref={trackRef}>
-        {fittedImages.map(({ image, width }, index) => (
+        {fittedImages.length === 0 ? (
           <Link
-            key={`${project.slug}-${image.src}-${index}`}
-            href={`${slideshowHref}?photo=${index + 1}`}
-            className="collage-cell"
-            style={{ width }}
-            aria-label={`Open ${project.title}`}
+            href={thumbnailsHref}
+            className={`collage-cell collage-cell--empty${editMode ? " collage-cell--empty-edit" : ""}`}
+            aria-label={`Open ${project.title} thumbnails`}
           >
-            <Image
-              src={image.src}
-              alt={image.alt || `${project.title} preview ${index + 1}`}
-              width={image.width}
-              height={image.height}
-              className="collage-cell__image"
-              sizes="(max-width: 960px) 40vw, 20vw"
-              priority={index < 3}
-            />
+            <span className="collage-cell__empty-plus">+</span>
+            <span className="collage-cell__empty-copy">add photos</span>
           </Link>
-        ))}
+        ) : (
+          fittedImages.map(({ image, width }, index) => (
+            <Link
+              key={`${project.slug}-${image.src}-${index}`}
+              href={`${slideshowHref}?photo=${index + 1}`}
+              className="collage-cell"
+              style={{ width }}
+              aria-label={`Open ${project.title}`}
+            >
+              <Image
+                src={image.src}
+                alt={image.alt || `${project.title} preview ${index + 1}`}
+                width={image.width}
+                height={image.height}
+                className="collage-cell__image"
+                sizes="(max-width: 960px) 40vw, 20vw"
+                priority={index < 3}
+              />
+            </Link>
+          ))
+        )}
       </div>
     </article>
   );

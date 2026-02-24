@@ -156,3 +156,15 @@ test("blog route redirects to Substack", async ({ request }) => {
   const location = response.headers()["location"];
   expect(location).toContain("ilikecalculus.substack.com");
 });
+
+test("editor api is blocked when editor flags are not enabled", async ({ request }) => {
+  const response = await request.get("/api/editor/state");
+  expect(response.status()).toBe(403);
+  const payload = await response.json();
+  expect(payload.error).toContain("disabled");
+});
+
+test("edit mode toggle is hidden when public editor flag is not enabled", async ({ page }) => {
+  await page.goto("/works");
+  await expect(page.locator(".dev-editor-toggle")).toHaveCount(0);
+});

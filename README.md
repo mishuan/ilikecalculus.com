@@ -35,58 +35,68 @@ nvm alias default 24
 
 ## Manual content workflow
 
-No admin dashboard is used.
+Canonical content is JSON-based.
 
-All project/page content is maintained in:
+Source of truth:
 
-- `/Users/michaelyuan/src/ilikecalculus.com/src/data/site-content.ts`
+- `/Users/michaelyuan/src/ilikecalculus.com/content/workspace.json`
+- `/Users/michaelyuan/src/ilikecalculus.com/content/projects/<slug>.json`
+
+Generated runtime file (do not edit manually):
+
+- `/Users/michaelyuan/src/ilikecalculus.com/src/data/generated-site-data.ts`
+
+Build/validate generated data:
+
+```bash
+npm run content:build
+```
 
 ### Add a new work page
-
-1. Add image files to:
-   - `/Users/michaelyuan/src/ilikecalculus.com/public/media/projects/<slug>`
-   - Use sequential names: `01.jpg`, `02.jpg`, `03.jpg`
-2. Add a new project object to `siteData.projects` in:
-   - `/Users/michaelyuan/src/ilikecalculus.com/src/data/site-content.ts`
-3. Required fields per project:
-   - `slug`
-   - `categories` (`film`, `portrait`, `personal`; choose one or more)
-   - `title`
-   - `description`
-   - `coverImage` (`src`, `width`, `height`, `alt`)
-   - `images` array (`src`, `width`, `height`, `alt`)
-4. Routes are generated as `/works/<category>/<slug>`.
-5. Optionally add the slug to `featuredProjectSlugs` for homepage highlighting.
-6. Always compress photos before committing:
-   - `npm run media:compress`
-   - Target is under `500 KB` per image.
-
-### Project organization workflow
-
-Use the scaffold command:
 
 ```bash
 npm run project:new -- --slug your-project --title "your project" --categories film,portrait
 ```
 
-This creates:
+This scaffolds:
 
 - `/Users/michaelyuan/src/ilikecalculus.com/content/projects/<slug>.json`
 - `/Users/michaelyuan/src/ilikecalculus.com/public/media/projects/<slug>/`
+- updates `projectOrder` in `/Users/michaelyuan/src/ilikecalculus.com/content/workspace.json`
 
-See `/Users/michaelyuan/src/ilikecalculus.com/content/projects/README.md` for conventions.
+### Project organization workflow
 
-To normalize existing project assets into foldered sequential names, run:
+Normalize file names and update manifest `src` fields:
 
 ```bash
 npm run media:organize
 ```
 
-Then compress all media:
+Compress photos, update width/height metadata in JSON manifests, and regenerate generated data:
 
 ```bash
 npm run media:compress
 ```
+
+### Dev edit mode
+
+Edit mode is dev-only and enabled automatically in development.
+
+Then run:
+
+```bash
+npm run dev
+```
+
+Capabilities in edit mode:
+
+- Reorder projects globally (`/works`)
+- Add categories (`/works`)
+- Edit project description (`/works/<category>/<project>/thumbnails?edit=1`)
+- Assign/unassign project categories (same page)
+- Upload photos (same page)
+- Reorder photos via drag/drop (same page)
+- Hard-delete photos (same page)
 
 ## Image hosting status
 

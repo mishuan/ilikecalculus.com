@@ -37,6 +37,7 @@ export function ProjectSlideshow({
 }: ProjectSlideshowProps) {
   const router = useRouter();
   const total = project.images.length;
+  const hasImages = total > 0;
   const resolvedInitialIndex = clampIndex(initialIndex, total);
   const [index, setIndex] = useState(resolvedInitialIndex);
   const indexRef = useRef(resolvedInitialIndex);
@@ -44,7 +45,6 @@ export function ProjectSlideshow({
   const goHome = useCallback(() => router.push("/"), [router]);
   const thumbnailsHref = `${projectThumbnailsHref(project, activeCategory)}?photo=${index + 1}`;
 
-  const activeImage = project.images[index];
 
   useEffect(() => {
     indexRef.current = index;
@@ -93,6 +93,10 @@ export function ProjectSlideshow({
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
+      if (event.defaultPrevented) {
+        return;
+      }
+
       if (event.key === "ArrowRight" || event.key === " ") {
         event.preventDefault();
         goToNext();
@@ -112,6 +116,45 @@ export function ProjectSlideshow({
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [goHome, goToNext, goToPrevious]);
+
+  if (!hasImages) {
+    return (
+      <section className="page page--viewer">
+        <article className="viewer-stage">
+          <header className="viewer-topbar">
+            <div className="viewer-topbar__project" />
+            <div className="viewer-topbar__actions">
+              <button
+                type="button"
+                className="viewer-text-link viewer-close"
+                onClick={goHome}
+                aria-label="Close slideshow"
+              >
+                x
+              </button>
+            </div>
+          </header>
+          <footer className="viewer-bottom">
+            <div className="viewer-bottom__meta">
+              <h1 className="viewer-bottom__title">{project.title}</h1>
+              <p className="viewer-bottom__description">No photos yet for this project.</p>
+            </div>
+            <div className="viewer-bottom__status">
+              <Link
+                href={thumbnailsHref}
+                className="text-action text-action--default text-action--underline viewer-bottom__thumbnail-link"
+                data-testid="slideshow-thumbnail-view-link"
+              >
+                thumbnails
+              </Link>
+            </div>
+          </footer>
+        </article>
+      </section>
+    );
+  }
+
+  const activeImage = project.images[index];
 
   return (
     <section className="page page--viewer">

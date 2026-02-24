@@ -13,17 +13,23 @@ export function ProjectCard({ project, priority = false, preferredCategory }: Pr
 
   return (
     <article className="work-card">
-      <Link href={href} className="work-card__media" aria-label={`Open ${project.title}`}>
-        <Image
-          src={project.coverImage.src}
-          alt={project.coverImage.alt || project.title}
-          width={project.coverImage.width}
-          height={project.coverImage.height}
-          priority={priority}
-          className="work-card__image"
-          sizes="(max-width: 960px) 100vw, (max-width: 1400px) 48vw, 36vw"
-        />
-      </Link>
+      {project.coverImage ? (
+        <Link href={href} className="work-card__media" aria-label={`Open ${project.title}`}>
+          <Image
+            src={project.coverImage.src}
+            alt={project.coverImage.alt || project.title}
+            width={project.coverImage.width}
+            height={project.coverImage.height}
+            priority={priority}
+            className="work-card__image"
+            sizes="(max-width: 960px) 100vw, (max-width: 1400px) 48vw, 36vw"
+          />
+        </Link>
+      ) : (
+        <Link href={href} className="work-card__media work-card__media--empty" aria-label={`Open ${project.title}`}>
+          <span className="work-card__placeholder">no cover yet</span>
+        </Link>
+      )}
 
       <div className="work-card__meta">
         <h2 className="work-card__title">
