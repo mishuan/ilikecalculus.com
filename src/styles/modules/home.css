@@ -39,6 +39,7 @@
 .category-section__rows {
   display: grid;
   gap: var(--space-work-row-gap);
+  padding-bottom: clamp(2.4rem, 7vh, 5rem);
 }
 
 .collage-row {
