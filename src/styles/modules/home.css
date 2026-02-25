@@ -20,22 +20,6 @@
   color: var(--muted);
 }
 
-.category-sections {
-  display: grid;
-  gap: 2.2rem;
-}
-
-.category-section {
-  display: grid;
-  gap: 1rem;
-}
-
-.category-section__title {
-  font-size: 1.05rem;
-  font-weight: 500;
-  letter-spacing: 0.16em;
-}
-
 .category-section__rows {
   display: grid;
   gap: var(--space-work-row-gap);
@@ -65,9 +49,9 @@
 }
 
 .collage-row__drag-handle {
-  font-size: 0.72rem;
+  font-size: var(--font-size-label);
   color: var(--muted);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--letter-spacing-label);
 }
 
 .collage-row__title a {
@@ -97,7 +81,7 @@
   height: var(--row-height);
   border-radius: 0;
   overflow: hidden;
-  background: #efede9;
+  background: var(--surface-gallery-cell);
   transform-origin: center center;
   transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1),
     box-shadow 240ms cubic-bezier(0.22, 1, 0.36, 1);
@@ -112,7 +96,7 @@
 
 .collage-cell:hover {
   transform: scale(1.05);
-  box-shadow: 0 12px 26px -22px rgba(0, 0, 0, 0.45);
+  box-shadow: var(--shadow-collage-hover);
   z-index: 2;
 }
 
@@ -143,8 +127,8 @@
 }
 
 .collage-cell__empty-copy {
-  font-size: 0.73rem;
-  letter-spacing: 0.06em;
+  font-size: var(--font-size-caption);
+  letter-spacing: var(--letter-spacing-caption);
   text-transform: lowercase;
 }
 
@@ -155,12 +139,7 @@
   gap: 0.4rem 0.55rem;
 }
 
-.works-edit-chip {
-  border: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--paper) 92%, white);
-  color: var(--ink);
-  padding: 0.08rem 0.5rem 0.14rem;
+.works-intro__nav--edit .editor-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.34rem;
@@ -168,14 +147,13 @@
 
 .works-edit-chip__drag {
   color: var(--muted);
-  font-size: 0.68rem;
-  letter-spacing: 0.08em;
+  font-size: var(--font-size-label);
+  letter-spacing: var(--letter-spacing-label);
 }
 
-.works-edit-chip--add {
+.works-intro__nav--edit .editor-chip--add {
   min-width: 1.95rem;
   justify-content: center;
-  cursor: pointer;
 }
 
 .works-inline-editor {
@@ -206,8 +184,8 @@
 
 .works-new-project__title {
   margin: 0;
-  font-size: 0.82rem;
-  letter-spacing: 0.08em;
+  font-size: var(--font-size-meta);
+  letter-spacing: var(--letter-spacing-label);
   text-transform: lowercase;
   color: var(--muted);
 }
@@ -225,11 +203,15 @@
   background: var(--paper);
   color: var(--ink);
   font: inherit;
-  font-size: 0.82rem;
+  font-size: var(--font-size-meta);
   line-height: 1.45;
   min-height: 4.25rem;
   resize: vertical;
   padding: 0.5rem 0.6rem;
+}
+
+.works-new-project__input {
+  width: 100%;
 }
 
 .works-new-project__actions {
@@ -287,27 +269,6 @@
   gap: 0.4rem;
 }
 
-.project-category-chip {
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--paper);
-  color: var(--muted);
-  padding: 0.18rem 0.55rem 0.24rem;
-  font-size: 0.73rem;
-  text-transform: lowercase;
-  cursor: pointer;
-}
-
-.project-category-chip--selected {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.project-category-chip--add {
-  min-width: 1.75rem;
-  text-align: center;
-}
-
 .project-thumbnails__category-create {
   display: inline-flex;
   align-items: center;
@@ -316,38 +277,6 @@
 
 .project-thumbnails__category-input {
   width: min(220px, 50vw);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit;
-  font-size: 0.78rem;
-  padding: 0.28rem 0.42rem;
-}
-
-.project-thumbnails__category-submit {
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  font-size: 0.74rem;
-  text-transform: lowercase;
-  padding: 0.24rem 0.42rem;
-  cursor: pointer;
-}
-
-.project-thumbnails__edit-status,
-.project-thumbnails__edit-error {
-  font-size: 0.73rem;
-  letter-spacing: 0.03em;
-}
-
-.project-thumbnails__edit-status {
-  color: var(--muted);
-}
-
-.project-thumbnails__edit-error {
-  color: #a3483e;
 }
 
 .project-thumbnails__upload-input {
@@ -380,12 +309,12 @@
 }
 
 .project-thumbnails__upload-title {
-  font-size: 0.84rem;
+  font-size: var(--font-size-meta);
   text-transform: lowercase;
 }
 
 .project-thumbnails__upload-hint {
-  font-size: 0.73rem;
+  font-size: var(--font-size-caption);
   text-transform: lowercase;
   opacity: 0.95;
 }
@@ -431,9 +360,9 @@
   height: 1.28rem;
   border: 0;
   border-radius: 999px;
-  background: rgba(16, 16, 16, 0.72);
-  color: #fff;
-  font-size: 0.78rem;
+  background: var(--surface-overlay);
+  color: var(--color-on-overlay);
+  font-size: var(--font-size-ui-sm);
   line-height: 1;
   display: inline-flex;
   align-items: center;

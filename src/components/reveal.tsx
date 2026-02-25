@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { classNames } from "@/components/ui/class-names";
 
 type RevealProps = {
   children: React.ReactNode;
@@ -47,7 +48,7 @@ export function Reveal({
   }, [rootMargin, threshold]);
 
   return (
-    <div ref={ref} className={`reveal${visible ? " is-visible" : ""} ${className}`.trim()}>
+    <div ref={ref} className={classNames("reveal", visible && "is-visible", className)}>
       {children}
     </div>
   );

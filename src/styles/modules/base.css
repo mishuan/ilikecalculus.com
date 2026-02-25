@@ -14,7 +14,7 @@ html {
 }
 
 body {
-  background: radial-gradient(circle at top left, #f8f7f4, var(--bg));
+  background: radial-gradient(circle at top left, var(--bg-gradient-start), var(--bg));
   color: var(--ink);
   font-family: var(--font-ui), "Segoe UI", sans-serif;
   line-height: var(--line-height-base);

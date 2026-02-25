@@ -5,11 +5,8 @@ import {
   rebuildGeneratedSiteData,
   writeWorkspace,
 } from "@/lib/content-store";
+import { normalizeCategory } from "@/lib/content-schema";
 import { editorGuardResponse } from "@/lib/editor-guard";
-
-function normalizeCategory(rawValue: string) {
-  return rawValue.trim().toLowerCase().replace(/\s+/g, "-");
-}
 
 export const runtime = "nodejs";
 

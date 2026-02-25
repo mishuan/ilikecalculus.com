@@ -35,26 +35,10 @@
   margin-right: 0;
 }
 
-.viewer-text-link--disabled {
-  opacity: 0.35 !important;
-  cursor: default;
-  pointer-events: none;
-}
-
 .viewer-close {
-  appearance: none;
-  border: 0;
-  background: transparent;
-  padding: 0;
-  color: var(--ink);
-  cursor: pointer;
-  text-decoration: none;
   font-size: 1.12rem;
   line-height: 1.05;
   margin-left: 0.55rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   transform: translateY(0);
 }
 
@@ -114,7 +98,7 @@
   top: 50%;
   transform: translateY(-50%);
   font-size: 1.28rem;
-  color: rgba(23, 23, 23, 0.5);
+  color: var(--control-icon-muted);
   transition: transform 180ms ease, color 180ms ease;
 }
 
@@ -135,7 +119,7 @@
 }
 
 .slideshow__tap:hover::before {
-  color: rgba(23, 23, 23, 0.9);
+  color: var(--control-icon-strong);
 }
 
 .slideshow__tap--left:hover::before {
@@ -162,7 +146,7 @@
 
 .viewer-bottom__title {
   font-family: var(--font-ui), "Segoe UI", sans-serif;
-  font-size: 0.98rem;
+  font-size: var(--font-size-title-sm);
   font-weight: 500;
   line-height: 1.14;
   text-transform: lowercase;
@@ -182,7 +166,7 @@
 
 .viewer-bottom__description {
   color: var(--muted);
-  font-size: 0.72rem;
+  font-size: var(--font-size-caption);
   line-height: 1.35;
 }
 
@@ -193,13 +177,13 @@
 }
 
 .slideshow__counter {
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
+  font-size: var(--font-size-caption);
+  letter-spacing: var(--letter-spacing-caption);
   color: var(--muted);
   text-transform: lowercase;
 }
 
 .viewer-bottom__thumbnail-link {
-  font-size: 0.72rem;
-  letter-spacing: 0.06em;
+  font-size: var(--font-size-caption);
+  letter-spacing: var(--letter-spacing-caption);
 }

@@ -81,6 +81,7 @@ npm run media:compress
 ### Dev edit mode
 
 Edit mode is dev-only and enabled automatically in development.
+No editor environment flags are required.
 
 Then run:
 

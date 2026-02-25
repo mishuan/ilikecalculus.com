@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { classNames } from "@/components/ui/class-names";
 import { projectHref, type Project, type ProjectCategory } from "@/data/site-content";
 
 type ProjectCollageGridProps = {
@@ -122,7 +123,7 @@ export function ProjectCollageGrid({
             return (
               <div
                 key={tile.key}
-                className={`collage-cell-wrapper${editMode ? " collage-cell-wrapper--editable" : ""}`}
+                className={classNames("collage-cell-wrapper", editMode && "collage-cell-wrapper--editable")}
                 style={{ width: tile.width }}
                 draggable={isEditable}
                 onDragStart={() => {

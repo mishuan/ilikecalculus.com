@@ -8,8 +8,8 @@
   position: sticky;
   top: 0;
   z-index: 30;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
-  background: rgba(253, 253, 252, 0.88);
+  border-bottom: 1px solid var(--surface-nav-border);
+  background: var(--surface-nav-bg);
   backdrop-filter: blur(4px);
 }
 
@@ -35,7 +35,7 @@
 
 .top-nav__name {
   font-family: var(--font-ui), "Segoe UI", sans-serif;
-  font-size: 0.96rem;
+  font-size: var(--font-size-title-sm);
   font-weight: 700;
   line-height: 1.05;
   letter-spacing: 0.02em;
@@ -51,8 +51,8 @@
 .nav-link {
   width: fit-content;
   color: var(--ink);
-  font-size: 0.8rem;
-  letter-spacing: 0.08em;
+  font-size: var(--font-size-text-action);
+  letter-spacing: var(--letter-spacing-text-action);
   text-decoration: none;
   text-transform: lowercase;
   transform-origin: left center;
@@ -139,7 +139,7 @@
 .eyebrow {
   margin-bottom: 0.5rem;
   color: var(--muted);
-  font-size: 0.76rem;
+  font-size: var(--font-size-ui-sm);
   letter-spacing: 0.16em;
 }
 
@@ -162,7 +162,7 @@
 
 .page-intro {
   color: var(--muted);
-  font-size: 0.94rem;
+  font-size: var(--font-size-body);
   max-width: 64ch;
 }
 
@@ -220,4 +220,73 @@
   opacity: 0.35;
   cursor: not-allowed;
   transform: none;
+}
+
+.editor-input {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font: inherit;
+  font-size: var(--font-size-ui-sm);
+  padding: 0.28rem 0.42rem;
+}
+
+.editor-button {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: var(--paper);
+  color: var(--ink);
+  font-size: var(--font-size-caption);
+  text-transform: lowercase;
+  padding: 0.24rem 0.42rem;
+  cursor: pointer;
+}
+
+.editor-button--danger {
+  border-color: var(--color-danger-border);
+  color: var(--color-danger);
+}
+
+.editor-button[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.editor-chip {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--paper);
+  color: var(--muted);
+  padding: 0.18rem 0.55rem 0.24rem;
+  font-size: var(--font-size-caption);
+  text-transform: lowercase;
+  cursor: pointer;
+}
+
+.editor-chip--selected {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.editor-chip--add {
+  min-width: 1.75rem;
+  text-align: center;
+}
+
+.editor-status {
+  font-size: var(--font-size-caption);
+  letter-spacing: var(--letter-spacing-meta);
+}
+
+.editor-status--muted {
+  color: var(--muted);
+}
+
+.editor-status--success {
+  color: var(--color-success);
+}
+
+.editor-status--error {
+  color: var(--color-error);
 }

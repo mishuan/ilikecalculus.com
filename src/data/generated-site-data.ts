@@ -383,12 +383,6 @@ export const generatedSiteData = {
           "alt": "20200617-DSCF1974.jpg"
         },
         {
-          "src": "/media/projects/urban-courts/04.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20191103-DSCF6314.jpg"
-        },
-        {
           "src": "/media/projects/urban-courts/12.jpg",
           "width": 2500,
           "height": 1667,
@@ -399,12 +393,6 @@ export const generatedSiteData = {
           "width": 2500,
           "height": 3125,
           "alt": "20190331-DSCF0406.jpg"
-        },
-        {
-          "src": "/media/projects/urban-courts/05.jpg",
-          "width": 2500,
-          "height": 1250,
-          "alt": "20191103-DSCF6326.jpg"
         },
         {
           "src": "/media/projects/urban-courts/16.jpg",

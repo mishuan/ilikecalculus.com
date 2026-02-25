@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { classNames } from "@/components/ui/class-names";
 import {
   projectHref,
   projectThumbnailsHref,
@@ -101,7 +102,7 @@ export function ProjectCollageRow({
 
   return (
     <article
-      className={`collage-row${editMode ? " collage-row--editable" : ""}`}
+      className={classNames("collage-row", editMode && "collage-row--editable")}
       draggable={reorderEnabled}
       onDragStart={() => {
         if (!reorderEnabled) {
@@ -132,7 +133,7 @@ export function ProjectCollageRow({
         {fittedImages.length === 0 ? (
           <Link
             href={thumbnailsHref}
-            className={`collage-cell collage-cell--empty${editMode ? " collage-cell--empty-edit" : ""}`}
+            className={classNames("collage-cell", "collage-cell--empty", editMode && "collage-cell--empty-edit")}
             aria-label={`Open ${project.title} thumbnails`}
           >
             <span className="collage-cell__empty-plus">+</span>

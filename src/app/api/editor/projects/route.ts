@@ -8,18 +8,11 @@ import {
   writeProject,
   writeWorkspace,
 } from "@/lib/content-store";
+import { normalizeSlug } from "@/lib/content-schema";
 import type { ProjectManifest } from "@/data/content-types";
 import { editorGuardResponse } from "@/lib/editor-guard";
 
 export const runtime = "nodejs";
-
-function normalizeSlug(rawValue: string) {
-  return rawValue
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-}
 
 export async function POST(request: NextRequest) {
   const guard = editorGuardResponse();

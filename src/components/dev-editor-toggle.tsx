@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { classNames } from "@/components/ui/class-names";
 import { isClientEditorAvailable } from "@/lib/editor-client";
 
 function isEditableTarget(target: EventTarget | null) {
@@ -26,6 +27,7 @@ export function DevEditorToggle() {
   const searchParams = useSearchParams();
   const isEditorAvailable = isClientEditorAvailable();
   const isEditing = useMemo(() => searchParams?.get("edit") === "1", [searchParams]);
+  const isSlideshowView = /^\/works\/[^/]+\/[^/]+\/?$/.test(pathname);
 
   const onToggle = useCallback(() => {
     if (!isEditorAvailable) {
@@ -77,14 +79,14 @@ export function DevEditorToggle() {
     };
   }, [isEditorAvailable, onToggle]);
 
-  if (!isEditorAvailable) {
+  if (!isEditorAvailable || isSlideshowView) {
     return null;
   }
 
   return (
     <button
       type="button"
-      className={`dev-editor-toggle${isEditing ? " dev-editor-toggle--active" : ""}`}
+      className={classNames("dev-editor-toggle", isEditing && "dev-editor-toggle--active")}
       onClick={onToggle}
     >
       {isEditing ? "exit edit mode" : "edit mode"} (cmd/ctrl+shift+e)

@@ -34,40 +34,48 @@ export const categoryLabels: Record<ProjectCategory, string> = Object.fromEntrie
   categoryOrder.map((category) => [category, generatedCategoryLabels[category] ?? category]),
 ) as Record<ProjectCategory, string>;
 
+const categorySet = new Set<ProjectCategory>(categoryOrder);
+
+export function isProjectCategory(value: string): value is ProjectCategory {
+  return categorySet.has(value as ProjectCategory);
+}
+
+function toProjectCategoryList(values: readonly string[], label: string): string[] {
+  if (values.length === 0) {
+    throw new Error(`${label} must include at least one category`);
+  }
+
+  return [...values];
+}
+
 export const siteData = generatedSiteData;
 export type ProjectSlug = Project["slug"];
+
 export const projects: Project[] = siteData.projects.map((project) => ({
   ...project,
-  categories: [...project.categories],
+  categories: toProjectCategoryList(project.categories, `projects.${project.slug}.categories`),
   coverImage: project.coverImage ? { ...project.coverImage } : null,
   images: project.images.map((image) => ({ ...image })),
 }));
 
-export const projectsBySlug: Record<string, Project> = Object.fromEntries(
+export const projectsBySlug: Record<ProjectSlug, Project> = Object.fromEntries(
   projects.map((project) => [project.slug, project]),
-) as Record<string, Project>;
+) as Record<ProjectSlug, Project>;
 
 export const projectsByCategoryAndSlug: Record<string, Project> = Object.fromEntries(
   projects.flatMap((project) =>
     project.categories.map((category) => [`${category}/${project.slug}`, project] as const),
   ),
-) as Record<string, Project>;
-
-export const groupedProjects = categoryOrder.map((category) => ({
-  category,
-  label: categoryLabels[category],
-  projects: projects.filter((project) => project.categories.some((item) => item === category)),
-}));
-
-export const featuredProjects = siteData.featuredProjectSlugs
-  .map((slug) => projectsBySlug[slug])
-  .filter(Boolean);
+);
 
 export function projectHref(project: Project, preferredCategory?: ProjectCategory) {
+  const fallbackCategory = isProjectCategory(project.categories[0] ?? "")
+    ? project.categories[0]
+    : categoryOrder[0];
   const category =
     preferredCategory && project.categories.some((item) => item === preferredCategory)
       ? preferredCategory
-      : project.categories[0];
+      : fallbackCategory;
 
   return `/works/${category}/${project.slug}`;
 }

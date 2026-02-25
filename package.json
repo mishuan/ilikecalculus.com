@@ -29,7 +29,7 @@
     "prestart": "node scripts/check-runtime.mjs",
     "start": "next start",
     "prelint": "node scripts/check-runtime.mjs",
-    "lint": "eslint src tests",
+    "lint": "node scripts/check-text-action-primitives.mjs && eslint src tests",
     "pretest:e2e": "node scripts/check-runtime.mjs",
     "test:e2e": "playwright test",
     "preproject:new": "node scripts/check-runtime.mjs",
@@ -37,7 +37,8 @@
     "premedia:organize": "node scripts/check-runtime.mjs",
     "media:organize": "node scripts/organize-project-media.mjs && node scripts/build-site-data.mjs",
     "premedia:compress": "node scripts/check-runtime.mjs",
-    "media:compress": "node scripts/compress-media.mjs"
+    "media:compress": "node scripts/compress-media.mjs",
+    "check:text-action-primitives": "node scripts/check-text-action-primitives.mjs"
   },
   "dependencies": {
     "next": "16.1.6",

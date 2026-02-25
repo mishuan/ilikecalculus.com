@@ -9,7 +9,7 @@ import {
   type Project,
   type ProjectCategory,
 } from "@/data/site-content";
-import { TextActionButton, TextActionLabel } from "@/components/ui/text-action";
+import { TextActionButton, TextActionLabel, TextActionLink } from "@/components/ui/text-action";
 
 type NeighborProject = {
   href: string;
@@ -44,7 +44,6 @@ export function ProjectSlideshow({
   const navigatingRef = useRef(false);
   const goHome = useCallback(() => router.push("/"), [router]);
   const thumbnailsHref = `${projectThumbnailsHref(project, activeCategory)}?photo=${index + 1}`;
-
 
   useEffect(() => {
     indexRef.current = index;
@@ -124,14 +123,14 @@ export function ProjectSlideshow({
           <header className="viewer-topbar">
             <div className="viewer-topbar__project" />
             <div className="viewer-topbar__actions">
-              <button
-                type="button"
+              <TextActionButton
                 className="viewer-text-link viewer-close"
+                underline="none"
                 onClick={goHome}
                 aria-label="Close slideshow"
               >
                 x
-              </button>
+              </TextActionButton>
             </div>
           </header>
           <footer className="viewer-bottom">
@@ -140,13 +139,13 @@ export function ProjectSlideshow({
               <p className="viewer-bottom__description">No photos yet for this project.</p>
             </div>
             <div className="viewer-bottom__status">
-              <Link
+              <TextActionLink
                 href={thumbnailsHref}
-                className="text-action text-action--default text-action--underline viewer-bottom__thumbnail-link"
+                className="viewer-bottom__thumbnail-link"
                 data-testid="slideshow-thumbnail-view-link"
               >
                 thumbnails
-              </Link>
+              </TextActionLink>
             </div>
           </footer>
         </article>
@@ -167,7 +166,7 @@ export function ProjectSlideshow({
               </TextActionButton>
             ) : (
               <TextActionLabel
-                className="viewer-text-link viewer-text-link--project viewer-text-link--disabled"
+                className="viewer-text-link viewer-text-link--project"
                 aria-disabled="true"
               >
                 next project
@@ -182,14 +181,14 @@ export function ProjectSlideshow({
             <TextActionButton className="viewer-text-link" onClick={goToNext} disabled={index === total - 1 && !nextProject}>
               next
             </TextActionButton>
-            <button
-              type="button"
+            <TextActionButton
               className="viewer-text-link viewer-close"
+              underline="none"
               onClick={goHome}
               aria-label="Close slideshow"
             >
               x
-            </button>
+            </TextActionButton>
           </div>
         </header>
 
@@ -243,13 +242,13 @@ export function ProjectSlideshow({
             <p className="slideshow__counter">
               {index + 1} / {total}
             </p>
-            <Link
+            <TextActionLink
               href={thumbnailsHref}
-              className="text-action text-action--default text-action--underline viewer-bottom__thumbnail-link"
+              className="viewer-bottom__thumbnail-link"
               data-testid="slideshow-thumbnail-view-link"
             >
               thumbnails
-            </Link>
+            </TextActionLink>
           </div>
         </footer>
       </article>

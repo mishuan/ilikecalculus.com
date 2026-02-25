@@ -2,6 +2,10 @@
 
 import fs from "node:fs/promises";
 import path from "node:path";
+import {
+  normalizeCategory,
+  normalizeSlug,
+} from "../src/lib/content-schema.mjs";
 
 function parseArgs(argv) {
   const parsed = {};
@@ -33,7 +37,7 @@ function parseCategories(rawValue, validCategories) {
 
   const categories = rawValue
     .split(",")
-    .map((item) => item.trim().toLowerCase())
+    .map((item) => normalizeCategory(item))
     .filter(Boolean);
 
   const unique = [...new Set(categories)];
@@ -63,7 +67,7 @@ async function exists(filePath) {
 
 async function run() {
   const args = parseArgs(process.argv.slice(2));
-  const slug = (args.slug || "").trim().toLowerCase();
+  const slug = normalizeSlug(args.slug || "");
   const title = (args.title || "").trim();
   const description = (args.description || "").trim();
 

@@ -100,6 +100,13 @@ test("slideshow thumbnail view link opens thumbnails with current photo", async 
   await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\/thumbnails\?photo=3$/);
 });
 
+test("dev editor toggle does not block slideshow thumbnail link", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed?photo=2");
+  await expect(page.locator(".dev-editor-toggle")).toHaveCount(0);
+  await page.getByTestId("slideshow-thumbnail-view-link").click();
+  await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\/thumbnails\?photo=2$/);
+});
+
 test("slideshow title opens thumbnails with current photo", async ({ page }) => {
   await page.goto("/works/personal/the-bridge-reconstructed?photo=4");
   await expect(page.locator(".slideshow__counter")).toContainText(/^4\s*\/\s*\d+$/);
@@ -157,14 +164,14 @@ test("blog route redirects to Substack", async ({ request }) => {
   expect(location).toContain("ilikecalculus.substack.com");
 });
 
-test("editor api is blocked when editor flags are not enabled", async ({ request }) => {
+test("editor api is available in development", async ({ request }) => {
   const response = await request.get("/api/editor/state");
-  expect(response.status()).toBe(403);
+  expect(response.status()).toBe(200);
   const payload = await response.json();
-  expect(payload.error).toContain("disabled");
+  expect(Array.isArray(payload.workspace?.categories)).toBe(true);
 });
 
-test("edit mode toggle is hidden when public editor flag is not enabled", async ({ page }) => {
+test("edit mode toggle is visible in development", async ({ page }) => {
   await page.goto("/works");
-  await expect(page.locator(".dev-editor-toggle")).toHaveCount(0);
+  await expect(page.locator(".dev-editor-toggle")).toHaveCount(1);
 });

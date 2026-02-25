@@ -1,5 +1,6 @@
 import {
   categoryOrder,
+  isProjectCategory,
   projectHref,
   projectThumbnailsHref,
   projects,
@@ -20,14 +21,17 @@ type ProjectNeighbor = {
 } | null;
 
 function resolveActiveCategory(project: Project, requestedCategory: string): ProjectCategory {
-  const fallbackCategory = project.categories[0] as ProjectCategory;
+  const firstCategory = project.categories[0];
+  const fallbackCategory: ProjectCategory = firstCategory && isProjectCategory(firstCategory)
+    ? firstCategory
+    : categoryOrder[0];
 
-  if (!categoryOrder.includes(requestedCategory as ProjectCategory)) {
+  if (!isProjectCategory(requestedCategory)) {
     return fallbackCategory;
   }
 
   return project.categories.some((category) => category === requestedCategory)
-    ? (requestedCategory as ProjectCategory)
+    ? requestedCategory
     : fallbackCategory;
 }
 

@@ -51,6 +51,11 @@
 - text action behavior:
   - same hover behavior and underline treatment via `.text-action`
   - avoid ad hoc per-page hover colors for this pattern
+  - do not compose raw `text-action` classes in markup; use `TextActionButton`, `TextActionLink`, or `TextActionLabel`
+
+## consistency check
+
+- run `npm run check:text-action-primitives` to detect raw `text-action` class usage in app/component code
 
 ## best-practice references
 

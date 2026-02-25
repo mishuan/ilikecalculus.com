@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import { classNames } from "@/components/ui/class-names";
 import { siteData } from "@/data/site-content";
 import { TextActionLink } from "@/components/ui/text-action";
 
@@ -164,7 +165,9 @@ export function ContactForm() {
             {isSubmitting ? "sending..." : "send message"}
           </button>
           {status ? (
-            <p className={`contact-form__status${status.ok ? " is-success" : " is-error"}`}>{status.message}</p>
+            <p className={classNames("contact-form__status", status.ok ? "is-success" : "is-error")}>
+              {status.message}
+            </p>
           ) : null}
         </div>
       </form>

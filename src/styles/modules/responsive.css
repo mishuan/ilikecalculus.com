@@ -1,8 +1,4 @@
 @media (max-width: 1180px) {
-  .work-grid {
-    grid-template-columns: 1fr;
-  }
-
   .split-layout {
     grid-template-columns: 1fr;
   }
@@ -64,21 +60,21 @@
   }
 
   .top-nav__inner {
-    padding: 0.9rem 0.95rem;
-    gap: 0.7rem;
+    padding: var(--space-nav-mobile-padding-y) var(--space-nav-mobile-padding-x);
+    gap: var(--space-nav-mobile-gap);
   }
 
   .top-nav__name {
-    font-size: 0.92rem;
+    font-size: var(--font-size-nav-mobile-title);
   }
 
   .top-nav__links {
-    gap: 0.42rem 0.64rem;
+    gap: var(--space-nav-mobile-links-gap);
   }
 
   .nav-link {
-    font-size: 0.68rem;
-    letter-spacing: 0.07em;
+    font-size: var(--font-size-nav-mobile-link);
+    letter-spacing: var(--letter-spacing-nav-mobile-link);
   }
 
   .content-shell {

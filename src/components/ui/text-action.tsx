@@ -1,4 +1,5 @@
 import type { AnchorHTMLAttributes, ButtonHTMLAttributes, HTMLAttributes } from "react";
+import { classNames } from "@/components/ui/class-names";
 
 type TextActionTone = "default" | "muted";
 type TextActionUnderline = "underline" | "none";
@@ -9,16 +10,12 @@ type TextActionOptions = {
   className?: string;
 };
 
-function joinClassNames(...values: Array<string | undefined | false>) {
-  return values.filter(Boolean).join(" ");
-}
-
 export function textActionClassName({
   tone = "default",
   underline = "underline",
   className,
 }: TextActionOptions = {}) {
-  return joinClassNames(
+  return classNames(
     "text-action",
     tone === "muted" ? "text-action--muted" : "text-action--default",
     underline === "none" ? "text-action--plain" : "text-action--underline",
