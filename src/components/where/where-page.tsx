@@ -63,6 +63,7 @@ export function WherePage({ initialLocations }: WherePageProps) {
         />
 
         <WhereMap
+          key={selectedLocationId ?? "where-map-default"}
           locations={mapLocations}
           selectedLocationId={selectedLocationId}
           latestPastLocationId={latestPastLocationId}
