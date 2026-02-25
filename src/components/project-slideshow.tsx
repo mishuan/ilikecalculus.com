@@ -139,13 +139,20 @@ export function ProjectSlideshow({
               <p className="viewer-bottom__description">No photos yet for this project.</p>
             </div>
             <div className="viewer-bottom__status">
-              <TextActionLink
-                href={thumbnailsHref}
-                className="viewer-bottom__thumbnail-link"
-                data-testid="slideshow-thumbnail-view-link"
-              >
-                thumbnails
-              </TextActionLink>
+              <div className="viewer-bottom__view-toggle" aria-label="Project view">
+                <TextActionLabel className="viewer-bottom__mode-label">slideshow</TextActionLabel>
+                <span className="viewer-bottom__view-separator" aria-hidden="true">
+                  /
+                </span>
+                <TextActionLink
+                  href={thumbnailsHref}
+                  underline="hover"
+                  className="viewer-bottom__thumbnail-link"
+                  data-testid="slideshow-thumbnail-view-link"
+                >
+                  thumbnails
+                </TextActionLink>
+              </div>
             </div>
           </footer>
         </article>
@@ -161,25 +168,39 @@ export function ProjectSlideshow({
         <header className="viewer-topbar">
           <div className="viewer-topbar__project">
             {nextProject ? (
-              <TextActionButton className="viewer-text-link viewer-text-link--project" onClick={() => pushOnce(nextProject.href)}>
-                next project: {nextProject.title}
+              <TextActionButton
+                className="viewer-text-link viewer-text-link--project"
+                underline="hover"
+                onClick={() => pushOnce(nextProject.href)}
+              >
+                next project -&gt; {nextProject.title}
               </TextActionButton>
             ) : (
               <TextActionLabel
                 className="viewer-text-link viewer-text-link--project"
                 aria-disabled="true"
               >
-                next project
+                next project -&gt;
               </TextActionLabel>
             )}
           </div>
 
           <div className="viewer-topbar__actions">
-            <TextActionButton className="viewer-text-link" onClick={goToPrevious} disabled={index === 0 && !previousProject}>
-              back
+            <TextActionButton
+              className="viewer-text-link"
+              underline="hover"
+              onClick={goToPrevious}
+              disabled={index === 0 && !previousProject}
+            >
+              &lt; back
             </TextActionButton>
-            <TextActionButton className="viewer-text-link" onClick={goToNext} disabled={index === total - 1 && !nextProject}>
-              next
+            <TextActionButton
+              className="viewer-text-link"
+              underline="hover"
+              onClick={goToNext}
+              disabled={index === total - 1 && !nextProject}
+            >
+              next &gt;
             </TextActionButton>
             <TextActionButton
               className="viewer-text-link viewer-close"
@@ -239,16 +260,23 @@ export function ProjectSlideshow({
           </div>
 
           <div className="viewer-bottom__status">
+            <div className="viewer-bottom__view-toggle" aria-label="Project view">
+              <TextActionLabel className="viewer-bottom__mode-label">slideshow</TextActionLabel>
+              <span className="viewer-bottom__view-separator" aria-hidden="true">
+                /
+              </span>
+              <TextActionLink
+                href={thumbnailsHref}
+                underline="hover"
+                className="viewer-bottom__thumbnail-link"
+                data-testid="slideshow-thumbnail-view-link"
+              >
+                thumbnails
+              </TextActionLink>
+            </div>
             <p className="slideshow__counter">
               {index + 1} / {total}
             </p>
-            <TextActionLink
-              href={thumbnailsHref}
-              className="viewer-bottom__thumbnail-link"
-              data-testid="slideshow-thumbnail-view-link"
-            >
-              thumbnails
-            </TextActionLink>
           </div>
         </footer>
       </article>

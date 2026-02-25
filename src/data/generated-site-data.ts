@@ -105,6 +105,34 @@ export const generatedSiteData = {
       "url": "https://glasstire.com/2023/01/04/a-shockingly-modernist-project-and-others-four-books-of-photographs/"
     }
   ],
+  "where": {
+    "locations": [
+      {
+        "id": "dc8310fa-5d26-4ec7-8380-4cb104de57db",
+        "label": "NYC",
+        "latitude": 40.718117449032434,
+        "longitude": -73.95747908497457,
+        "at": "2026-01-02T17:00:00.000Z",
+        "note": "Finally after in NYC after a month of traveling NYC"
+      },
+      {
+        "id": "ecf5e8ba-d4da-4705-b6d5-5fffb50b8f22",
+        "label": "Hong Kong",
+        "latitude": 22.28117547134755,
+        "longitude": 114.18595157291284,
+        "at": "2026-03-01T00:45:00.000Z",
+        "note": "Starting my sabbatical in Hong Kong"
+      },
+      {
+        "id": "43dce09f-7884-4629-9dec-c4db9fb26251",
+        "label": "Taipei",
+        "latitude": 25.03346844531645,
+        "longitude": 121.56495420459811,
+        "at": "2025-12-30T13:50:00.000Z",
+        "note": "NYE countddown in Taipei with DQ"
+      }
+    ]
+  },
   "projects": [
     {
       "slug": "the-bridge-reconstructed",

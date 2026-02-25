@@ -5,6 +5,15 @@ export type ProjectImageManifest = {
   alt: string;
 };
 
+export type LocationEntry = {
+  id: string;
+  label: string;
+  latitude: number;
+  longitude: number;
+  at: string;
+  note: string;
+};
+
 export type ProjectManifest = {
   slug: string;
   title: string;
@@ -42,6 +51,9 @@ export type WorkspaceContent = {
   categories: string[];
   projectOrder: string[];
   featuredProjectSlugs: string[];
+  where: {
+    locations: LocationEntry[];
+  };
 };
 
 export type EditorStateResponse = {

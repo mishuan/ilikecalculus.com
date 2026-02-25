@@ -34,6 +34,10 @@ test("primary navigation routes work", async ({ page }) => {
   await expect(page).toHaveURL(/\/contact$/);
   await expect(page.getByRole("heading", { name: "Let's Talk" })).toBeVisible();
 
+  await page.getByRole("link", { name: "where is" }).click();
+  await expect(page).toHaveURL(/\/where$/);
+  await expect(page.getByRole("heading", { name: "where is michael" })).toBeVisible();
+
   await page.getByRole("link", { name: "press" }).click();
   await expect(page).toHaveURL(/\/press$/);
   await expect(page.getByRole("heading", { name: "Press Coverage" })).toBeVisible();
@@ -174,4 +178,26 @@ test("editor api is available in development", async ({ request }) => {
 test("edit mode toggle is visible in development", async ({ page }) => {
   await page.goto("/works");
   await expect(page.locator(".dev-editor-toggle")).toHaveCount(1);
+});
+
+test("where page renders timeline and map", async ({ page }) => {
+  await page.goto("/where");
+  await expect(page.getByRole("heading", { name: "where is michael" })).toBeVisible();
+  await expect(page.getByText("past & current")).toBeVisible();
+  await expect(page.getByText("upcoming")).toBeVisible();
+  await expect(page.locator(".where-map")).toBeVisible();
+
+  const hasPastEmptyState = await page.getByText("No past locations yet.").count();
+  const whereEntryCount = await page.locator(".where-entry").count();
+  expect(hasPastEmptyState > 0 || whereEntryCount > 0).toBeTruthy();
+});
+
+test("where edit controls only appear in edit mode", async ({ page }) => {
+  await page.goto("/where");
+  await expect(page.getByTestId("where-add-location-editor")).toHaveCount(0);
+  await expect(page.locator(".dev-editor-toggle")).toHaveCount(1);
+
+  await page.locator(".dev-editor-toggle").click();
+  await expect(page).toHaveURL(/\/where\?edit=1$/);
+  await expect(page.getByTestId("where-add-location-editor")).toHaveCount(1);
 });

@@ -1,7 +1,7 @@
 "use client";
 
 import { EditorStatus } from "@/components/ui/editor-controls";
-import { TextActionLink } from "@/components/ui/text-action";
+import { TextActionLabel, TextActionLink } from "@/components/ui/text-action";
 
 type ProjectActionsProps = {
   slideshowHref: string;
@@ -31,13 +31,19 @@ export function ProjectActions({
 }: ProjectActionsProps) {
   return (
     <div className="project-thumbnails__actions">
-      <TextActionLink href={slideshowHref} data-testid="thumbnail-page-slideshow-link">
-        slideshow
-      </TextActionLink>
+      <div className="project-thumbnails__view-toggle" aria-label="Project view">
+        <TextActionLabel underline="underline">thumbnails</TextActionLabel>
+        <span className="project-thumbnails__view-separator" aria-hidden="true">
+          /
+        </span>
+        <TextActionLink href={slideshowHref} underline="hover" data-testid="thumbnail-page-slideshow-link">
+          slideshow
+        </TextActionLink>
+      </div>
 
       {nextProject ? (
-        <TextActionLink href={nextProject.href} data-testid="thumbnail-page-next-project-link">
-          next project: {nextProject.title}
+        <TextActionLink href={nextProject.href} underline="hover" data-testid="thumbnail-page-next-project-link">
+          next project -&gt; {nextProject.title}
         </TextActionLink>
       ) : null}
 

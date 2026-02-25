@@ -7,6 +7,10 @@
     grid-template-columns: 1fr;
   }
 
+  .where-layout {
+    grid-template-columns: 1fr;
+  }
+
   .contact-panel {
     max-width: none;
     border-left: 0;
@@ -166,5 +170,13 @@
     padding-right: 0.95rem;
     height: 100dvh;
     overflow: hidden;
+  }
+
+  .where-editor__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .where-map {
+    min-height: clamp(290px, 48vh, 420px);
   }
 }

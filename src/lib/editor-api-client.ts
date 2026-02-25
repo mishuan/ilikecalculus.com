@@ -1,5 +1,6 @@
 import type {
   EditorStateResponse,
+  LocationEntry,
   ProjectImageManifest,
 } from "@/data/content-types";
 
@@ -15,6 +16,9 @@ export type EditorStatePayload = EditorStateResponse &
     };
     addedImage?: ProjectImageManifest;
     removedImage?: ProjectImageManifest;
+    createdLocation?: LocationEntry;
+    updatedLocation?: LocationEntry;
+    deletedLocationId?: string;
   };
 
 async function requestJson<TPayload extends EditorErrorPayload>(
@@ -122,6 +126,47 @@ export async function uploadProjectPhoto(slug: string, file: File, alt: string) 
 
 export async function deleteProjectPhoto(slug: string, index: number) {
   return requestJson<EditorStatePayload>(`/api/editor/projects/${slug}/photos/${index}`, {
+    method: "DELETE",
+  });
+}
+
+export async function createLocation(payload: {
+  label: string;
+  latitude: number;
+  longitude: number;
+  at: string;
+  note: string;
+}) {
+  return requestJson<EditorStatePayload>("/api/editor/locations", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function updateLocation(
+  id: string,
+  payload: {
+    label: string;
+    latitude: number;
+    longitude: number;
+    at: string;
+    note: string;
+  },
+) {
+  return requestJson<EditorStatePayload>(`/api/editor/locations/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(payload),
+  });
+}
+
+export async function deleteLocation(id: string) {
+  return requestJson<EditorStatePayload>(`/api/editor/locations/${id}`, {
     method: "DELETE",
   });
 }

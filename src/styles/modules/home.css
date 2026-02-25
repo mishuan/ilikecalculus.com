@@ -58,12 +58,19 @@
   display: inline-flex;
   color: var(--ink);
   transform-origin: left center;
-  transition: transform var(--duration-text-action) ease, color var(--duration-text-action) ease;
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: var(--underline-thickness-text-action);
+  text-underline-offset: var(--underline-offset-text-action);
+  transition: transform var(--interactive-duration) ease, color var(--interactive-duration) ease,
+    text-decoration-color var(--interactive-duration) ease;
 }
 
-.collage-row__title a:hover {
+.collage-row__title a:hover,
+.collage-row__title a:focus-visible {
   color: var(--ink);
-  transform: scale(var(--hover-scale-text-action));
+  transform: translateY(var(--interactive-raise-y));
+  text-decoration-color: currentColor;
 }
 
 .collage-track {
@@ -118,7 +125,8 @@
 }
 
 .collage-cell--empty-edit {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--line));
+  border-color: var(--interactive-border-hover);
+  background: var(--interactive-surface-hover);
 }
 
 .collage-cell__empty-plus {
@@ -234,6 +242,17 @@
   margin-top: 0.12rem;
 }
 
+.project-thumbnails__view-toggle {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.42rem;
+}
+
+.project-thumbnails__view-separator {
+  color: var(--muted);
+  font-size: var(--font-size-caption);
+}
+
 .page-title--inline-edit {
   width: 100%;
   border: 0;
@@ -298,9 +317,9 @@
 }
 
 .project-thumbnails__upload-dropzone--active {
-  border-color: var(--accent);
-  color: var(--accent);
-  background: color-mix(in srgb, var(--paper) 80%, white);
+  border-color: var(--interactive-border-active);
+  color: var(--ink);
+  background: var(--interactive-surface-hover);
 }
 
 .project-thumbnails__upload-plus {

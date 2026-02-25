@@ -25,8 +25,12 @@ This file maps each active style module to the UI surfaces that consume it.
   - Contact form styles
   - Shared reveal animation and dev editor toggle styles
 
+- `src/styles/modules/where.css`
+  - `/where` route layout (timeline + map)
+  - `/where` edit controls and map visualization styles
+
 - `src/styles/modules/responsive.css`
-  - Breakpoint behavior for layout/home/slideshow/content modules
+  - Breakpoint behavior for layout/home/slideshow/content/where modules
 
 ## Rule of Thumb
 

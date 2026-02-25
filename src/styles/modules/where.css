@@ -1,0 +1,291 @@
+.page--where {
+  max-width: var(--size-page-max-wide);
+}
+
+.where-layout {
+  display: grid;
+  grid-template-columns: minmax(0, var(--size-where-timeline-width)) minmax(0, 1fr);
+  gap: var(--space-where-layout-gap);
+  align-items: start;
+}
+
+.where-timeline,
+.where-map-panel {
+  border: 1px solid var(--line);
+  background: var(--surface-where-panel);
+  padding: var(--space-where-panel-padding);
+}
+
+.where-timeline {
+  display: grid;
+  gap: var(--space-where-section-gap);
+  align-content: start;
+}
+
+.where-timeline__group {
+  display: grid;
+  gap: 0.55rem;
+}
+
+.where-timeline__subhead,
+.where-map-panel__title {
+  margin: 0;
+  font-size: var(--font-size-meta);
+  letter-spacing: var(--letter-spacing-label);
+  color: var(--muted);
+}
+
+.where-timeline__editor-block {
+  border-bottom: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  padding-bottom: 0.75rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.where-timeline__empty {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--font-size-ui-sm);
+}
+
+.where-entry-list {
+  display: grid;
+  gap: var(--space-where-entry-gap);
+}
+
+.where-entry {
+  border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
+  background: var(--surface-where-panel-muted);
+  padding: 0.58rem 0.64rem;
+  display: grid;
+  gap: 0.46rem;
+}
+
+.where-entry--latest {
+  padding: 0.74rem 0.8rem;
+  background: color-mix(in srgb, var(--paper) 82%, white);
+}
+
+.where-entry--selected {
+  border-color: color-mix(in srgb, var(--ink) 62%, var(--line));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 20%, transparent);
+}
+
+.where-entry--future {
+  border-style: dashed;
+}
+
+.where-entry__main {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  display: grid;
+  gap: 0.22rem;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.where-entry__label {
+  margin: 0;
+  font-size: 0.92rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.where-entry--latest .where-entry__label {
+  font-size: 1.02rem;
+}
+
+.where-entry__time {
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--font-size-ui-sm);
+  letter-spacing: 0.02em;
+}
+
+.where-entry__note {
+  margin: 0;
+  font-size: var(--font-size-meta);
+  color: color-mix(in srgb, var(--ink) 92%, transparent);
+  line-height: var(--line-height-copy);
+}
+
+.where-entry__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.where-entry__editor {
+  border-top: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
+  padding-top: 0.58rem;
+}
+
+.where-editor {
+  display: grid;
+  gap: 0.5rem;
+}
+
+.where-editor__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.44rem 0.5rem;
+}
+
+.where-editor__field {
+  margin: 0;
+  display: grid;
+  gap: 0.24rem;
+}
+
+.where-editor__field--full {
+  grid-column: 1 / -1;
+}
+
+.where-editor__label {
+  font-size: var(--font-size-label);
+  letter-spacing: var(--letter-spacing-label);
+  color: var(--muted);
+}
+
+.where-editor__textarea {
+  width: 100%;
+  min-height: 4rem;
+  line-height: 1.35;
+  resize: vertical;
+}
+
+.where-editor__actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.where-editor__error {
+  margin: 0;
+  color: var(--color-error);
+  font-size: var(--font-size-caption);
+}
+
+.where-map-panel {
+  display: grid;
+  gap: 0.58rem;
+}
+
+.where-map {
+  position: relative;
+  border: 1px solid color-mix(in srgb, var(--line) 76%, transparent);
+  background: var(--surface-where-panel-muted);
+  min-height: var(--size-where-map-min-height);
+  overflow: hidden;
+}
+
+.where-map svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.where-map__graticule line {
+  stroke: var(--surface-where-map-line);
+  stroke-width: 1;
+}
+
+.where-map__land path {
+  fill: color-mix(in srgb, var(--ink) 8%, var(--paper));
+  stroke: color-mix(in srgb, var(--ink) 18%, var(--line));
+  stroke-width: 0.9;
+}
+
+.where-map__content {
+  transition: transform var(--motion-where-focus-duration) ease;
+}
+
+.where-map__segment {
+  fill: none;
+  stroke: color-mix(in srgb, var(--ink) 82%, var(--muted));
+  stroke-linecap: round;
+}
+
+.where-map__segment--selected {
+  stroke: var(--ink);
+  opacity: 0.88 !important;
+}
+
+.where-map__segment--selected:not(.where-map__segment--upcoming) {
+  stroke-dasharray: none;
+}
+
+.where-map__segment--upcoming {
+  stroke-dasharray: 8 7;
+}
+
+.where-map__marker {
+  fill: var(--ink);
+  stroke: color-mix(in srgb, var(--paper) 92%, white);
+  stroke-width: 1.4;
+  cursor: pointer;
+  transition: r var(--motion-where-focus-duration) ease, fill var(--motion-where-focus-duration) ease;
+}
+
+.where-map__marker--latest {
+  stroke-width: 1.9;
+}
+
+.where-map__marker--future {
+  fill: color-mix(in srgb, var(--muted) 64%, var(--ink));
+}
+
+.where-map__marker-ring {
+  fill: transparent;
+  stroke: var(--ink);
+  transform-origin: center;
+  pointer-events: none;
+}
+
+.where-map__marker-ring--selected {
+  stroke-width: 1.2;
+  stroke-dasharray: 2.5 3.2;
+  opacity: 0.66;
+}
+
+.where-map__marker-ring--latest {
+  stroke-width: 1.35;
+  opacity: 0.48;
+  animation: where-pulse 1.7s ease-out infinite;
+}
+
+.where-map__empty {
+  position: absolute;
+  left: 0.7rem;
+  bottom: 0.56rem;
+  margin: 0;
+  color: var(--muted);
+  font-size: var(--font-size-caption);
+  letter-spacing: var(--letter-spacing-caption);
+}
+
+@keyframes where-pulse {
+  0% {
+    opacity: 0.68;
+    transform: scale(0.88);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.28);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .where-map__content,
+  .where-map__marker {
+    transition: none;
+  }
+
+  .where-map__marker-ring--latest {
+    animation: none;
+  }
+}

@@ -2,7 +2,7 @@ import type { AnchorHTMLAttributes, ButtonHTMLAttributes, HTMLAttributes } from 
 import { classNames } from "@/components/ui/class-names";
 
 type TextActionTone = "default" | "muted";
-type TextActionUnderline = "underline" | "none";
+type TextActionUnderline = "underline" | "none" | "hover";
 
 type TextActionOptions = {
   tone?: TextActionTone;
@@ -18,7 +18,11 @@ export function textActionClassName({
   return classNames(
     "text-action",
     tone === "muted" ? "text-action--muted" : "text-action--default",
-    underline === "none" ? "text-action--plain" : "text-action--underline",
+    underline === "none"
+      ? "text-action--plain"
+      : underline === "hover"
+        ? "text-action--hover"
+        : "text-action--underline",
     className,
   );
 }

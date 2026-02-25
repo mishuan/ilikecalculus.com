@@ -16,6 +16,24 @@ function assertPositiveInteger(value, fieldPath) {
   assert(Number.isInteger(value) && Number(value) > 0, `${fieldPath} must be a positive integer`);
 }
 
+function assertFiniteNumber(value, fieldPath) {
+  assert(typeof value === "number" && Number.isFinite(value), `${fieldPath} must be a finite number`);
+}
+
+function assertNumberInRange(value, min, max, fieldPath) {
+  assertFiniteNumber(value, fieldPath);
+  assert(value >= min && value <= max, `${fieldPath} must be between ${min} and ${max}`);
+}
+
+function assertUtcIsoDateTime(value, fieldPath) {
+  assert(typeof value === "string" && value.length > 0, `${fieldPath} must be a non-empty string`);
+
+  const parsed = new Date(value);
+  assert(!Number.isNaN(parsed.getTime()), `${fieldPath} must be a valid ISO datetime`);
+  assert(value.endsWith("Z"), `${fieldPath} must be UTC (ending in Z)`);
+  assert(parsed.toISOString() === value, `${fieldPath} must be a canonical ISO datetime`);
+}
+
 function assertUnique(values, fieldPath) {
   assert(new Set(values).size === values.length, `${fieldPath} must not contain duplicates`);
 }
@@ -103,6 +121,21 @@ export function validateWorkspace(workspace) {
     assertNonEmptyString(slug, `workspace.featuredProjectSlugs[${index}]`);
   });
   assertUnique(workspace.featuredProjectSlugs, "workspace.featuredProjectSlugs");
+
+  assert(isPlainObject(workspace.where), "workspace.where must be an object");
+  assert(Array.isArray(workspace.where.locations), "workspace.where.locations must be an array");
+  const locationIds = new Set();
+  workspace.where.locations.forEach((location, index) => {
+    assert(isPlainObject(location), `workspace.where.locations[${index}] must be an object`);
+    assertNonEmptyString(location.id, `workspace.where.locations[${index}].id`);
+    assert(!locationIds.has(location.id), `workspace.where.locations duplicate id: ${location.id}`);
+    locationIds.add(location.id);
+    assertNonEmptyString(location.label, `workspace.where.locations[${index}].label`);
+    assertNumberInRange(location.latitude, -90, 90, `workspace.where.locations[${index}].latitude`);
+    assertNumberInRange(location.longitude, -180, 180, `workspace.where.locations[${index}].longitude`);
+    assertUtcIsoDateTime(location.at, `workspace.where.locations[${index}].at`);
+    assert(typeof location.note === "string", `workspace.where.locations[${index}].note must be a string`);
+  });
 }
 
 export function validateProjectManifest(project, workspaceCategories) {

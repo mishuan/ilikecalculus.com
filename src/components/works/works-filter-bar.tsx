@@ -90,7 +90,7 @@ export function WorksFilterBar({
               <TextActionButton
                 className="works-intro__link"
                 tone={activeFilter === option.value ? "default" : "muted"}
-                underline={activeFilter === option.value ? "underline" : "none"}
+                underline={activeFilter === option.value ? "underline" : "hover"}
                 onClick={() => onFilterChange(option.value)}
               >
                 {option.label}

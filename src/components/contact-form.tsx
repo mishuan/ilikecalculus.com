@@ -80,21 +80,35 @@ export function ContactForm() {
   return (
     <div className="contact-panel">
       <h2 className="panel-title">send a message</h2>
-      <p className="contact-panel__description">
-        for collaborations and inquiries, you can send a message here or reach out on instagram. blog
-        posts and updates live on substack.
-      </p>
-      <div className="contact-panel__links" aria-label="external contact channels">
-        <TextActionLink href={siteData.site.instagramUrl} target="_blank" rel="noreferrer" className="contact-panel__link">
+      <p className="contact-panel__description body-copy">
+        For collaborations and inquiries, you can send a message here or reach out on{" "}
+        <TextActionLink
+          href={siteData.site.instagramUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="contact-panel__description-link"
+          underline="hover"
+        >
           instagram
+          <span className="contact-panel__external-marker" aria-hidden="true">
+            ↗
+          </span>
         </TextActionLink>
-        <span className="contact-panel__divider" aria-hidden="true">
-          /
-        </span>
-        <TextActionLink href={siteData.site.blogUrl} target="_blank" rel="noreferrer" className="contact-panel__link">
+        . Blog posts and updates live on{" "}
+        <TextActionLink
+          href={siteData.site.blogUrl}
+          target="_blank"
+          rel="noreferrer"
+          className="contact-panel__description-link"
+          underline="hover"
+        >
           substack
+          <span className="contact-panel__external-marker" aria-hidden="true">
+            ↗
+          </span>
         </TextActionLink>
-      </div>
+        .
+      </p>
       <form className="contact-form" onSubmit={onSubmit}>
         <div className="contact-form__row">
           <label className="contact-form__field">

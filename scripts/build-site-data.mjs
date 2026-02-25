@@ -76,6 +76,7 @@ async function build() {
     about: workspace.about,
     contact: workspace.contact,
     press: workspace.press,
+    where: workspace.where,
     projects: orderedProjects,
     featuredProjectSlugs: workspace.featuredProjectSlugs,
   };

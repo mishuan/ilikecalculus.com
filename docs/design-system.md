@@ -47,6 +47,7 @@
 - page width:
   - default content pages use `.page` (`--size-page-max`)
   - only works index uses `.page--wide`
+  - `/where` uses `.page--where` with route tokens for timeline/map layout
   - slideshow keeps its dedicated viewer layout
 - text action behavior:
   - same hover behavior and underline treatment via `.text-action`

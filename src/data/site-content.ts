@@ -3,6 +3,7 @@ import {
   generatedCategoryOrder,
   generatedSiteData,
 } from "@/data/generated-site-data";
+import type { LocationEntry } from "@/data/content-types";
 
 export type ProjectImage = {
   src: string;
@@ -28,6 +29,8 @@ export type Project = {
   images: ProjectImage[];
 };
 
+export type WhereLocation = LocationEntry;
+
 export const categoryOrder = [...generatedCategoryOrder] as ProjectCategory[];
 
 export const categoryLabels: Record<ProjectCategory, string> = Object.fromEntries(
@@ -50,6 +53,9 @@ function toProjectCategoryList(values: readonly string[], label: string): string
 
 export const siteData = generatedSiteData;
 export type ProjectSlug = Project["slug"];
+export const whereLocations: WhereLocation[] = (siteData.where.locations as readonly WhereLocation[]).map((location) => ({
+  ...location,
+}));
 
 export const projects: Project[] = siteData.projects.map((project) => ({
   ...project,
@@ -87,6 +93,7 @@ export function projectThumbnailsHref(project: Project, preferredCategory?: Proj
 export const navItems = [
   { label: "home", href: "/" },
   { label: "projects", href: "/works" },
+  { label: "where is", href: "/where" },
   { label: "about", href: "/about" },
   { label: "contact", href: "/contact" },
   { label: "press", href: "/press" },

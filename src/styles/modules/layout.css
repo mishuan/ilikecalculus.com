@@ -29,6 +29,10 @@
   gap: 0.62rem;
 }
 
+.top-nav__where {
+  margin-right: 0.28rem;
+}
+
 .top-nav__brand {
   display: inline-flex;
 }
@@ -54,14 +58,22 @@
   font-size: var(--font-size-text-action);
   letter-spacing: var(--letter-spacing-text-action);
   text-decoration: none;
+  text-decoration-thickness: var(--underline-thickness-text-action);
+  text-underline-offset: var(--underline-offset-text-action);
   text-transform: lowercase;
   transform-origin: left center;
-  transition: transform var(--duration-text-action) ease, color var(--duration-text-action) ease;
+  transition: transform var(--interactive-duration) ease, color var(--interactive-duration) ease,
+    text-decoration-color var(--interactive-duration) ease;
 }
 
 .nav-link:hover {
   color: var(--ink);
-  transform: scale(var(--hover-scale-text-action));
+  text-decoration: underline;
+  transform: translateY(var(--interactive-raise-y));
+}
+
+.nav-link:active {
+  transform: none;
 }
 
 .nav-link--active {
@@ -77,12 +89,12 @@
   color: var(--ink);
   line-height: 1;
   transform-origin: center center;
-  transition: transform var(--duration-text-action) ease, color var(--duration-text-action) ease;
+  transition: transform var(--interactive-duration) ease, color var(--interactive-duration) ease;
 }
 
 .instagram-link:hover {
   color: var(--ink);
-  transform: scale(var(--hover-scale-text-action));
+  transform: translateY(var(--interactive-raise-y));
 }
 
 .content-shell {
@@ -186,11 +198,11 @@
   letter-spacing: var(--letter-spacing-text-action);
   line-height: 1.08;
   text-transform: lowercase;
-  text-decoration-thickness: from-font;
+  text-decoration-thickness: var(--underline-thickness-text-action);
   text-underline-offset: var(--underline-offset-text-action);
   transform-origin: left center;
-  transition: transform var(--duration-text-action) ease, color var(--duration-text-action) ease,
-    opacity var(--duration-text-action) ease;
+  transition: transform var(--interactive-duration) ease, color var(--interactive-duration) ease,
+    opacity var(--interactive-duration) ease;
 }
 
 .text-action--underline {
@@ -198,6 +210,10 @@
 }
 
 .text-action--plain {
+  text-decoration: none;
+}
+
+.text-action--hover {
   text-decoration: none;
 }
 
@@ -211,7 +227,16 @@
 
 .text-action:hover {
   color: var(--ink);
-  transform: scale(var(--hover-scale-text-action));
+  transform: translateY(var(--interactive-raise-y));
+}
+
+.text-action:active {
+  transform: none;
+}
+
+.text-action--hover:hover,
+.text-action--hover:focus-visible {
+  text-decoration: underline;
 }
 
 .text-action:disabled,
@@ -220,6 +245,11 @@
   opacity: 0.35;
   cursor: not-allowed;
   transform: none;
+}
+
+:where(a, button, input, textarea, select, summary, [role="button"]):focus-visible {
+  outline: 2px solid var(--interactive-outline);
+  outline-offset: 2px;
 }
 
 .editor-input {
@@ -265,8 +295,9 @@
 }
 
 .editor-chip--selected {
-  border-color: var(--accent);
-  color: var(--accent);
+  border-color: var(--interactive-border-active);
+  background: var(--interactive-surface-selected);
+  color: var(--ink);
 }
 
 .editor-chip--add {

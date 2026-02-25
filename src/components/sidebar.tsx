@@ -34,6 +34,9 @@ export function Sidebar() {
     () => false,
   );
   const isSlideshowView = /^\/works\/[^/]+\/[^/]+\/?$/.test(pathname);
+  const whereItem = navItems.find((item) => !("external" in item && item.external) && item.href === "/where");
+  const topLinks = navItems.filter((item) => ("external" in item && item.external) || item.href !== "/where");
+  const isWhereActive = isHydrated && (pathname === "/where" || pathname.startsWith("/where/"));
 
   if (isSlideshowView) {
     return null;
@@ -43,7 +46,7 @@ export function Sidebar() {
     <header className="top-nav">
       <div className="top-nav__inner">
         <nav aria-label="Main navigation" className="top-nav__links">
-          {navItems.map((item) => {
+          {topLinks.map((item) => {
             const isExternal = "external" in item && item.external;
             const isActive =
               !isExternal &&
@@ -79,6 +82,14 @@ export function Sidebar() {
         </nav>
 
         <div className="top-nav__identity">
+          {whereItem ? (
+            <Link
+              href={whereItem.href}
+              className={classNames("nav-link", "top-nav__where", isWhereActive && "nav-link--active")}
+            >
+              {whereItem.label}
+            </Link>
+          ) : null}
           <Link href="/" className="top-nav__brand" aria-label="Go to homepage">
             <span className="top-nav__name">{siteData.site.shortName}</span>
           </Link>
