@@ -52,6 +52,7 @@ export function useWhereState({ initialLocations }: UseWhereStateInput) {
   const [status, setStatus] = useState("");
   const [error, setError] = useState("");
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
+  const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = window.setInterval(() => {
@@ -145,6 +146,19 @@ export function useWhereState({ initialLocations }: UseWhereStateInput) {
     }
   }, [defaultSelectedId, resolvedLocations, selectedLocationId]);
 
+  useEffect(() => {
+    if (!hoveredLocationId) {
+      return;
+    }
+
+    const stillExists = resolvedLocations.some((location) => location.id === hoveredLocationId);
+    if (!stillExists) {
+      setHoveredLocationId(null);
+    }
+  }, [hoveredLocationId, resolvedLocations]);
+
+  const focusedLocationId = hoveredLocationId ?? selectedLocationId;
+
   const createLocation = async (input: WhereLocationMutationInput) => {
     if (!isEditMode || !editorState) {
       return false;
@@ -233,6 +247,9 @@ export function useWhereState({ initialLocations }: UseWhereStateInput) {
     error,
     selectedLocationId,
     setSelectedLocationId,
+    hoveredLocationId,
+    setHoveredLocationId,
+    focusedLocationId,
     currentLocation,
     pastLocations,
     upcomingLocations,

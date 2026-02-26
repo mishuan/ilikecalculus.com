@@ -10,8 +10,11 @@ import { classNames } from "@/components/ui/class-names";
 type WhereMapProps = {
   locations: ResolvedWhereLocation[];
   selectedLocationId: string | null;
+  hoveredLocationId: string | null;
+  focusedLocationId: string | null;
   latestPastLocationId: string | null;
   onSelectLocation: (id: string) => void;
+  onHoverLocation: (id: string | null) => void;
 };
 
 const MAP_WIDTH = 980;
@@ -445,8 +448,11 @@ function resolveMarkerRadius({
 export function WhereMap({
   locations,
   selectedLocationId,
+  hoveredLocationId,
+  focusedLocationId,
   latestPastLocationId,
   onSelectLocation,
+  onHoverLocation,
 }: WhereMapProps) {
   const { latestArrivalKey, nextUpcomingKey, nextUpcomingLocationId } = useMemo(() => {
     if (!latestPastLocationId) {
@@ -488,6 +494,7 @@ export function WhereMap({
   );
 
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const svgRef = useRef<SVGSVGElement | null>(null);
   const pointersRef = useRef<Map<number, PointerSample>>(new Map());
   const panPointerIdRef = useRef<number | null>(null);
   const panLastRef = useRef<PointerSample | null>(null);
@@ -495,7 +502,6 @@ export function WhereMap({
   const interactionTimeoutRef = useRef<number | null>(null);
   const [isPanning, setIsPanning] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
-  const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
 
   const selectedPoint = selectedLocationId ? pointsById.get(selectedLocationId) : null;
 
@@ -534,18 +540,40 @@ export function WhereMap({
     () => `translate(${view.translateX} ${view.translateY}) scale(${view.scale})`,
     [view.scale, view.translateX, view.translateY],
   );
+  const inverseViewScale = 1 / view.scale;
 
   function toMapCoordinates(clientX: number, clientY: number) {
-    const rect = mapRef.current?.getBoundingClientRect();
-    if (!rect || rect.width <= 0 || rect.height <= 0) {
+    const svgNode = svgRef.current;
+    if (!svgNode) {
       return null;
     }
 
+    const ctm = svgNode.getScreenCTM();
+    if (!ctm) {
+      return null;
+    }
+
+    const inverseMatrix = ctm.inverse();
+    const basePoint = svgNode.createSVGPoint();
+    basePoint.x = clientX;
+    basePoint.y = clientY;
+    const mappedBase = basePoint.matrixTransform(inverseMatrix);
+
+    const rightPoint = svgNode.createSVGPoint();
+    rightPoint.x = clientX + 1;
+    rightPoint.y = clientY;
+    const mappedRight = rightPoint.matrixTransform(inverseMatrix);
+
+    const downPoint = svgNode.createSVGPoint();
+    downPoint.x = clientX;
+    downPoint.y = clientY + 1;
+    const mappedDown = downPoint.matrixTransform(inverseMatrix);
+
     return {
-      x: ((clientX - rect.left) / rect.width) * MAP_WIDTH,
-      y: ((clientY - rect.top) / rect.height) * MAP_HEIGHT,
-      unitsPerPixelX: MAP_WIDTH / rect.width,
-      unitsPerPixelY: MAP_HEIGHT / rect.height,
+      x: mappedBase.x,
+      y: mappedBase.y,
+      unitsPerPixelX: Math.max(0.0001, Math.abs(mappedRight.x - mappedBase.x)),
+      unitsPerPixelY: Math.max(0.0001, Math.abs(mappedDown.y - mappedBase.y)),
     };
   }
 
@@ -567,19 +595,12 @@ export function WhereMap({
     }
 
     function onWheel(event: WheelEvent) {
-      const rect = mapNode?.getBoundingClientRect();
-      if (!rect) {
+      const mappedPointer = toMapCoordinates(event.clientX, event.clientY);
+      if (!mappedPointer) {
         return;
       }
 
-      if (rect.width <= 0 || rect.height <= 0) {
-        return;
-      }
-
-      const mapX = ((event.clientX - rect.left) / rect.width) * MAP_WIDTH;
-      const mapY = ((event.clientY - rect.top) / rect.height) * MAP_HEIGHT;
-      const unitsPerPixelX = MAP_WIDTH / rect.width;
-      const unitsPerPixelY = MAP_HEIGHT / rect.height;
+      const { x: mapX, y: mapY, unitsPerPixelX, unitsPerPixelY } = mappedPointer;
       const currentView = viewRef.current;
       const horizontalIntent = Math.abs(event.deltaX) > Math.abs(event.deltaY) * 0.65;
       const shouldPan =
@@ -813,6 +834,7 @@ export function WhereMap({
 
       const intensity = totalSegments <= 1 ? 1 : (index + 1) / totalSegments;
       const selected = selectedLocationId === from.id || selectedLocationId === to.id;
+      const focused = focusedLocationId === from.id || focusedLocationId === to.id;
       const segmentKey = `${from.id}-${to.id}`;
 
       return {
@@ -821,13 +843,14 @@ export function WhereMap({
         to: toPoint,
         intensity,
         selected,
+        focused,
         upcoming: from.isFuture || to.isFuture,
         pieces: routeSegmentPieces(from, to),
         isLatestArrival: latestArrivalKey === segmentKey,
         isNextUpcoming: nextUpcomingKey === segmentKey,
       };
     }).filter((segment): segment is NonNullable<typeof segment> => Boolean(segment));
-  }, [latestArrivalKey, locations, nextUpcomingKey, pointsById, selectedLocationId]);
+  }, [focusedLocationId, latestArrivalKey, locations, nextUpcomingKey, pointsById, selectedLocationId]);
 
   return (
     <section className="where-map-panel">
@@ -848,9 +871,14 @@ export function WhereMap({
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerCancel}
         onLostPointerCapture={handlePointerCancel}
+        onPointerLeave={() => {
+          onHoverLocation(null);
+        }}
       >
         <svg
+          ref={svgRef}
           viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
+          preserveAspectRatio="xMidYMid slice"
           role="img"
           aria-label="Map of visited and upcoming locations"
         >
@@ -895,12 +923,18 @@ export function WhereMap({
                         "where-map__segment",
                         segment.upcoming && "where-map__segment--upcoming",
                         segment.selected && "where-map__segment--selected",
+                        segment.focused && "where-map__segment--focused",
                         segment.isLatestArrival && "where-map__segment--latest-arrival",
                         segment.isNextUpcoming && "where-map__segment--next-upcoming",
                       )}
                       style={{
-                        opacity: String(0.22 + segment.intensity * 0.45 + (segment.selected ? 0.08 : 0)),
-                        strokeWidth: `${0.65 + segment.intensity * 1.35 + (segment.selected ? 0.35 : 0)}px`,
+                        opacity: String(
+                          0.22 +
+                            segment.intensity * 0.45 +
+                            (segment.selected ? 0.08 : 0) +
+                            (segment.focused && !segment.selected ? 0.07 : 0),
+                        ),
+                        strokeWidth: `${0.65 + segment.intensity * 1.35 + (segment.selected ? 0.35 : 0) + (segment.focused && !segment.selected ? 0.25 : 0)}px`,
                       }}
                     />
                   )),
@@ -916,7 +950,12 @@ export function WhereMap({
                   const isLatestPast = latestPastLocationId === location.id;
                   const isUpcomingDestination = nextUpcomingLocationId === location.id;
                   const isHovered = hoveredLocationId === location.id;
-                  const markerRadius = resolveMarkerRadius({ isLatestPast, isSelected, isHovered });
+                  const markerRadius =
+                    resolveMarkerRadius({ isLatestPast, isSelected, isHovered }) * inverseViewScale;
+                  const selectedRingRadius = MARKER_RING_RADIUS.selected * inverseViewScale;
+                  const hoveredRingRadius = MARKER_RING_RADIUS.hovered * inverseViewScale;
+                  const upcomingRingRadius = MARKER_RING_RADIUS.upcomingDestination * inverseViewScale;
+                  const markerHitRadius = MARKER_HIT_RADIUS * inverseViewScale;
 
                   return (
                     <g key={location.id}>
@@ -924,7 +963,7 @@ export function WhereMap({
                         <circle
                           cx={point.x}
                           cy={point.y}
-                          r={MARKER_RING_RADIUS.hovered}
+                          r={hoveredRingRadius}
                           className="where-map__marker-ring where-map__marker-ring--hovered"
                           aria-hidden="true"
                         />
@@ -933,7 +972,7 @@ export function WhereMap({
                         <circle
                           cx={point.x}
                           cy={point.y}
-                          r={MARKER_RING_RADIUS.upcomingDestination}
+                          r={upcomingRingRadius}
                           className="where-map__marker-ring where-map__marker-ring--upcoming-destination"
                           aria-hidden="true"
                         />
@@ -942,7 +981,7 @@ export function WhereMap({
                         <circle
                           cx={point.x}
                           cy={point.y}
-                          r={MARKER_RING_RADIUS.selected}
+                          r={selectedRingRadius}
                           className="where-map__marker-ring where-map__marker-ring--selected"
                           aria-hidden="true"
                         />
@@ -958,18 +997,22 @@ export function WhereMap({
                           isLatestPast && "where-map__marker--latest",
                           location.isFuture && "where-map__marker--future",
                         )}
+                        data-testid={`where-map-node-${location.id}`}
                       />
                       <circle
                         cx={point.x}
                         cy={point.y}
-                        r={MARKER_HIT_RADIUS}
+                        r={markerHitRadius}
                         className="where-map__marker-hit"
                         aria-hidden="true"
+                        data-testid={`where-map-node-hit-${location.id}`}
                         onPointerEnter={() => {
-                          setHoveredLocationId(location.id);
+                          onHoverLocation(location.id);
                         }}
                         onPointerLeave={() => {
-                          setHoveredLocationId((current) => (current === location.id ? null : current));
+                          if (hoveredLocationId === location.id) {
+                            onHoverLocation(null);
+                          }
                         }}
                         onPointerDown={(event) => {
                           event.stopPropagation();

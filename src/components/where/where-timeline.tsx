@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { TextActionButton, TextActionLabel } from "@/components/ui/text-action";
+import { WhereCalendar } from "@/components/where/where-calendar";
 import { WhereEditor, type WhereLocationFormValue } from "@/components/where/where-editor";
 import { WhereTimelineSection } from "@/components/where/where-timeline-section";
 import type {
@@ -14,6 +16,8 @@ type WhereTimelineProps = {
   pastLocations: ResolvedWhereLocation[];
   upcomingLocations: ResolvedWhereLocation[];
   selectedLocationId: string | null;
+  hoveredLocationId: string | null;
+  focusedLocationId: string | null;
   latestPastLocationId: string | null;
   isEditMode: boolean;
   isLoadingEditorState: boolean;
@@ -21,10 +25,13 @@ type WhereTimelineProps = {
   updatingLocationId: string | null;
   deletingLocationId: string | null;
   onSelectLocation: (id: string) => void;
+  onHoverLocation: (id: string | null) => void;
   onCreateLocation: (input: WhereLocationMutationInput) => Promise<boolean>;
   onUpdateLocation: (id: string, input: WhereLocationMutationInput) => Promise<boolean>;
   onDeleteLocation: (id: string) => Promise<boolean>;
 };
+
+type WhereTimelineViewMode = "list" | "calendar";
 
 function pad(value: number) {
   return String(value).padStart(2, "0");
@@ -59,6 +66,8 @@ export function WhereTimeline({
   pastLocations,
   upcomingLocations,
   selectedLocationId,
+  hoveredLocationId,
+  focusedLocationId,
   latestPastLocationId,
   isEditMode,
   isLoadingEditorState,
@@ -66,6 +75,7 @@ export function WhereTimeline({
   updatingLocationId,
   deletingLocationId,
   onSelectLocation,
+  onHoverLocation,
   onCreateLocation,
   onUpdateLocation,
   onDeleteLocation,
@@ -75,10 +85,23 @@ export function WhereTimeline({
   const [editingLocationId, setEditingLocationId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<WhereLocationFormValue>(() => createEmptyDraft());
   const [editFormError, setEditFormError] = useState("");
+  const [viewMode, setViewMode] = useState<WhereTimelineViewMode>("list");
   const entryRefMap = useRef<Map<string, HTMLElement>>(new Map());
 
   const isMutating = isCreatingLocation || updatingLocationId !== null || deletingLocationId !== null;
   const isBusy = isLoadingEditorState || isMutating;
+  const allLocations = useMemo(
+    () =>
+      [currentLocation, ...upcomingLocations, ...pastLocations]
+        .filter((location): location is ResolvedWhereLocation => Boolean(location))
+        .sort((a, b) => {
+          if (a.atMs === b.atMs) {
+            return a.id.localeCompare(b.id);
+          }
+          return a.atMs - b.atMs;
+        }),
+    [currentLocation, pastLocations, upcomingLocations],
+  );
   const dateFormatter = useMemo(
     () =>
       new Intl.DateTimeFormat(undefined, {
@@ -104,7 +127,7 @@ export function WhereTimeline({
       block: "nearest",
       inline: "nearest",
     });
-  }, [selectedLocationId]);
+  }, [selectedLocationId, viewMode]);
 
   const registerEntryRef = (id: string, node: HTMLElement | null) => {
     if (!node) {
@@ -195,32 +218,84 @@ export function WhereTimeline({
         </div>
       ) : null}
 
-      {timelineSections.map((section) => (
-        <WhereTimelineSection
-          key={section.key}
-          title={section.title}
-          emptyText={section.emptyText}
-          locations={section.locations}
-          variant={section.variant}
-          selectedLocationId={selectedLocationId}
-          latestPastLocationId={latestPastLocationId}
-          isEditMode={isEditMode}
-          isBusy={isBusy}
-          updatingLocationId={updatingLocationId}
-          deletingLocationId={deletingLocationId}
-          editingLocationId={editingLocationId}
-          editDraft={editDraft}
-          editFormError={editFormError}
-          dateFormatter={dateFormatter}
-          registerEntryRef={registerEntryRef}
-          onSelectLocation={onSelectLocation}
-          onOpenEditor={openEditorForLocation}
-          onDeleteLocation={(id) => void onDeleteLocation(id)}
-          onEditDraftChange={setEditDraft}
-          onSaveEdit={() => void handleSaveEdit()}
-          onCancelEdit={() => setEditingLocationId(null)}
-        />
-      ))}
+      <div className="where-timeline__view-switch" data-testid="where-view-toggle" aria-label="Timeline view">
+        {viewMode === "list" ? (
+          <TextActionLabel className="where-timeline__view-item" underline="underline">
+            list
+          </TextActionLabel>
+        ) : (
+          <TextActionButton
+            type="button"
+            className="where-timeline__view-item"
+            underline="hover"
+            onClick={() => setViewMode("list")}
+            data-testid="where-view-list"
+          >
+            list
+          </TextActionButton>
+        )}
+        <span className="where-timeline__view-separator" aria-hidden="true">
+          /
+        </span>
+        {viewMode === "calendar" ? (
+          <TextActionLabel className="where-timeline__view-item" underline="underline">
+            calendar
+          </TextActionLabel>
+        ) : (
+          <TextActionButton
+            type="button"
+            className="where-timeline__view-item"
+            underline="hover"
+            onClick={() => setViewMode("calendar")}
+            data-testid="where-view-calendar"
+          >
+            calendar
+          </TextActionButton>
+        )}
+      </div>
+
+      <div className="where-timeline__content">
+        {viewMode === "list" ? (
+          timelineSections.map((section) => (
+            <WhereTimelineSection
+              key={section.key}
+              title={section.title}
+              emptyText={section.emptyText}
+              locations={section.locations}
+              variant={section.variant}
+              selectedLocationId={selectedLocationId}
+              hoveredLocationId={hoveredLocationId}
+              focusedLocationId={focusedLocationId}
+              latestPastLocationId={latestPastLocationId}
+              isEditMode={isEditMode}
+              isBusy={isBusy}
+              updatingLocationId={updatingLocationId}
+              deletingLocationId={deletingLocationId}
+              editingLocationId={editingLocationId}
+              editDraft={editDraft}
+              editFormError={editFormError}
+              dateFormatter={dateFormatter}
+              registerEntryRef={registerEntryRef}
+              onSelectLocation={onSelectLocation}
+              onHoverLocation={onHoverLocation}
+              onOpenEditor={openEditorForLocation}
+              onDeleteLocation={(id) => void onDeleteLocation(id)}
+              onEditDraftChange={setEditDraft}
+              onSaveEdit={() => void handleSaveEdit()}
+              onCancelEdit={() => setEditingLocationId(null)}
+            />
+          ))
+        ) : (
+          <WhereCalendar
+            locations={allLocations}
+            selectedLocationId={selectedLocationId}
+            hoveredLocationId={hoveredLocationId}
+            onSelectLocation={onSelectLocation}
+            onHoverLocation={onHoverLocation}
+            registerEntryRef={registerEntryRef}
+          />
+        )}
+      </div>
     </section>
   );
 }

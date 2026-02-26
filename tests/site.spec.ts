@@ -33,7 +33,7 @@ test("primary navigation routes work", async ({ page }) => {
 
   await page.getByRole("link", { name: "where is" }).click();
   await expect(page).toHaveURL(/\/where$/);
-  await expect(page.getByRole("heading", { name: "where is michael" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "where is michael?" })).toBeVisible();
 
   await page.getByRole("link", { name: "press" }).click();
   await expect(page).toHaveURL(/\/press$/);
@@ -215,15 +215,138 @@ test("edit mode toggle is visible in development", async ({ page }) => {
 
 test("where page renders timeline and map", async ({ page }) => {
   await page.goto("/where");
-  await expect(page.getByRole("heading", { name: "where is michael" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "where is michael?" })).toBeVisible();
   await expect(page.getByRole("heading", { level: 2, name: "current" })).toBeVisible();
   await expect(page.getByRole("heading", { level: 2, name: "past" })).toBeVisible();
   await expect(page.getByText("upcoming")).toBeVisible();
   await expect(page.locator(".where-map")).toBeVisible();
+  await expect(page.getByTestId("where-view-toggle")).toBeVisible();
 
   const hasPastEmptyState = await page.getByText("No past locations yet.").count();
   const whereEntryCount = await page.locator(".where-entry").count();
   expect(hasPastEmptyState > 0 || whereEntryCount > 0).toBeTruthy();
+});
+
+test("where timeline toggles between list and calendar view", async ({ page }) => {
+  await page.goto("/where");
+  await expect(page.getByRole("heading", { level: 2, name: "current" })).toBeVisible();
+
+  await page.getByTestId("where-view-calendar").click();
+  await expect(page.getByTestId("where-calendar")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "current" })).toHaveCount(0);
+
+  await page.getByTestId("where-view-list").click();
+  await expect(page.getByRole("heading", { level: 2, name: "current" })).toBeVisible();
+});
+
+test("where calendar hover previews details and click keeps selected detail", async ({ page }) => {
+  await page.goto("/where");
+  await page.getByTestId("where-view-calendar").click();
+  await expect(page.getByTestId("where-calendar")).toBeVisible();
+
+  const emptyDay = page.locator(".where-calendar__day:not(.where-calendar__day--has-items)").first();
+  await emptyDay.hover();
+
+  const firstInteractiveDay = page.locator(".where-calendar__day--has-items").first();
+  await expect(firstInteractiveDay.locator(".where-calendar__day-location")).toHaveCount(1);
+  const previewLocationId = await firstInteractiveDay.getAttribute("data-preview-location-id");
+  expect(previewLocationId).toBeTruthy();
+  if (!previewLocationId) {
+    throw new Error("Calendar day is missing preview location id.");
+  }
+
+  await firstInteractiveDay.hover();
+  const hoverDetail = page.getByTestId(`where-calendar-detail-${previewLocationId}`);
+  await expect(hoverDetail).toBeVisible();
+
+  await firstInteractiveDay.click();
+  await emptyDay.hover();
+  await expect(page.getByTestId(`where-calendar-detail-${previewLocationId}`)).toBeVisible();
+
+  const previewLocation = workspaceContent.where.locations.find((location) => location.id === previewLocationId);
+  if (previewLocation?.note) {
+    await expect(page.getByTestId(`where-calendar-detail-${previewLocationId}`)).toContainText(previewLocation.note);
+  }
+});
+
+test("where timeline and map panels keep equal desktop heights", async ({ page }) => {
+  await page.goto("/where");
+
+  const timeline = page.locator(".where-timeline");
+  const mapPanel = page.locator(".where-map-panel");
+  await expect(timeline).toBeVisible();
+  await expect(mapPanel).toBeVisible();
+
+  const timelineBox = await timeline.boundingBox();
+  const mapPanelBox = await mapPanel.boundingBox();
+  expect(timelineBox).not.toBeNull();
+  expect(mapPanelBox).not.toBeNull();
+
+  if (!timelineBox || !mapPanelBox) {
+    return;
+  }
+
+  const heightDifference = Math.abs(timelineBox.height - mapPanelBox.height);
+  expect(heightDifference).toBeLessThan(3);
+});
+
+test("where list preview uses hover and selected states", async ({ page }) => {
+  await page.goto("/where");
+
+  const rows = page.locator(".where-entry");
+  expect(await rows.count()).toBeGreaterThan(1);
+
+  const selectedRow = page.locator(".where-entry--selected").first();
+  await expect(selectedRow).toBeVisible();
+  await expect(selectedRow.locator(".where-entry__note")).toHaveCount(1);
+  await expect(selectedRow.locator(".where-entry__hover-note")).toHaveCount(0);
+
+  const secondaryRow = rows.nth(1);
+  await expect(secondaryRow.locator(".where-entry__note")).toHaveCount(0);
+  await expect(secondaryRow.locator(".where-entry__hover-note")).toHaveCount(0);
+
+  await secondaryRow.hover();
+  await expect(secondaryRow.locator(".where-entry__note")).toHaveCount(0);
+  await expect(secondaryRow.locator(".where-entry__hover-note")).toHaveCount(1);
+  await expect(selectedRow.locator(".where-entry__note")).toHaveCount(1);
+
+  await page.locator(".page-title").hover();
+  await expect(secondaryRow.locator(".where-entry__hover-note")).toHaveCount(0);
+  await expect(selectedRow.locator(".where-entry__note")).toHaveCount(1);
+});
+
+test("where map node click selects matching timeline row", async ({ page }) => {
+  await page.goto("/where");
+
+  const locations = workspaceContent.where.locations;
+  expect(locations.length).toBeGreaterThan(0);
+
+  const target = locations[0];
+  const clickedNode = await page.evaluate((locationId) => {
+    const selector = `[data-testid=\"where-map-node-hit-${locationId}\"]`;
+    const nodes = Array.from(document.querySelectorAll<SVGCircleElement>(selector));
+    if (nodes.length === 0) {
+      return false;
+    }
+
+    const inViewport = nodes.find((node) => {
+      const rect = node.getBoundingClientRect();
+      return (
+        rect.width > 0 &&
+        rect.height > 0 &&
+        rect.bottom > 0 &&
+        rect.right > 0 &&
+        rect.left < window.innerWidth &&
+        rect.top < window.innerHeight
+      );
+    });
+
+    const node = inViewport ?? nodes[0];
+    node.dispatchEvent(new MouseEvent("click", { bubbles: true }));
+    return true;
+  }, target.id);
+  expect(clickedNode).toBeTruthy();
+  await expect(page.getByTestId(`where-entry-${target.id}`)).toHaveClass(/where-entry--selected/);
 });
 
 test("contact page includes about and contact copy", async ({ page }) => {

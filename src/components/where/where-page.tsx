@@ -21,6 +21,9 @@ export function WherePage({ initialLocations }: WherePageProps) {
     error,
     selectedLocationId,
     setSelectedLocationId,
+    hoveredLocationId,
+    setHoveredLocationId,
+    focusedLocationId,
     currentLocation,
     pastLocations,
     upcomingLocations,
@@ -52,6 +55,8 @@ export function WherePage({ initialLocations }: WherePageProps) {
           pastLocations={pastLocations}
           upcomingLocations={upcomingLocations}
           selectedLocationId={selectedLocationId}
+          hoveredLocationId={hoveredLocationId}
+          focusedLocationId={focusedLocationId}
           latestPastLocationId={latestPastLocationId}
           isEditMode={isEditMode}
           isLoadingEditorState={isLoadingEditorState}
@@ -59,6 +64,7 @@ export function WherePage({ initialLocations }: WherePageProps) {
           updatingLocationId={updatingLocationId}
           deletingLocationId={deletingLocationId}
           onSelectLocation={setSelectedLocationId}
+          onHoverLocation={setHoveredLocationId}
           onCreateLocation={createLocation}
           onUpdateLocation={updateLocation}
           onDeleteLocation={deleteLocation}
@@ -68,8 +74,11 @@ export function WherePage({ initialLocations }: WherePageProps) {
           key={selectedLocationId ?? "where-map-default"}
           locations={mapLocations}
           selectedLocationId={selectedLocationId}
+          hoveredLocationId={hoveredLocationId}
+          focusedLocationId={focusedLocationId}
           latestPastLocationId={latestPastLocationId}
           onSelectLocation={setSelectedLocationId}
+          onHoverLocation={setHoveredLocationId}
         />
       </div>
     </section>

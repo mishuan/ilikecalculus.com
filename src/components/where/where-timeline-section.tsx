@@ -13,6 +13,8 @@ type WhereTimelineSectionProps = {
   locations: ResolvedWhereLocation[];
   variant: WhereTimelineSectionVariant;
   selectedLocationId: string | null;
+  hoveredLocationId: string | null;
+  focusedLocationId: string | null;
   latestPastLocationId: string | null;
   isEditMode: boolean;
   isBusy: boolean;
@@ -24,6 +26,7 @@ type WhereTimelineSectionProps = {
   dateFormatter: Intl.DateTimeFormat;
   registerEntryRef: (id: string, node: HTMLElement | null) => void;
   onSelectLocation: (id: string) => void;
+  onHoverLocation: (id: string | null) => void;
   onOpenEditor: (location: ResolvedWhereLocation) => void;
   onDeleteLocation: (id: string) => void;
   onEditDraftChange: (nextValue: WhereLocationFormValue) => void;
@@ -37,6 +40,8 @@ export function WhereTimelineSection({
   locations,
   variant,
   selectedLocationId,
+  hoveredLocationId,
+  focusedLocationId,
   latestPastLocationId,
   isEditMode,
   isBusy,
@@ -48,6 +53,7 @@ export function WhereTimelineSection({
   dateFormatter,
   registerEntryRef,
   onSelectLocation,
+  onHoverLocation,
   onOpenEditor,
   onDeleteLocation,
   onEditDraftChange,
@@ -61,12 +67,16 @@ export function WhereTimelineSection({
         <p className="where-timeline__empty">{emptyText}</p>
       ) : (
         <div className="where-entry-list">
-          {locations.map((location) => {
+          {locations.map((location, index) => {
             const isSelected = selectedLocationId === location.id;
+            const isHovered = hoveredLocationId === location.id;
+            const isFocused = focusedLocationId === location.id;
             const isLatest = variant === "current" && latestPastLocationId === location.id;
             const isUpdating = updatingLocationId === location.id;
             const isDeleting = deletingLocationId === location.id;
             const isEditing = editingLocationId === location.id;
+            const shouldShowSelectedPreview = Boolean(location.note) && isSelected;
+            const shouldShowHoverPreview = Boolean(location.note) && isHovered && !isSelected;
 
             return (
               <article
@@ -76,18 +86,40 @@ export function WhereTimelineSection({
                   "where-entry",
                   variant === "upcoming" && "where-entry--future",
                   isSelected && "where-entry--selected",
+                  isHovered && "where-entry--hovered",
+                  isFocused && "where-entry--focused",
                   isLatest && "where-entry--latest",
+                  index === 0 && "where-entry--hover-note-below",
                 )}
+                data-testid={`where-entry-${location.id}`}
               >
                 <button
                   type="button"
                   className="where-entry__main"
+                  onPointerEnter={() => {
+                    onHoverLocation(location.id);
+                  }}
+                  onPointerLeave={() => {
+                    if (hoveredLocationId === location.id) {
+                      onHoverLocation(null);
+                    }
+                  }}
+                  onFocus={() => {
+                    onHoverLocation(location.id);
+                  }}
+                  onBlur={() => {
+                    if (hoveredLocationId === location.id) {
+                      onHoverLocation(null);
+                    }
+                  }}
                   onClick={() => onSelectLocation(location.id)}
                 >
                   <p className="where-entry__label">{location.label}</p>
                   <p className="where-entry__time">{dateFormatter.format(new Date(location.at))}</p>
-                  {location.note ? <p className="where-entry__note">{location.note}</p> : null}
+                  {shouldShowSelectedPreview ? <p className="where-entry__note">{location.note}</p> : null}
                 </button>
+
+                {shouldShowHoverPreview ? <p className="where-entry__hover-note">{location.note}</p> : null}
 
                 {isEditMode ? (
                   <div className="where-entry__actions">

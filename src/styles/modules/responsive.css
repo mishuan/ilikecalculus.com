@@ -11,6 +11,25 @@
     grid-template-columns: 1fr;
   }
 
+  .where-timeline,
+  .where-map-panel {
+    height: auto;
+  }
+
+  .where-timeline {
+    grid-template-rows: auto auto auto;
+  }
+
+  .where-timeline__content {
+    overflow: visible;
+    padding-right: 0;
+  }
+
+  .where-map {
+    min-height: var(--size-where-map-min-height);
+    height: auto;
+  }
+
   .contact-panel {
     max-width: none;
     border-left: 0;
