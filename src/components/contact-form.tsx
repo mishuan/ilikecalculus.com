@@ -3,7 +3,8 @@
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { siteData } from "@/data/site-content";
-import { TextActionLink } from "@/components/ui/text-action";
+import { ExternalTextLink } from "@/components/ui/text-action";
+import { parseContactSubmission } from "@/lib/contact-schema";
 
 type ContactState = {
   name: string;
@@ -43,13 +44,33 @@ export function ContactForm() {
     setIsSubmitting(true);
     setStatus(null);
 
+    const parsed = parseContactSubmission(form);
+    if (!parsed.ok) {
+      setStatus({
+        ok: false,
+        message: parsed.message,
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (parsed.isSpam) {
+      setStatus({
+        ok: true,
+        message: "Message sent.",
+      });
+      setForm(INITIAL_STATE);
+      setIsSubmitting(false);
+      return;
+    }
+
     try {
       const response = await fetch("/api/contact", {
         method: "POST",
         headers: {
           "content-type": "application/json",
         },
-        body: JSON.stringify(form),
+        body: JSON.stringify(parsed.payload),
       });
 
       const payload = (await response.json()) as { message?: string };
@@ -82,31 +103,19 @@ export function ContactForm() {
       <h2 className="panel-title">send a message</h2>
       <p className="contact-panel__description body-copy">
         For collaborations and inquiries, you can send a message here or reach out on{" "}
-        <TextActionLink
+        <ExternalTextLink
           href={siteData.site.instagramUrl}
-          target="_blank"
-          rel="noreferrer"
           className="contact-panel__description-link"
-          underline="hover"
         >
           instagram
-          <span className="contact-panel__external-marker" aria-hidden="true">
-            ↗
-          </span>
-        </TextActionLink>
+        </ExternalTextLink>
         . Blog posts and updates live on{" "}
-        <TextActionLink
+        <ExternalTextLink
           href={siteData.site.blogUrl}
-          target="_blank"
-          rel="noreferrer"
           className="contact-panel__description-link"
-          underline="hover"
         >
           substack
-          <span className="contact-panel__external-marker" aria-hidden="true">
-            ↗
-          </span>
-        </TextActionLink>
+        </ExternalTextLink>
         .
       </p>
       <form className="contact-form" onSubmit={onSubmit}>

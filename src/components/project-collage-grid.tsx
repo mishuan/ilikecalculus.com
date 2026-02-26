@@ -2,7 +2,11 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
+import {
+  buildCollageRows,
+  useCollageMeasurements,
+} from "@/components/collage/collage-layout";
 import { classNames } from "@/components/ui/class-names";
 import { projectHref, type Project, type ProjectCategory } from "@/data/site-content";
 
@@ -16,15 +20,6 @@ type ProjectCollageGridProps = {
   onReorderPhoto?: (draggingSrc: string, targetSrc: string) => void;
 };
 
-type GridTile = {
-  image: Project["images"][number];
-  width: number;
-  index: number;
-  key: string;
-};
-
-const DEFAULT_CELL_GAP_PX = 14;
-
 export function ProjectCollageGrid({
   project,
   activeCategory,
@@ -34,92 +29,29 @@ export function ProjectCollageGrid({
   onDeletePhoto,
   onReorderPhoto,
 }: ProjectCollageGridProps) {
-  const gridRef = useRef<HTMLDivElement | null>(null);
-  const [containerWidth, setContainerWidth] = useState(0);
-  const [rowHeight, setRowHeight] = useState(0);
-  const [gapPx, setGapPx] = useState(DEFAULT_CELL_GAP_PX);
+  const { containerRef: gridRef, containerWidth, rowHeight, gapPx } =
+    useCollageMeasurements<HTMLDivElement>({
+      gapReadMode: "row-or-column",
+      rowHeightFallback: 120,
+    });
   const [draggingPhotoSrc, setDraggingPhotoSrc] = useState<string | null>(null);
   const slideshowHref = projectHref(project, activeCategory);
 
-  useLayoutEffect(() => {
-    const node = gridRef.current;
-    if (!node) {
-      return;
-    }
-
-    function refresh() {
-      const currentNode = gridRef.current;
-      if (!currentNode) {
-        return;
-      }
-
-      const width = currentNode.clientWidth;
-      const styles = window.getComputedStyle(currentNode);
-      const resolvedGap = Number.parseFloat(styles.rowGap || styles.columnGap || styles.gap || "");
-      const rowHeightProbe = document.createElement("div");
-      rowHeightProbe.style.position = "absolute";
-      rowHeightProbe.style.visibility = "hidden";
-      rowHeightProbe.style.pointerEvents = "none";
-      rowHeightProbe.style.blockSize = "var(--row-height)";
-      rowHeightProbe.style.inlineSize = "0";
-      rowHeightProbe.style.padding = "0";
-      rowHeightProbe.style.border = "0";
-      currentNode.append(rowHeightProbe);
-      const resolvedRowHeight = rowHeightProbe.getBoundingClientRect().height;
-      rowHeightProbe.remove();
-
-      setContainerWidth(width);
-      setRowHeight(Number.isFinite(resolvedRowHeight) ? resolvedRowHeight : 120);
-      setGapPx(Number.isFinite(resolvedGap) ? resolvedGap : DEFAULT_CELL_GAP_PX);
-    }
-
-    const observer = new ResizeObserver(refresh);
-    observer.observe(node);
-    refresh();
-    window.addEventListener("resize", refresh);
-
-    return () => {
-      observer.disconnect();
-      window.removeEventListener("resize", refresh);
-    };
-  }, []);
-
   const rows = useMemo(() => {
-    if (containerWidth <= 0 || rowHeight <= 0) {
-      return [] as GridTile[][];
-    }
-
-    const nextRows: GridTile[][] = [];
-    let currentRow: GridTile[] = [];
-    let usedWidth = 0;
-
-    project.images.forEach((image, index) => {
-      const ratio = image.width / image.height;
-      const rawWidth = rowHeight * ratio;
-      const fittedWidth = Math.max(1, Math.min(rawWidth, containerWidth));
-      const nextWidth = currentRow.length === 0 ? fittedWidth : fittedWidth + gapPx;
-
-      if (currentRow.length > 0 && usedWidth + nextWidth > containerWidth) {
-        nextRows.push(currentRow);
-        currentRow = [];
-        usedWidth = 0;
-      }
-
-      currentRow.push({
-        image,
-        width: fittedWidth,
-        index,
-        key: `${project.slug}-${image.src}-${index}`,
-      });
-
-      usedWidth += currentRow.length === 1 ? fittedWidth : fittedWidth + gapPx;
+    const packedRows = buildCollageRows(project.images, {
+      containerWidth,
+      rowHeight,
+      gapPx,
     });
 
-    if (currentRow.length > 0) {
-      nextRows.push(currentRow);
-    }
-
-    return nextRows;
+    return packedRows.map((row) =>
+      row.map((tile) => ({
+        image: tile.item,
+        width: tile.width,
+        index: tile.index,
+        key: `${project.slug}-${tile.item.src}-${tile.index}`,
+      })),
+    );
   }, [containerWidth, gapPx, project.images, project.slug, rowHeight]);
 
   return (

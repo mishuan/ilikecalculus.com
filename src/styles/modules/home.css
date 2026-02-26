@@ -206,11 +206,6 @@
 
 .works-new-project__description {
   width: 100%;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: var(--paper);
-  color: var(--ink);
-  font: inherit;
   font-size: var(--font-size-meta);
   line-height: 1.45;
   min-height: 4.25rem;

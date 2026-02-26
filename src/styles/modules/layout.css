@@ -249,6 +249,16 @@
   transform: none;
 }
 
+.external-text-link {
+  gap: 0.14em;
+}
+
+.external-text-link__marker {
+  display: inline-flex;
+  font-size: 0.82em;
+  line-height: 1;
+}
+
 :where(a, button, input, textarea, select, summary, [role="button"]):focus-visible {
   outline: 2px solid var(--interactive-outline);
   outline-offset: 2px;
@@ -262,6 +272,11 @@
   font: inherit;
   font-size: var(--font-size-ui-sm);
   padding: 0.28rem 0.42rem;
+}
+
+.editor-textarea {
+  width: 100%;
+  resize: vertical;
 }
 
 .editor-button {

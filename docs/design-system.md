@@ -35,10 +35,14 @@
 
 - underlined textual actions use one component:
   - `/Users/michaelyuan/src/ilikecalculus.com/src/components/ui/text-action.tsx`
+  - external text links use `ExternalTextLink` from the same module for consistent marker + `target`/`rel` defaults
+- editor form controls use one component family:
+  - `/Users/michaelyuan/src/ilikecalculus.com/src/components/ui/editor-controls.tsx`
 - usage:
   - works filters
   - contact channel links
   - slideshow top actions (`next project`, `back`, `next`)
+  - where + works editor textareas use `EditorTextarea` rather than raw textarea styling
 
 ## consistency rules
 
@@ -53,6 +57,9 @@
   - same hover behavior and underline treatment via `.text-action`
   - avoid ad hoc per-page hover colors for this pattern
   - do not compose raw `text-action` classes in markup; use `TextActionButton`, `TextActionLink`, or `TextActionLabel`
+- where route styling:
+  - route-specific spacing and surface values should live in `default.css` `--space-where-*` / `--surface-where-*` tokens
+  - avoid hard-coded `rem` values in `where.css` unless there is no meaningful token yet
 
 ## consistency check
 

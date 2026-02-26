@@ -1,14 +1,15 @@
 "use client";
 
 import { EditorStatus } from "@/components/ui/editor-controls";
-import { TextActionLabel, TextActionLink } from "@/components/ui/text-action";
+import {
+  NextProjectTextLink,
+  type NeighborProject,
+  ProjectViewToggle,
+} from "@/components/project-navigation";
 
 type ProjectActionsProps = {
   slideshowHref: string;
-  nextProject: {
-    href: string;
-    title: string;
-  } | null;
+  nextProject: NeighborProject | null;
   isEditMode: boolean;
   isLoadingEditorState: boolean;
   isSavingInline: boolean;
@@ -31,21 +32,15 @@ export function ProjectActions({
 }: ProjectActionsProps) {
   return (
     <div className="project-thumbnails__actions">
-      <div className="project-thumbnails__view-toggle" aria-label="Project view">
-        <TextActionLabel underline="underline">thumbnails</TextActionLabel>
-        <span className="project-thumbnails__view-separator" aria-hidden="true">
-          /
-        </span>
-        <TextActionLink href={slideshowHref} underline="hover" data-testid="thumbnail-page-slideshow-link">
-          slideshow
-        </TextActionLink>
-      </div>
+      <ProjectViewToggle
+        activeView="thumbnails"
+        otherHref={slideshowHref}
+        className="project-thumbnails__view-toggle"
+        separatorClassName="project-thumbnails__view-separator"
+        linkTestId="thumbnail-page-slideshow-link"
+      />
 
-      {nextProject ? (
-        <TextActionLink href={nextProject.href} underline="hover" data-testid="thumbnail-page-next-project-link">
-          next project -&gt; {nextProject.title}
-        </TextActionLink>
-      ) : null}
+      <NextProjectTextLink nextProject={nextProject} testId="thumbnail-page-next-project-link" />
 
       {isEditMode && (isLoadingEditorState || isSavingInline || isUploadingPhoto || isSavingPhotoOrder) ? (
         <EditorStatus>saving...</EditorStatus>

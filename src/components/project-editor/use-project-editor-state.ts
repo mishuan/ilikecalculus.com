@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import {
   useEffect,
@@ -15,13 +16,13 @@ import { useEditMode } from "@/hooks/use-edit-mode";
 import {
   createCategory,
   deleteProjectPhoto,
-  fetchEditorState,
   reorderProjectPhotos,
   updateProject,
   uploadProjectPhoto,
   type EditorStatePayload,
 } from "@/lib/editor-api-client";
 import { normalizeCategory } from "@/lib/content-schema";
+import { loadEditorState, runEditorMutation } from "@/lib/editor-request-state";
 
 function reorderBySrc(values: string[], draggingSrc: string, targetSrc: string) {
   const startIndex = values.indexOf(draggingSrc);
@@ -122,28 +123,15 @@ export function useProjectEditorState({
     }
 
     let isCancelled = false;
-    const run = async () => {
-      setIsLoadingEditorState(true);
-      setInlineError("");
 
-      try {
-        const payload = await fetchEditorState();
-        if (!isCancelled) {
-          setEditorState(payload);
-        }
-      } catch (error) {
-        if (!isCancelled) {
-          const message = error instanceof Error ? error.message : "Unable to load edit state.";
-          setInlineError(message);
-        }
-      } finally {
-        if (!isCancelled) {
-          setIsLoadingEditorState(false);
-        }
-      }
-    };
+    void loadEditorState({
+      setLoading: setIsLoadingEditorState,
+      setError: setInlineError,
+      onLoaded: setEditorState,
+      errorMessage: "Unable to load edit state.",
+      isCancelled: () => isCancelled,
+    });
 
-    void run();
     return () => {
       isCancelled = true;
     };
@@ -170,26 +158,23 @@ export function useProjectEditorState({
       return;
     }
 
-    setIsSavingInline(true);
-    setInlineError("");
-    setInlineStatus("");
-
-    try {
-      const payload = await updateProject(project.slug, {
-        title: nextValues.title.trim(),
-        description: nextValues.description,
-        categories: nextValues.categories,
-      });
-
-      setEditorState(payload);
-      setInlineStatus("Saved.");
-      router.refresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to save project edits.";
-      setInlineError(message);
-    } finally {
-      setIsSavingInline(false);
-    }
+    await runEditorMutation({
+      setPending: setIsSavingInline,
+      setError: setInlineError,
+      setStatus: setInlineStatus,
+      run: () =>
+        updateProject(project.slug, {
+          title: nextValues.title.trim(),
+          description: nextValues.description,
+          categories: nextValues.categories,
+        }),
+      successMessage: "Saved.",
+      errorMessage: "Unable to save project edits.",
+      onSuccess: (payload) => {
+        setEditorState(payload);
+        router.refresh();
+      },
+    });
   };
 
   const savePhotoOrder = async (nextOrder: string[], fallbackOrder: string[]) => {
@@ -197,23 +182,21 @@ export function useProjectEditorState({
       return;
     }
 
-    setIsSavingPhotoOrder(true);
-    setInlineError("");
-    setInlineStatus("");
-
-    try {
-      const payload = await reorderProjectPhotos(project.slug, nextOrder);
-
-      setEditorState(payload);
-      setInlineStatus("Photo order saved.");
-      router.refresh();
-    } catch (error) {
-      setPhotoOrderDraft(fallbackOrder);
-      const message = error instanceof Error ? error.message : "Unable to save photo order.";
-      setInlineError(message);
-    } finally {
-      setIsSavingPhotoOrder(false);
-    }
+    await runEditorMutation({
+      setPending: setIsSavingPhotoOrder,
+      setError: setInlineError,
+      setStatus: setInlineStatus,
+      run: () => reorderProjectPhotos(project.slug, nextOrder),
+      successMessage: "Photo order saved.",
+      errorMessage: "Unable to save photo order.",
+      onSuccess: (payload) => {
+        setEditorState(payload);
+        router.refresh();
+      },
+      onError: () => {
+        setPhotoOrderDraft(fallbackOrder);
+      },
+    });
   };
 
   const handleReorderPhoto = (draggingSrc: string, targetSrc: string) => {
@@ -288,34 +271,33 @@ export function useProjectEditorState({
       return;
     }
 
-    setIsAddingCategory(true);
-    setInlineError("");
-    setInlineStatus("");
+    const createPayload = await runEditorMutation({
+      setPending: setIsAddingCategory,
+      setError: setInlineError,
+      setStatus: setInlineStatus,
+      run: () => createCategory(rawCategory),
+      errorMessage: "Unable to add category.",
+    });
 
-    try {
-      const createPayload = await createCategory(rawCategory);
-
-      setEditorState(createPayload);
-      const normalizedCategory = normalizeCategory(rawCategory);
-      const nextCategories = categoryDraft.includes(normalizedCategory)
-        ? categoryDraft
-        : [...categoryDraft, normalizedCategory];
-
-      setCategoryDraft(nextCategories);
-      setNewCategoryDraft("");
-      setShowCategoryCreator(false);
-
-      await saveInlineProject({
-        title: titleDraft,
-        description: descriptionDraft,
-        categories: nextCategories,
-      });
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to add category.";
-      setInlineError(message);
-    } finally {
-      setIsAddingCategory(false);
+    if (!createPayload) {
+      return;
     }
+
+    setEditorState(createPayload);
+    const normalizedCategory = normalizeCategory(rawCategory);
+    const nextCategories = categoryDraft.includes(normalizedCategory)
+      ? categoryDraft
+      : [...categoryDraft, normalizedCategory];
+
+    setCategoryDraft(nextCategories);
+    setNewCategoryDraft("");
+    setShowCategoryCreator(false);
+
+    await saveInlineProject({
+      title: titleDraft,
+      description: descriptionDraft,
+      categories: nextCategories,
+    });
   };
 
   const uploadPhoto = async (file: File) => {
@@ -323,23 +305,23 @@ export function useProjectEditorState({
       return;
     }
 
-    setIsUploadingPhoto(true);
-    setInlineError("");
-    setInlineStatus("");
+    await runEditorMutation({
+      setPending: setIsUploadingPhoto,
+      setError: setInlineError,
+      setStatus: setInlineStatus,
+      run: () => uploadProjectPhoto(project.slug, file, file.name),
+      successMessage: "Photo added.",
+      errorMessage: "Unable to add photo.",
+      onSuccess: (payload) => {
+        setEditorState(payload);
+        router.refresh();
+      },
+      onError: () => {
+        setIsUploadDragOver(false);
+      },
+    });
 
-    try {
-      const payload = await uploadProjectPhoto(project.slug, file, file.name);
-
-      setEditorState(payload);
-      setInlineStatus("Photo added.");
-      router.refresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to add photo.";
-      setInlineError(message);
-    } finally {
-      setIsUploadingPhoto(false);
-      setIsUploadDragOver(false);
-    }
+    setIsUploadDragOver(false);
   };
 
   const handleUploadInputChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -389,22 +371,20 @@ export function useProjectEditorState({
       return;
     }
 
-    setDeletingPhotoSrc(src);
-    setInlineError("");
-    setInlineStatus("");
-
-    try {
-      const payload = await deleteProjectPhoto(project.slug, index);
-
-      setEditorState(payload);
-      setInlineStatus("Photo deleted.");
-      router.refresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to delete photo.";
-      setInlineError(message);
-    } finally {
-      setDeletingPhotoSrc(null);
-    }
+    await runEditorMutation({
+      setPending: (isPending) => {
+        setDeletingPhotoSrc(isPending ? src : null);
+      },
+      setError: setInlineError,
+      setStatus: setInlineStatus,
+      run: () => deleteProjectPhoto(project.slug, index),
+      successMessage: "Photo deleted.",
+      errorMessage: "Unable to delete photo.",
+      onSuccess: (payload) => {
+        setEditorState(payload);
+        router.refresh();
+      },
+    });
   };
 
   return {

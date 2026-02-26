@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { EditorButton } from "@/components/ui/editor-controls";
 import { WhereEditor, type WhereLocationFormValue } from "@/components/where/where-editor";
+import { WhereTimelineSection } from "@/components/where/where-timeline-section";
 import type {
   ResolvedWhereLocation,
   WhereLocationMutationInput,
 } from "@/components/where/use-where-state";
-import { classNames } from "@/components/ui/class-names";
+import { toWhereLocationMutationInput } from "@/lib/where-location-input";
 
 type WhereTimelineProps = {
   currentLocation: ResolvedWhereLocation | null;
@@ -51,65 +51,6 @@ function toDraft(location: ResolvedWhereLocation): WhereLocationFormValue {
     coordinates: `${location.latitude}, ${location.longitude}`,
     atLocal: toLocalDateTimeValue(new Date(location.at)),
     note: location.note,
-  };
-}
-
-function parseCoordinatePair(rawValue: string): { latitude: number; longitude: number } | null {
-  const matches = rawValue.match(/[-+]?\d*\.?\d+/g);
-  if (!matches || matches.length < 2) {
-    return null;
-  }
-
-  const latitude = Number.parseFloat(matches[0]);
-  const longitude = Number.parseFloat(matches[1]);
-  if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
-    return null;
-  }
-
-  return { latitude, longitude };
-}
-
-function toMutationInput(value: WhereLocationFormValue): {
-  payload: WhereLocationMutationInput | null;
-  error: string;
-} {
-  const label = value.label.trim();
-  if (!label) {
-    return { payload: null, error: "Location name is required." };
-  }
-
-  const parsedCoordinates = parseCoordinatePair(value.coordinates);
-  if (!parsedCoordinates) {
-    return { payload: null, error: "Coordinates must include latitude and longitude." };
-  }
-
-  const { latitude, longitude } = parsedCoordinates;
-  if (!Number.isFinite(latitude) || latitude < -90 || latitude > 90) {
-    return { payload: null, error: "Latitude must be between -90 and 90." };
-  }
-
-  if (!Number.isFinite(longitude) || longitude < -180 || longitude > 180) {
-    return { payload: null, error: "Longitude must be between -180 and 180." };
-  }
-
-  if (!value.atLocal) {
-    return { payload: null, error: "Time is required." };
-  }
-
-  const date = new Date(value.atLocal);
-  if (Number.isNaN(date.getTime())) {
-    return { payload: null, error: "Time must be a valid datetime." };
-  }
-
-  return {
-    payload: {
-      label,
-      latitude,
-      longitude,
-      at: date.toISOString(),
-      note: value.note,
-    },
-    error: "",
   };
 }
 
@@ -175,7 +116,7 @@ export function WhereTimeline({
   };
 
   const handleCreate = async () => {
-    const parsed = toMutationInput(createDraft);
+    const parsed = toWhereLocationMutationInput(createDraft);
     if (!parsed.payload) {
       setCreateFormError(parsed.error);
       return;
@@ -199,7 +140,7 @@ export function WhereTimeline({
       return;
     }
 
-    const parsed = toMutationInput(editDraft);
+    const parsed = toWhereLocationMutationInput(editDraft);
     if (!parsed.payload) {
       setEditFormError(parsed.error);
       return;
@@ -211,6 +152,30 @@ export function WhereTimeline({
       setEditingLocationId(null);
     }
   };
+
+  const timelineSections = [
+    {
+      key: "current",
+      title: "current",
+      emptyText: "No current location yet.",
+      locations: currentLocation ? [currentLocation] : [],
+      variant: "current",
+    },
+    {
+      key: "upcoming",
+      title: "upcoming",
+      emptyText: "No upcoming locations yet.",
+      locations: upcomingLocations,
+      variant: "upcoming",
+    },
+    {
+      key: "past",
+      title: "past",
+      emptyText: "No past locations yet.",
+      locations: pastLocations,
+      variant: "past",
+    },
+  ] as const;
 
   return (
     <section className="where-timeline">
@@ -230,218 +195,32 @@ export function WhereTimeline({
         </div>
       ) : null}
 
-      <div className="where-timeline__group">
-        <h2 className="where-timeline__subhead">current</h2>
-        {!currentLocation ? (
-          <p className="where-timeline__empty">No current location yet.</p>
-        ) : (
-          <div className="where-entry-list">
-            {[currentLocation].map((location) => {
-              const isSelected = selectedLocationId === location.id;
-              const isLatest = latestPastLocationId === location.id;
-              const isUpdating = updatingLocationId === location.id;
-              const isDeleting = deletingLocationId === location.id;
-              const isEditing = editingLocationId === location.id;
-
-              return (
-                <article
-                  key={location.id}
-                  ref={(node) => registerEntryRef(location.id, node)}
-                  className={classNames(
-                    "where-entry",
-                    isSelected && "where-entry--selected",
-                    isLatest && "where-entry--latest",
-                  )}
-                >
-                  <button
-                    type="button"
-                    className="where-entry__main"
-                    onClick={() => onSelectLocation(location.id)}
-                  >
-                    <p className="where-entry__label">{location.label}</p>
-                    <p className="where-entry__time">{dateFormatter.format(new Date(location.at))}</p>
-                    {location.note ? <p className="where-entry__note">{location.note}</p> : null}
-                  </button>
-
-                  {isEditMode ? (
-                    <div className="where-entry__actions">
-                      <EditorButton
-                        onClick={() => openEditorForLocation(location)}
-                        disabled={isBusy}
-                      >
-                        edit
-                      </EditorButton>
-                      <EditorButton
-                        variant="danger"
-                        onClick={() => void onDeleteLocation(location.id)}
-                        disabled={isBusy}
-                      >
-                        {isDeleting ? "deleting..." : "delete"}
-                      </EditorButton>
-                    </div>
-                  ) : null}
-
-                  {isEditMode && isEditing ? (
-                    <div className="where-entry__editor">
-                      <WhereEditor
-                        title={`Edit ${location.label}`}
-                        value={editDraft}
-                        submitLabel={isUpdating ? "saving..." : "save"}
-                        disabled={isBusy}
-                        onChange={setEditDraft}
-                        onSubmit={() => void handleSaveEdit()}
-                        onCancel={() => setEditingLocationId(null)}
-                      />
-                      {editFormError ? <p className="where-editor__error">{editFormError}</p> : null}
-                    </div>
-                  ) : null}
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      <div className="where-timeline__group">
-        <h2 className="where-timeline__subhead">upcoming</h2>
-        {upcomingLocations.length === 0 ? (
-          <p className="where-timeline__empty">No upcoming locations yet.</p>
-        ) : (
-          <div className="where-entry-list">
-            {upcomingLocations.map((location) => {
-              const isSelected = selectedLocationId === location.id;
-              const isUpdating = updatingLocationId === location.id;
-              const isDeleting = deletingLocationId === location.id;
-              const isEditing = editingLocationId === location.id;
-
-              return (
-                <article
-                  key={location.id}
-                  ref={(node) => registerEntryRef(location.id, node)}
-                  className={classNames(
-                    "where-entry",
-                    "where-entry--future",
-                    isSelected && "where-entry--selected",
-                  )}
-                >
-                  <button
-                    type="button"
-                    className="where-entry__main"
-                    onClick={() => onSelectLocation(location.id)}
-                  >
-                    <p className="where-entry__label">{location.label}</p>
-                    <p className="where-entry__time">{dateFormatter.format(new Date(location.at))}</p>
-                    {location.note ? <p className="where-entry__note">{location.note}</p> : null}
-                  </button>
-
-                  {isEditMode ? (
-                    <div className="where-entry__actions">
-                      <EditorButton
-                        onClick={() => openEditorForLocation(location)}
-                        disabled={isBusy}
-                      >
-                        edit
-                      </EditorButton>
-                      <EditorButton
-                        variant="danger"
-                        onClick={() => void onDeleteLocation(location.id)}
-                        disabled={isBusy}
-                      >
-                        {isDeleting ? "deleting..." : "delete"}
-                      </EditorButton>
-                    </div>
-                  ) : null}
-
-                  {isEditMode && isEditing ? (
-                    <div className="where-entry__editor">
-                      <WhereEditor
-                        title={`Edit ${location.label}`}
-                        value={editDraft}
-                        submitLabel={isUpdating ? "saving..." : "save"}
-                        disabled={isBusy}
-                        onChange={setEditDraft}
-                        onSubmit={() => void handleSaveEdit()}
-                        onCancel={() => setEditingLocationId(null)}
-                      />
-                      {editFormError ? <p className="where-editor__error">{editFormError}</p> : null}
-                    </div>
-                  ) : null}
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </div>
-
-      <div className="where-timeline__group">
-        <h2 className="where-timeline__subhead">past</h2>
-        {pastLocations.length === 0 ? (
-          <p className="where-timeline__empty">No past locations yet.</p>
-        ) : (
-          <div className="where-entry-list">
-            {pastLocations.map((location) => {
-              const isSelected = selectedLocationId === location.id;
-              const isUpdating = updatingLocationId === location.id;
-              const isDeleting = deletingLocationId === location.id;
-              const isEditing = editingLocationId === location.id;
-
-              return (
-                <article
-                  key={location.id}
-                  ref={(node) => registerEntryRef(location.id, node)}
-                  className={classNames(
-                    "where-entry",
-                    isSelected && "where-entry--selected",
-                  )}
-                >
-                  <button
-                    type="button"
-                    className="where-entry__main"
-                    onClick={() => onSelectLocation(location.id)}
-                  >
-                    <p className="where-entry__label">{location.label}</p>
-                    <p className="where-entry__time">{dateFormatter.format(new Date(location.at))}</p>
-                    {location.note ? <p className="where-entry__note">{location.note}</p> : null}
-                  </button>
-
-                  {isEditMode ? (
-                    <div className="where-entry__actions">
-                      <EditorButton
-                        onClick={() => openEditorForLocation(location)}
-                        disabled={isBusy}
-                      >
-                        edit
-                      </EditorButton>
-                      <EditorButton
-                        variant="danger"
-                        onClick={() => void onDeleteLocation(location.id)}
-                        disabled={isBusy}
-                      >
-                        {isDeleting ? "deleting..." : "delete"}
-                      </EditorButton>
-                    </div>
-                  ) : null}
-
-                  {isEditMode && isEditing ? (
-                    <div className="where-entry__editor">
-                      <WhereEditor
-                        title={`Edit ${location.label}`}
-                        value={editDraft}
-                        submitLabel={isUpdating ? "saving..." : "save"}
-                        disabled={isBusy}
-                        onChange={setEditDraft}
-                        onSubmit={() => void handleSaveEdit()}
-                        onCancel={() => setEditingLocationId(null)}
-                      />
-                      {editFormError ? <p className="where-editor__error">{editFormError}</p> : null}
-                    </div>
-                  ) : null}
-                </article>
-              );
-            })}
-          </div>
-        )}
-      </div>
+      {timelineSections.map((section) => (
+        <WhereTimelineSection
+          key={section.key}
+          title={section.title}
+          emptyText={section.emptyText}
+          locations={section.locations}
+          variant={section.variant}
+          selectedLocationId={selectedLocationId}
+          latestPastLocationId={latestPastLocationId}
+          isEditMode={isEditMode}
+          isBusy={isBusy}
+          updatingLocationId={updatingLocationId}
+          deletingLocationId={deletingLocationId}
+          editingLocationId={editingLocationId}
+          editDraft={editDraft}
+          editFormError={editFormError}
+          dateFormatter={dateFormatter}
+          registerEntryRef={registerEntryRef}
+          onSelectLocation={onSelectLocation}
+          onOpenEditor={openEditorForLocation}
+          onDeleteLocation={(id) => void onDeleteLocation(id)}
+          onEditDraftChange={setEditDraft}
+          onSaveEdit={() => void handleSaveEdit()}
+          onCancelEdit={() => setEditingLocationId(null)}
+        />
+      ))}
     </section>
   );
 }

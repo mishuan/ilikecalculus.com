@@ -1,6 +1,6 @@
 "use client";
 
-import { EditorButton, EditorInput } from "@/components/ui/editor-controls";
+import { EditorButton, EditorInput, EditorTextarea } from "@/components/ui/editor-controls";
 
 export type WhereLocationFormValue = {
   label: string;
@@ -65,8 +65,8 @@ export function WhereEditor({
 
       <label className="where-editor__field">
         <span className="where-editor__label">note</span>
-        <textarea
-          className="editor-input where-editor__textarea"
+        <EditorTextarea
+          className="where-editor__textarea"
           value={value.note}
           onChange={(event) => onChange({ ...value, note: event.target.value })}
           disabled={disabled}

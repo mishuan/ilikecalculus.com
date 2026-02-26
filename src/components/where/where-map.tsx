@@ -16,6 +16,8 @@ type WhereMapProps = {
 
 const MAP_WIDTH = 980;
 const MAP_HEIGHT = 520;
+const GRATICULE_LATITUDES = [-60, -30, 0, 30, 60] as const;
+const GRATICULE_LONGITUDES = [-120, -60, 0, 60, 120] as const;
 type CoordinatePair = readonly [latitude: number, longitude: number];
 type LandGeometry = Polygon | MultiPolygon;
 const LAND_AREA_MIN = 90;
@@ -54,9 +56,22 @@ type PinchGesture = {
 
 const MIN_CAMERA_SCALE = 1;
 const MAX_CAMERA_SCALE = 6;
+const FOCUS_SCALE = 1.14;
 const WHEEL_ZOOM_SPEED = 0.0034;
 const INTERACTION_IDLE_MS = 120;
 const WORLD_X_OFFSETS = [-MAP_WIDTH, 0, MAP_WIDTH] as const;
+const MARKER_RADIUS = {
+  base: 3.2,
+  hovered: 3.9,
+  selected: 4.6,
+  latest: 4.8,
+} as const;
+const MARKER_RING_RADIUS = {
+  hovered: 6.6,
+  upcomingDestination: 8.2,
+  selected: 8,
+} as const;
+const MARKER_HIT_RADIUS = 9.5;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -403,6 +418,30 @@ function routeSegmentPieces(from: ResolvedWhereLocation, to: ResolvedWhereLocati
   ];
 }
 
+function resolveMarkerRadius({
+  isLatestPast,
+  isSelected,
+  isHovered,
+}: {
+  isLatestPast: boolean;
+  isSelected: boolean;
+  isHovered: boolean;
+}) {
+  if (isLatestPast) {
+    return MARKER_RADIUS.latest;
+  }
+
+  if (isSelected) {
+    return MARKER_RADIUS.selected;
+  }
+
+  if (isHovered) {
+    return MARKER_RADIUS.hovered;
+  }
+
+  return MARKER_RADIUS.base;
+}
+
 export function WhereMap({
   locations,
   selectedLocationId,
@@ -465,12 +504,11 @@ export function WhereMap({
       return { scale: 1, translateX: 0, translateY: 0 };
     }
 
-    const focusScale = 1.14;
-    const targetX = MAP_WIDTH * 0.5 - selectedPoint.x * focusScale;
-    const targetY = MAP_HEIGHT * 0.5 - selectedPoint.y * focusScale;
+    const targetX = MAP_WIDTH * 0.5 - selectedPoint.x * FOCUS_SCALE;
+    const targetY = MAP_HEIGHT * 0.5 - selectedPoint.y * FOCUS_SCALE;
 
     return clampView({
-      scale: focusScale,
+      scale: FOCUS_SCALE,
       translateX: targetX,
       translateY: targetY,
     });
@@ -818,19 +856,19 @@ export function WhereMap({
         >
           <defs>
             <linearGradient id="where-map-bg" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0%" stopColor="color-mix(in srgb, var(--paper) 92%, white)" />
-              <stop offset="100%" stopColor="color-mix(in srgb, var(--bg) 82%, var(--paper))" />
+              <stop offset="0%" stopColor="var(--surface-where-map-bg-start)" />
+              <stop offset="100%" stopColor="var(--surface-where-map-bg-end)" />
             </linearGradient>
           </defs>
 
           <rect width={MAP_WIDTH} height={MAP_HEIGHT} fill="url(#where-map-bg)" />
 
           <g className="where-map__graticule" aria-hidden="true">
-            {[-60, -30, 0, 30, 60].map((latitude) => {
+            {GRATICULE_LATITUDES.map((latitude) => {
               const y = project(latitude, 0).y;
               return <line key={`lat-${latitude}`} x1={0} y1={y} x2={MAP_WIDTH} y2={y} />;
             })}
-            {[-120, -60, 0, 60, 120].map((longitude) => {
+            {GRATICULE_LONGITUDES.map((longitude) => {
               const x = project(0, longitude).x;
               return <line key={`lng-${longitude}`} x1={x} y1={0} x2={x} y2={MAP_HEIGHT} />;
             })}
@@ -878,8 +916,7 @@ export function WhereMap({
                   const isLatestPast = latestPastLocationId === location.id;
                   const isUpcomingDestination = nextUpcomingLocationId === location.id;
                   const isHovered = hoveredLocationId === location.id;
-                  const markerRadius = isLatestPast ? 4.8 : isSelected ? 4.6 : isHovered ? 3.9 : 3.2;
-                  const hitRadius = 9.5;
+                  const markerRadius = resolveMarkerRadius({ isLatestPast, isSelected, isHovered });
 
                   return (
                     <g key={location.id}>
@@ -887,7 +924,7 @@ export function WhereMap({
                         <circle
                           cx={point.x}
                           cy={point.y}
-                          r={6.6}
+                          r={MARKER_RING_RADIUS.hovered}
                           className="where-map__marker-ring where-map__marker-ring--hovered"
                           aria-hidden="true"
                         />
@@ -896,7 +933,7 @@ export function WhereMap({
                         <circle
                           cx={point.x}
                           cy={point.y}
-                          r={8.2}
+                          r={MARKER_RING_RADIUS.upcomingDestination}
                           className="where-map__marker-ring where-map__marker-ring--upcoming-destination"
                           aria-hidden="true"
                         />
@@ -905,7 +942,7 @@ export function WhereMap({
                         <circle
                           cx={point.x}
                           cy={point.y}
-                          r={8}
+                          r={MARKER_RING_RADIUS.selected}
                           className="where-map__marker-ring where-map__marker-ring--selected"
                           aria-hidden="true"
                         />
@@ -925,7 +962,7 @@ export function WhereMap({
                       <circle
                         cx={point.x}
                         cy={point.y}
-                        r={hitRadius}
+                        r={MARKER_HIT_RADIUS}
                         className="where-map__marker-hit"
                         aria-hidden="true"
                         onPointerEnter={() => {

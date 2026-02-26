@@ -2,6 +2,7 @@ import type {
   ButtonHTMLAttributes,
   HTMLAttributes,
   InputHTMLAttributes,
+  TextareaHTMLAttributes,
 } from "react";
 import { classNames } from "@/components/ui/class-names";
 
@@ -9,6 +10,12 @@ type EditorInputProps = InputHTMLAttributes<HTMLInputElement>;
 
 export function EditorInput({ className, ...props }: EditorInputProps) {
   return <input className={classNames("editor-input", className)} {...props} />;
+}
+
+type EditorTextareaProps = TextareaHTMLAttributes<HTMLTextAreaElement>;
+
+export function EditorTextarea({ className, ...props }: EditorTextareaProps) {
+  return <textarea className={classNames("editor-input", "editor-textarea", className)} {...props} />;
 }
 
 type EditorButtonVariant = "default" | "danger";

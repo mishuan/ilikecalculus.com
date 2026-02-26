@@ -1,4 +1,4 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, HTMLAttributes } from "react";
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes, HTMLAttributes, ReactNode } from "react";
 import { classNames } from "@/components/ui/class-names";
 
 type TextActionTone = "default" | "muted";
@@ -48,6 +48,47 @@ export function TextActionLink({
   ...props
 }: TextActionLinkProps) {
   return <a className={textActionClassName({ tone, underline, className })} {...props} />;
+}
+
+type ExternalTextLinkProps = Omit<TextActionLinkProps, "target"> & {
+  marker?: ReactNode;
+  markerClassName?: string;
+  showMarker?: boolean;
+};
+
+function mergeExternalRel(value?: string) {
+  const tokens = new Set((value ?? "").split(/\s+/).filter(Boolean));
+  tokens.add("noopener");
+  tokens.add("noreferrer");
+  return Array.from(tokens).join(" ");
+}
+
+export function ExternalTextLink({
+  underline = "hover",
+  marker = "↗",
+  markerClassName,
+  showMarker = true,
+  rel,
+  className,
+  children,
+  ...props
+}: ExternalTextLinkProps) {
+  return (
+    <TextActionLink
+      {...props}
+      target="_blank"
+      rel={mergeExternalRel(rel)}
+      underline={underline}
+      className={classNames("external-text-link", className)}
+    >
+      {children}
+      {showMarker ? (
+        <span className={classNames("external-text-link__marker", markerClassName)} aria-hidden="true">
+          {marker}
+        </span>
+      ) : null}
+    </TextActionLink>
+  );
 }
 
 type TextActionLabelProps = HTMLAttributes<HTMLSpanElement> & TextActionOptions;

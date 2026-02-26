@@ -183,6 +183,6 @@
   }
 
   .where-map {
-    min-height: clamp(290px, 48vh, 420px);
+    min-height: var(--size-where-map-min-height-mobile);
   }
 }

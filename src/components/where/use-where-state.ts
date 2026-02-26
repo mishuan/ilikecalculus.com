@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { WhereLocation } from "@/data/site-content";
 import { useEditMode } from "@/hooks/use-edit-mode";
+import type { WhereLocationMutationInput } from "@/lib/where-location-input";
 import {
   createLocation as createEditorLocation,
   deleteLocation as deleteEditorLocation,
@@ -16,14 +17,7 @@ export type ResolvedWhereLocation = WhereLocation & {
   atMs: number;
   isFuture: boolean;
 };
-
-export type WhereLocationMutationInput = {
-  label: string;
-  latitude: number;
-  longitude: number;
-  at: string;
-  note: string;
-};
+export type { WhereLocationMutationInput } from "@/lib/where-location-input";
 
 type UseWhereStateInput = {
   initialLocations: WhereLocation[];

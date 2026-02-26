@@ -4,6 +4,7 @@ import {
   EditorButton,
   EditorChip,
   EditorInput,
+  EditorTextarea,
 } from "@/components/ui/editor-controls";
 import { TextActionLink } from "@/components/ui/text-action";
 
@@ -66,7 +67,7 @@ export function NewProjectPanel({
         />
       </div>
 
-      <textarea
+      <EditorTextarea
         value={newProjectDescription}
         className="works-new-project__description"
         placeholder="project description"

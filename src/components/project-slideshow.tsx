@@ -8,19 +8,19 @@ import {
   type Project,
   type ProjectCategory,
 } from "@/data/site-content";
-import { TextActionButton, TextActionLabel, TextActionLink } from "@/components/ui/text-action";
-
-type NeighborProject = {
-  href: string;
-  title: string;
-} | null;
+import { TextActionButton } from "@/components/ui/text-action";
+import {
+  NextProjectTextLink,
+  type NeighborProject,
+  ProjectViewToggle,
+} from "@/components/project-navigation";
 
 type ProjectSlideshowProps = {
   project: Project;
   activeCategory: ProjectCategory;
   initialIndex?: number;
-  nextProject: NeighborProject;
-  previousProject: NeighborProject;
+  nextProject: NeighborProject | null;
+  previousProject: NeighborProject | null;
 };
 
 function clampIndex(index: number, total: number) {
@@ -138,20 +138,15 @@ export function ProjectSlideshow({
               <p className="viewer-bottom__description">No photos yet for this project.</p>
             </div>
             <div className="viewer-bottom__left">
-              <div className="viewer-bottom__view-toggle" aria-label="Project view">
-                <TextActionLabel className="viewer-bottom__mode-label">slideshow</TextActionLabel>
-                <span className="viewer-bottom__view-separator" aria-hidden="true">
-                  /
-                </span>
-                <TextActionLink
-                  href={thumbnailsHref}
-                  underline="hover"
-                  className="viewer-bottom__thumbnail-link"
-                  data-testid="slideshow-thumbnail-view-link"
-                >
-                  thumbnails
-                </TextActionLink>
-              </div>
+              <ProjectViewToggle
+                activeView="slideshow"
+                otherHref={thumbnailsHref}
+                className="viewer-bottom__view-toggle"
+                separatorClassName="viewer-bottom__view-separator"
+                activeLabelClassName="viewer-bottom__mode-label"
+                linkClassName="viewer-bottom__thumbnail-link"
+                linkTestId="slideshow-thumbnail-view-link"
+              />
             </div>
           </footer>
         </article>
@@ -213,26 +208,16 @@ export function ProjectSlideshow({
 
         <footer className="viewer-bottom">
           <div className="viewer-bottom__left">
-            <div className="viewer-bottom__view-toggle project-thumbnails__view-toggle" aria-label="Project view">
-              <TextActionLabel underline="underline">slideshow</TextActionLabel>
-              <span className="viewer-bottom__view-separator project-thumbnails__view-separator" aria-hidden="true">
-                /
-              </span>
-              <TextActionLink
-                href={thumbnailsHref}
-                underline="hover"
-                data-testid="slideshow-thumbnail-view-link"
-              >
-                thumbnails
-              </TextActionLink>
-            </div>
+            <ProjectViewToggle
+              activeView="slideshow"
+              otherHref={thumbnailsHref}
+              className="viewer-bottom__view-toggle project-thumbnails__view-toggle"
+              separatorClassName="viewer-bottom__view-separator project-thumbnails__view-separator"
+              linkTestId="slideshow-thumbnail-view-link"
+            />
           </div>
           <div className="viewer-bottom__project">
-            {nextProject ? (
-              <TextActionLink href={nextProject.href} underline="hover">
-                next project -&gt; {nextProject.title}
-              </TextActionLink>
-            ) : null}
+            <NextProjectTextLink nextProject={nextProject} />
             <p className="slideshow__counter">
               {index + 1} / {total}
             </p>

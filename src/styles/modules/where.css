@@ -24,7 +24,7 @@
 
 .where-timeline__group {
   display: grid;
-  gap: 0.55rem;
+  gap: var(--space-where-group-gap);
 }
 
 .where-timeline__subhead,
@@ -37,9 +37,9 @@
 
 .where-timeline__editor-block {
   border-bottom: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
-  padding-bottom: 0.75rem;
+  padding-bottom: var(--space-where-divider-padding);
   display: grid;
-  gap: 0.45rem;
+  gap: var(--space-where-editor-block-gap);
 }
 
 .where-timeline__empty {
@@ -56,13 +56,13 @@
 .where-entry {
   border: 1px solid color-mix(in srgb, var(--line) 82%, transparent);
   background: var(--surface-where-panel-muted);
-  padding: 0.58rem 0.64rem;
+  padding: var(--space-where-entry-padding-y) var(--space-where-entry-padding-x);
   display: grid;
-  gap: 0.46rem;
+  gap: var(--space-where-entry-inner-gap);
 }
 
 .where-entry--latest {
-  padding: 0.74rem 0.8rem;
+  padding: var(--space-where-entry-padding-y-latest) var(--space-where-entry-padding-x-latest);
   background: color-mix(in srgb, var(--paper) 82%, white);
 }
 
@@ -82,27 +82,27 @@
   margin: 0;
   text-align: left;
   display: grid;
-  gap: 0.22rem;
+  gap: var(--space-where-entry-main-gap);
   color: var(--ink);
   cursor: pointer;
 }
 
 .where-entry__label {
   margin: 0;
-  font-size: 0.92rem;
+  font-size: var(--font-size-where-entry-label);
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: var(--letter-spacing-where-entry-label);
 }
 
 .where-entry--latest .where-entry__label {
-  font-size: 1.02rem;
+  font-size: var(--font-size-where-entry-label-latest);
 }
 
 .where-entry__time {
   margin: 0;
   color: var(--muted);
   font-size: var(--font-size-ui-sm);
-  letter-spacing: 0.02em;
+  letter-spacing: var(--letter-spacing-where-entry-time);
 }
 
 .where-entry__note {
@@ -115,29 +115,29 @@
 .where-entry__actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: var(--space-where-entry-actions-gap);
 }
 
 .where-entry__editor {
   border-top: 1px solid color-mix(in srgb, var(--line) 88%, transparent);
-  padding-top: 0.58rem;
+  padding-top: var(--space-where-entry-padding-y);
 }
 
 .where-editor {
   display: grid;
-  gap: 0.5rem;
+  gap: var(--space-where-editor-gap);
 }
 
 .where-editor__grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 0.44rem 0.5rem;
+  gap: var(--space-where-editor-grid-gap);
 }
 
 .where-editor__field {
   margin: 0;
   display: grid;
-  gap: 0.24rem;
+  gap: var(--space-where-editor-field-gap);
 }
 
 .where-editor__field--full {
@@ -151,16 +151,14 @@
 }
 
 .where-editor__textarea {
-  width: 100%;
-  min-height: 4rem;
-  line-height: 1.35;
-  resize: vertical;
+  min-height: var(--size-where-editor-textarea-min-height);
+  line-height: var(--line-height-where-editor-textarea);
 }
 
 .where-editor__actions {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  gap: var(--space-where-entry-actions-gap);
 }
 
 .where-editor__error {
@@ -171,7 +169,7 @@
 
 .where-map-panel {
   display: grid;
-  gap: 0.58rem;
+  gap: var(--space-where-map-panel-gap);
 }
 
 .where-map {
@@ -312,8 +310,8 @@
 
 .where-map__empty {
   position: absolute;
-  left: 0.7rem;
-  bottom: 0.56rem;
+  left: var(--space-where-map-empty-inline);
+  bottom: var(--space-where-map-empty-block);
   margin: 0;
   color: var(--muted);
   font-size: var(--font-size-caption);

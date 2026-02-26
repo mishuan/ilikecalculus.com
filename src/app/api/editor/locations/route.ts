@@ -8,58 +8,9 @@ import {
 } from "@/lib/content-store";
 import type { LocationEntry } from "@/data/content-types";
 import { editorGuardResponse } from "@/lib/editor-guard";
+import { parseWhereLocationCreateBody } from "@/lib/where-location-input";
 
 export const runtime = "nodejs";
-
-function parseCoordinate(
-  value: unknown,
-  fieldPath: "latitude" | "longitude",
-  min: number,
-  max: number,
-) {
-  if (typeof value !== "number" || !Number.isFinite(value)) {
-    throw new Error(`${fieldPath} must be a finite number`);
-  }
-
-  if (value < min || value > max) {
-    throw new Error(`${fieldPath} must be between ${min} and ${max}`);
-  }
-
-  return value;
-}
-
-function parseAt(value: unknown) {
-  if (typeof value !== "string" || value.trim().length === 0) {
-    throw new Error("at is required");
-  }
-
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    throw new Error("at must be a valid datetime");
-  }
-
-  return date.toISOString();
-}
-
-function parseLabel(value: unknown) {
-  if (typeof value !== "string" || value.trim().length === 0) {
-    throw new Error("label is required");
-  }
-
-  return value.trim();
-}
-
-function parseNote(value: unknown) {
-  if (value === undefined) {
-    return "";
-  }
-
-  if (typeof value !== "string") {
-    throw new Error("note must be a string");
-  }
-
-  return value;
-}
 
 export async function POST(request: NextRequest) {
   const guard = editorGuardResponse();
@@ -78,11 +29,7 @@ export async function POST(request: NextRequest) {
 
     const nextLocation: LocationEntry = {
       id: randomUUID(),
-      label: parseLabel(body.label),
-      latitude: parseCoordinate(body.latitude, "latitude", -90, 90),
-      longitude: parseCoordinate(body.longitude, "longitude", -180, 180),
-      at: parseAt(body.at),
-      note: parseNote(body.note),
+      ...parseWhereLocationCreateBody(body),
     };
 
     const { workspace } = await readContentBundle();

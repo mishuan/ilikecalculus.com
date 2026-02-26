@@ -1,54 +1,28 @@
 import { NextResponse } from "next/server";
-
-type ContactPayload = {
-  name?: string;
-  email?: string;
-  subject?: string;
-  message?: string;
-  website?: string;
-};
+import { parseContactSubmission } from "@/lib/contact-schema";
 
 const DEFAULT_TO_EMAIL = "michael@ilikecalculus.com";
 const DEFAULT_FROM_EMAIL = "contact form <onboarding@resend.dev>";
 
-function cleanText(value: unknown) {
-  return typeof value === "string" ? value.trim() : "";
-}
-
-function isValidEmail(value: string) {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-}
-
 export async function POST(request: Request) {
-  let payload: ContactPayload;
+  let rawPayload: unknown;
 
   try {
-    payload = (await request.json()) as ContactPayload;
+    rawPayload = await request.json();
   } catch {
     return NextResponse.json({ message: "Invalid request body." }, { status: 400 });
   }
 
-  const name = cleanText(payload.name);
-  const email = cleanText(payload.email);
-  const subject = cleanText(payload.subject);
-  const message = cleanText(payload.message);
-  const website = cleanText(payload.website);
+  const parsed = parseContactSubmission(rawPayload);
+  if (!parsed.ok) {
+    return NextResponse.json({ message: parsed.message }, { status: 400 });
+  }
 
-  if (website.length > 0) {
+  if (parsed.isSpam) {
     return NextResponse.json({ message: "Message sent." }, { status: 200 });
   }
 
-  if (!name || !email || !subject || !message) {
-    return NextResponse.json({ message: "Please complete all required fields." }, { status: 400 });
-  }
-
-  if (!isValidEmail(email)) {
-    return NextResponse.json({ message: "Please provide a valid email address." }, { status: 400 });
-  }
-
-  if (subject.length > 160 || message.length > 5000 || name.length > 120) {
-    return NextResponse.json({ message: "Message is too long." }, { status: 400 });
-  }
+  const { name, email, subject, message } = parsed.payload;
 
   const apiKey = process.env.RESEND_API_KEY;
   const to = process.env.CONTACT_TO_EMAIL || DEFAULT_TO_EMAIL;

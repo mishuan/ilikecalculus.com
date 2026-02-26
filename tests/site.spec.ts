@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import workspaceContent from "../content/workspace.json";
 import { projectsBySlug } from "../src/data/site-content";
 
 test("home filters rows by category", async ({ page }) => {
@@ -37,6 +38,14 @@ test("primary navigation routes work", async ({ page }) => {
   await page.getByRole("link", { name: "press" }).click();
   await expect(page).toHaveURL(/\/press$/);
   await expect(page.getByRole("heading", { name: "Press Coverage" })).toBeVisible();
+});
+
+test("press page renders all configured press entries", async ({ page }) => {
+  await page.goto("/press");
+  await expect(page.locator(".press-item")).toHaveCount(workspaceContent.press.length);
+  await expect(
+    page.getByRole("link", { name: /a shockingly modernist project and others: four books of photographs/i }),
+  ).toBeVisible();
 });
 
 test("works project page slideshow advances into next project", async ({ page }) => {
@@ -122,7 +131,7 @@ test("project thumbnails page renders all project images", async ({ page }) => {
   await expect(page.getByText("A new perspective on an iconic subject.")).toBeVisible();
   await expect(page.getByTestId("thumbnail-page-slideshow-link")).toBeVisible();
   await expect(page.getByTestId("thumbnail-page-next-project-link")).toContainText(
-    /next project:\s*urban courts/i,
+    /next project\s*[-:>]+\s*urban courts/i,
   );
   await expect(page.locator("[data-testid^='project-thumbnail-']")).toHaveCount(
     projectsBySlug["the-bridge-reconstructed"].images.length,
@@ -207,7 +216,8 @@ test("edit mode toggle is visible in development", async ({ page }) => {
 test("where page renders timeline and map", async ({ page }) => {
   await page.goto("/where");
   await expect(page.getByRole("heading", { name: "where is michael" })).toBeVisible();
-  await expect(page.getByText("past & current")).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "current" })).toBeVisible();
+  await expect(page.getByRole("heading", { level: 2, name: "past" })).toBeVisible();
   await expect(page.getByText("upcoming")).toBeVisible();
   await expect(page.locator(".where-map")).toBeVisible();
 

@@ -1,4 +1,5 @@
 "use client";
+/* eslint-disable react-hooks/set-state-in-effect */
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -13,12 +14,12 @@ import { useEditMode } from "@/hooks/use-edit-mode";
 import {
   createCategory,
   createProject as createEditorProject,
-  fetchEditorState,
   reorderCategories,
   reorderProjects,
   type EditorStatePayload,
 } from "@/lib/editor-api-client";
 import { normalizeSlug } from "@/lib/content-schema";
+import { loadEditorState, runEditorMutation } from "@/lib/editor-request-state";
 
 function reorderByValue(values: string[], draggingValue: string, targetValue: string) {
   const startIndex = values.indexOf(draggingValue);
@@ -62,24 +63,6 @@ export function useWorksEditorState() {
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [newProjectLink, setNewProjectLink] = useState<{ slug: string; category: string } | null>(null);
 
-  const refreshEditorState = async () => {
-    setIsEditorLoading(true);
-    setEditorError("");
-
-    try {
-      const payload = await fetchEditorState();
-      setEditorState(payload);
-      setProjectOrderDraft(payload.workspace.projectOrder);
-      setCategoryOrderDraft(payload.workspace.categories);
-      setEditorStatus("");
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Failed to load editor state";
-      setEditorError(message);
-    } finally {
-      setIsEditorLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (!isEditMode) {
       setEditorState(null);
@@ -92,7 +75,24 @@ export function useWorksEditorState() {
       setNewProjectLink(null);
       return;
     }
-    void refreshEditorState();
+
+    let isCancelled = false;
+    void loadEditorState({
+      setLoading: setIsEditorLoading,
+      setError: setEditorError,
+      onLoaded: (payload) => {
+        setEditorState(payload);
+        setProjectOrderDraft(payload.workspace.projectOrder);
+        setCategoryOrderDraft(payload.workspace.categories);
+        setEditorStatus("");
+      },
+      errorMessage: "Failed to load editor state",
+      isCancelled: () => isCancelled,
+    });
+
+    return () => {
+      isCancelled = true;
+    };
   }, [isEditMode]);
 
   useEffect(() => {
@@ -165,24 +165,22 @@ export function useWorksEditorState() {
       return;
     }
 
-    setIsSavingProjectOrder(true);
-    setEditorError("");
-    setEditorStatus("");
-
-    try {
-      const payload = await reorderProjects(nextOrder);
-
-      setEditorState(payload);
-      setProjectOrderDraft(payload.workspace.projectOrder);
-      setEditorStatus("Project order saved.");
-      router.refresh();
-    } catch (error) {
-      setProjectOrderDraft(fallbackOrder);
-      const message = error instanceof Error ? error.message : "Unable to save project order";
-      setEditorError(message);
-    } finally {
-      setIsSavingProjectOrder(false);
-    }
+    await runEditorMutation({
+      setPending: setIsSavingProjectOrder,
+      setError: setEditorError,
+      setStatus: setEditorStatus,
+      run: () => reorderProjects(nextOrder),
+      successMessage: "Project order saved.",
+      errorMessage: "Unable to save project order",
+      onSuccess: (payload) => {
+        setEditorState(payload);
+        setProjectOrderDraft(payload.workspace.projectOrder);
+        router.refresh();
+      },
+      onError: () => {
+        setProjectOrderDraft(fallbackOrder);
+      },
+    });
   };
 
   const persistCategoryOrder = async (nextOrder: string[], fallbackOrder: string[]) => {
@@ -190,24 +188,22 @@ export function useWorksEditorState() {
       return;
     }
 
-    setIsSavingCategoryOrder(true);
-    setEditorError("");
-    setEditorStatus("");
-
-    try {
-      const payload = await reorderCategories(nextOrder);
-
-      setEditorState(payload);
-      setCategoryOrderDraft(payload.workspace.categories);
-      setEditorStatus("Category order saved.");
-      router.refresh();
-    } catch (error) {
-      setCategoryOrderDraft(fallbackOrder);
-      const message = error instanceof Error ? error.message : "Unable to save category order";
-      setEditorError(message);
-    } finally {
-      setIsSavingCategoryOrder(false);
-    }
+    await runEditorMutation({
+      setPending: setIsSavingCategoryOrder,
+      setError: setEditorError,
+      setStatus: setEditorStatus,
+      run: () => reorderCategories(nextOrder),
+      successMessage: "Category order saved.",
+      errorMessage: "Unable to save category order",
+      onSuccess: (payload) => {
+        setEditorState(payload);
+        setCategoryOrderDraft(payload.workspace.categories);
+        router.refresh();
+      },
+      onError: () => {
+        setCategoryOrderDraft(fallbackOrder);
+      },
+    });
   };
 
   const onProjectDrop = (targetSlug: string) => {
@@ -254,25 +250,21 @@ export function useWorksEditorState() {
       return;
     }
 
-    setIsAddingCategory(true);
-    setEditorError("");
-    setEditorStatus("");
-
-    try {
-      const payload = await createCategory(nextCategory);
-
-      setEditorState(payload);
-      setCategoryOrderDraft(payload.workspace.categories);
-      setNewCategory("");
-      setShowCategoryCreator(false);
-      setEditorStatus("Category added.");
-      router.refresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to add category";
-      setEditorError(message);
-    } finally {
-      setIsAddingCategory(false);
-    }
+    await runEditorMutation({
+      setPending: setIsAddingCategory,
+      setError: setEditorError,
+      setStatus: setEditorStatus,
+      run: () => createCategory(nextCategory),
+      successMessage: "Category added.",
+      errorMessage: "Unable to add category",
+      onSuccess: (nextPayload) => {
+        setEditorState(nextPayload);
+        setCategoryOrderDraft(nextPayload.workspace.categories);
+        setNewCategory("");
+        setShowCategoryCreator(false);
+        router.refresh();
+      },
+    });
   };
 
   const toggleNewProjectCategory = (category: string) => {
@@ -309,47 +301,45 @@ export function useWorksEditorState() {
       return;
     }
 
-    setIsCreatingProject(true);
-    setEditorError("");
-    setEditorStatus("");
     setNewProjectLink(null);
 
-    try {
-      const payload = await createEditorProject({
-        title,
-        slug,
-        description,
-        categories: newProjectCategories,
-      });
+    await runEditorMutation({
+      setPending: setIsCreatingProject,
+      setError: setEditorError,
+      setStatus: setEditorStatus,
+      run: () =>
+        createEditorProject({
+          title,
+          slug,
+          description,
+          categories: newProjectCategories,
+        }),
+      successMessage: "Project created. Open it to upload photos.",
+      errorMessage: "Unable to create project",
+      onSuccess: (payload) => {
+        setEditorState(payload);
+        setProjectOrderDraft(payload.workspace.projectOrder);
+        setCategoryOrderDraft(payload.workspace.categories);
+        setActiveFilter("all");
+        setNewProjectTitle("");
+        setNewProjectSlug("");
+        setNewProjectDescription("");
+        setIsProjectSlugDirty(false);
+        setNewProjectCategories(payload.workspace.categories.length > 0 ? [payload.workspace.categories[0]] : []);
 
-      setEditorState(payload);
-      setProjectOrderDraft(payload.workspace.projectOrder);
-      setCategoryOrderDraft(payload.workspace.categories);
-      setActiveFilter("all");
-      setNewProjectTitle("");
-      setNewProjectSlug("");
-      setNewProjectDescription("");
-      setIsProjectSlugDirty(false);
-      setNewProjectCategories(payload.workspace.categories.length > 0 ? [payload.workspace.categories[0]] : []);
-      setEditorStatus("Project created. Open it to upload photos.");
-
-      if (payload.createdProject) {
-        const primaryCategory = payload.createdProject.categories[0];
-        if (primaryCategory) {
-          setNewProjectLink({
-            slug: payload.createdProject.slug,
-            category: primaryCategory,
-          });
+        if (payload.createdProject) {
+          const primaryCategory = payload.createdProject.categories[0];
+          if (primaryCategory) {
+            setNewProjectLink({
+              slug: payload.createdProject.slug,
+              category: primaryCategory,
+            });
+          }
         }
-      }
 
-      router.refresh();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Unable to create project";
-      setEditorError(message);
-    } finally {
-      setIsCreatingProject(false);
-    }
+        router.refresh();
+      },
+    });
   };
 
   const handleTitleDraftChange = (value: string) => {
