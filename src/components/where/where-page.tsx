@@ -21,7 +21,8 @@ export function WherePage({ initialLocations }: WherePageProps) {
     error,
     selectedLocationId,
     setSelectedLocationId,
-    pastCurrentLocations,
+    currentLocation,
+    pastLocations,
     upcomingLocations,
     mapLocations,
     latestPastLocationId,
@@ -35,7 +36,7 @@ export function WherePage({ initialLocations }: WherePageProps) {
   return (
     <section className="page page--where">
       <header className="page-header">
-        <h1 className="page-title">where is michael</h1>
+        <h1 className="page-title">where is michael?</h1>
         <p className="page-intro">
           A running map of where I have been and where I am going next.
         </p>
@@ -47,7 +48,8 @@ export function WherePage({ initialLocations }: WherePageProps) {
 
       <div className="where-layout">
         <WhereTimeline
-          pastCurrentLocations={pastCurrentLocations}
+          currentLocation={currentLocation}
+          pastLocations={pastLocations}
           upcomingLocations={upcomingLocations}
           selectedLocationId={selectedLocationId}
           latestPastLocationId={latestPastLocationId}

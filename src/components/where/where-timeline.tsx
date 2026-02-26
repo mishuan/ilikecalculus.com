@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { EditorButton } from "@/components/ui/editor-controls";
 import { WhereEditor, type WhereLocationFormValue } from "@/components/where/where-editor";
 import type {
@@ -10,7 +10,8 @@ import type {
 import { classNames } from "@/components/ui/class-names";
 
 type WhereTimelineProps = {
-  pastCurrentLocations: ResolvedWhereLocation[];
+  currentLocation: ResolvedWhereLocation | null;
+  pastLocations: ResolvedWhereLocation[];
   upcomingLocations: ResolvedWhereLocation[];
   selectedLocationId: string | null;
   latestPastLocationId: string | null;
@@ -113,7 +114,8 @@ function toMutationInput(value: WhereLocationFormValue): {
 }
 
 export function WhereTimeline({
-  pastCurrentLocations,
+  currentLocation,
+  pastLocations,
   upcomingLocations,
   selectedLocationId,
   latestPastLocationId,
@@ -132,6 +134,7 @@ export function WhereTimeline({
   const [editingLocationId, setEditingLocationId] = useState<string | null>(null);
   const [editDraft, setEditDraft] = useState<WhereLocationFormValue>(() => createEmptyDraft());
   const [editFormError, setEditFormError] = useState("");
+  const entryRefMap = useRef<Map<string, HTMLElement>>(new Map());
 
   const isMutating = isCreatingLocation || updatingLocationId !== null || deletingLocationId !== null;
   const isBusy = isLoadingEditorState || isMutating;
@@ -143,6 +146,33 @@ export function WhereTimeline({
       }),
     [],
   );
+
+  useEffect(() => {
+    if (!selectedLocationId) {
+      return;
+    }
+
+    const selectedEntry = entryRefMap.current.get(selectedLocationId);
+    if (!selectedEntry) {
+      return;
+    }
+
+    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    selectedEntry.scrollIntoView({
+      behavior: prefersReducedMotion ? "auto" : "smooth",
+      block: "nearest",
+      inline: "nearest",
+    });
+  }, [selectedLocationId]);
+
+  const registerEntryRef = (id: string, node: HTMLElement | null) => {
+    if (!node) {
+      entryRefMap.current.delete(id);
+      return;
+    }
+
+    entryRefMap.current.set(id, node);
+  };
 
   const handleCreate = async () => {
     const parsed = toMutationInput(createDraft);
@@ -201,12 +231,12 @@ export function WhereTimeline({
       ) : null}
 
       <div className="where-timeline__group">
-        <h2 className="where-timeline__subhead">past &amp; current</h2>
-        {pastCurrentLocations.length === 0 ? (
-          <p className="where-timeline__empty">No past locations yet.</p>
+        <h2 className="where-timeline__subhead">current</h2>
+        {!currentLocation ? (
+          <p className="where-timeline__empty">No current location yet.</p>
         ) : (
           <div className="where-entry-list">
-            {pastCurrentLocations.map((location) => {
+            {[currentLocation].map((location) => {
               const isSelected = selectedLocationId === location.id;
               const isLatest = latestPastLocationId === location.id;
               const isUpdating = updatingLocationId === location.id;
@@ -216,6 +246,7 @@ export function WhereTimeline({
               return (
                 <article
                   key={location.id}
+                  ref={(node) => registerEntryRef(location.id, node)}
                   className={classNames(
                     "where-entry",
                     isSelected && "where-entry--selected",
@@ -286,9 +317,80 @@ export function WhereTimeline({
               return (
                 <article
                   key={location.id}
+                  ref={(node) => registerEntryRef(location.id, node)}
                   className={classNames(
                     "where-entry",
                     "where-entry--future",
+                    isSelected && "where-entry--selected",
+                  )}
+                >
+                  <button
+                    type="button"
+                    className="where-entry__main"
+                    onClick={() => onSelectLocation(location.id)}
+                  >
+                    <p className="where-entry__label">{location.label}</p>
+                    <p className="where-entry__time">{dateFormatter.format(new Date(location.at))}</p>
+                    {location.note ? <p className="where-entry__note">{location.note}</p> : null}
+                  </button>
+
+                  {isEditMode ? (
+                    <div className="where-entry__actions">
+                      <EditorButton
+                        onClick={() => openEditorForLocation(location)}
+                        disabled={isBusy}
+                      >
+                        edit
+                      </EditorButton>
+                      <EditorButton
+                        variant="danger"
+                        onClick={() => void onDeleteLocation(location.id)}
+                        disabled={isBusy}
+                      >
+                        {isDeleting ? "deleting..." : "delete"}
+                      </EditorButton>
+                    </div>
+                  ) : null}
+
+                  {isEditMode && isEditing ? (
+                    <div className="where-entry__editor">
+                      <WhereEditor
+                        title={`Edit ${location.label}`}
+                        value={editDraft}
+                        submitLabel={isUpdating ? "saving..." : "save"}
+                        disabled={isBusy}
+                        onChange={setEditDraft}
+                        onSubmit={() => void handleSaveEdit()}
+                        onCancel={() => setEditingLocationId(null)}
+                      />
+                      {editFormError ? <p className="where-editor__error">{editFormError}</p> : null}
+                    </div>
+                  ) : null}
+                </article>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <div className="where-timeline__group">
+        <h2 className="where-timeline__subhead">past</h2>
+        {pastLocations.length === 0 ? (
+          <p className="where-timeline__empty">No past locations yet.</p>
+        ) : (
+          <div className="where-entry-list">
+            {pastLocations.map((location) => {
+              const isSelected = selectedLocationId === location.id;
+              const isUpdating = updatingLocationId === location.id;
+              const isDeleting = deletingLocationId === location.id;
+              const isEditing = editingLocationId === location.id;
+
+              return (
+                <article
+                  key={location.id}
+                  ref={(node) => registerEntryRef(location.id, node)}
+                  className={classNames(
+                    "where-entry",
                     isSelected && "where-entry--selected",
                   )}
                 >

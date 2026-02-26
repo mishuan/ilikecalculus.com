@@ -1,6 +1,9 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import type { FeatureCollection, MultiPolygon, Polygon, Position } from "geojson";
+import { feature } from "topojson-client";
+import land110m from "world-atlas/land-110m.json";
 import type { ResolvedWhereLocation } from "@/components/where/use-where-state";
 import { classNames } from "@/components/ui/class-names";
 
@@ -14,299 +17,10 @@ type WhereMapProps = {
 const MAP_WIDTH = 980;
 const MAP_HEIGHT = 520;
 type CoordinatePair = readonly [latitude: number, longitude: number];
-const CONTINENT_POLYGONS: ReadonlyArray<ReadonlyArray<CoordinatePair>> = [
-  [
-    [72, -168],
-    [69, -160],
-    [66, -150],
-    [62, -141],
-    [58, -136],
-    [55, -130],
-    [51, -127],
-    [48, -125],
-    [45, -123],
-    [42, -124],
-    [38, -122],
-    [35, -119],
-    [33, -116],
-    [31, -114],
-    [28, -112],
-    [26, -109],
-    [24, -106],
-    [22, -102],
-    [20, -98],
-    [19, -94],
-    [19, -90],
-    [21, -86],
-    [24, -83],
-    [27, -81],
-    [30, -80],
-    [32, -78],
-    [35, -77],
-    [40, -74],
-    [44, -69],
-    [48, -63],
-    [52, -61],
-    [56, -64],
-    [60, -70],
-    [63, -79],
-    [66, -88],
-    [69, -100],
-    [71, -114],
-    [72, -130],
-  ],
-  [
-    [83, -74],
-    [81, -62],
-    [79, -50],
-    [76, -40],
-    [72, -32],
-    [68, -28],
-    [64, -34],
-    [60, -43],
-    [60, -52],
-    [63, -59],
-    [68, -65],
-    [74, -69],
-  ],
-  [
-    [12, -81],
-    [10, -78],
-    [8, -76],
-    [6, -74],
-    [3, -72],
-    [0, -71],
-    [-4, -70],
-    [-8, -70],
-    [-12, -69],
-    [-16, -68],
-    [-20, -66],
-    [-24, -64],
-    [-28, -62],
-    [-33, -60],
-    [-37, -58],
-    [-41, -59],
-    [-45, -62],
-    [-50, -67],
-    [-54, -71],
-    [-56, -67],
-    [-54, -61],
-    [-50, -56],
-    [-45, -52],
-    [-39, -49],
-    [-33, -48],
-    [-26, -50],
-    [-18, -54],
-    [-11, -58],
-    [-5, -61],
-    [0, -62],
-    [4, -64],
-    [7, -67],
-    [10, -72],
-  ],
-  [
-    [72, -12],
-    [71, -3],
-    [70, 8],
-    [70, 20],
-    [69, 32],
-    [68, 44],
-    [67, 56],
-    [66, 68],
-    [64, 80],
-    [62, 92],
-    [60, 104],
-    [58, 116],
-    [55, 128],
-    [50, 140],
-    [45, 150],
-    [40, 156],
-    [34, 152],
-    [29, 145],
-    [24, 139],
-    [20, 132],
-    [16, 125],
-    [12, 118],
-    [8, 110],
-    [6, 102],
-    [8, 94],
-    [11, 88],
-    [16, 82],
-    [20, 77],
-    [22, 72],
-    [24, 66],
-    [26, 60],
-    [28, 54],
-    [31, 48],
-    [34, 42],
-    [37, 36],
-    [41, 30],
-    [44, 24],
-    [47, 18],
-    [50, 12],
-    [53, 6],
-    [56, 2],
-    [58, -3],
-    [60, -7],
-    [63, -10],
-    [66, -12],
-    [69, -14],
-  ],
-  [
-    [37, -18],
-    [34, -10],
-    [33, -2],
-    [33, 8],
-    [32, 18],
-    [30, 27],
-    [27, 33],
-    [23, 36],
-    [19, 40],
-    [14, 43],
-    [9, 46],
-    [3, 45],
-    [-2, 42],
-    [-7, 39],
-    [-12, 36],
-    [-17, 33],
-    [-22, 30],
-    [-27, 26],
-    [-31, 22],
-    [-34, 17],
-    [-35, 11],
-    [-34, 5],
-    [-32, 0],
-    [-29, -4],
-    [-24, -7],
-    [-18, -9],
-    [-12, -11],
-    [-6, -12],
-    [0, -12],
-    [6, -10],
-    [12, -8],
-    [18, -6],
-    [23, -5],
-    [28, -7],
-    [32, -10],
-    [35, -14],
-  ],
-  [
-    [31, 35],
-    [28, 38],
-    [24, 43],
-    [20, 49],
-    [16, 54],
-    [13, 53],
-    [12, 47],
-    [14, 43],
-    [18, 40],
-    [23, 37],
-    [28, 35],
-  ],
-  [
-    [28, 67],
-    [25, 72],
-    [22, 76],
-    [20, 80],
-    [18, 84],
-    [15, 87],
-    [12, 89],
-    [9, 86],
-    [8, 82],
-    [10, 78],
-    [14, 74],
-    [19, 71],
-    [23, 69],
-  ],
-  [
-    [59, -8],
-    [57, -5],
-    [55, -3],
-    [53, -4],
-    [51, -6],
-    [52, -8],
-    [55, -9],
-  ],
-  [
-    [45, 141],
-    [42, 144],
-    [38, 142],
-    [35, 139],
-    [33, 136],
-    [36, 134],
-    [40, 136],
-    [43, 139],
-  ],
-  [
-    [-10, 112],
-    [-14, 116],
-    [-18, 121],
-    [-22, 126],
-    [-26, 131],
-    [-30, 136],
-    [-34, 141],
-    [-38, 146],
-    [-42, 145],
-    [-44, 139],
-    [-43, 132],
-    [-40, 125],
-    [-36, 119],
-    [-31, 114],
-    [-25, 111],
-    [-19, 110],
-    [-13, 110],
-  ],
-  [
-    [-3, 141],
-    [-4, 147],
-    [-6, 153],
-    [-8, 151],
-    [-9, 146],
-    [-8, 142],
-    [-6, 140],
-  ],
-  [
-    [-12, 45],
-    [-15, 48],
-    [-20, 50],
-    [-24, 49],
-    [-26, 46],
-    [-24, 44],
-    [-20, 43],
-    [-16, 44],
-  ],
-  [
-    [-34, 166],
-    [-38, 174],
-    [-42, 178],
-    [-46, 173],
-    [-45, 168],
-    [-40, 165],
-  ],
-  [
-    [-62, -180],
-    [-60, -160],
-    [-61, -140],
-    [-63, -120],
-    [-62, -100],
-    [-64, -80],
-    [-63, -60],
-    [-65, -40],
-    [-64, -20],
-    [-66, 0],
-    [-64, 20],
-    [-65, 40],
-    [-63, 60],
-    [-64, 80],
-    [-62, 100],
-    [-63, 120],
-    [-61, 140],
-    [-62, 160],
-    [-63, 180],
-    [-76, 180],
-    [-76, -180],
-  ],
-];
+type LandGeometry = Polygon | MultiPolygon;
+const LAND_AREA_MIN = 90;
+const SMALL_POLAR_BLOB_AREA_MAX = 220;
+const POLAR_LATITUDE_MIN = 70;
 
 type SegmentPiece = {
   from: ReturnType<typeof project>;
@@ -333,21 +47,32 @@ type PinchGesture = {
 
 const MIN_CAMERA_SCALE = 1;
 const MAX_CAMERA_SCALE = 6;
-const WHEEL_ZOOM_SPEED = 0.0017;
+const WHEEL_ZOOM_SPEED = 0.0034;
 const CLICK_SUPPRESS_MS = 160;
+const INTERACTION_IDLE_MS = 120;
+const WORLD_X_OFFSETS = [-MAP_WIDTH, 0, MAP_WIDTH] as const;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
+function normalizeTranslateX(translateX: number, scale: number) {
+  const period = MAP_WIDTH * scale;
+  if (period <= 0) {
+    return translateX;
+  }
+
+  const wrapped = ((translateX % period) + period) % period;
+  return wrapped - period;
+}
+
 function clampView(view: MapView): MapView {
   const nextScale = clamp(view.scale, MIN_CAMERA_SCALE, MAX_CAMERA_SCALE);
-  const minX = MAP_WIDTH - MAP_WIDTH * nextScale;
   const minY = MAP_HEIGHT - MAP_HEIGHT * nextScale;
 
   return {
     scale: nextScale,
-    translateX: clamp(view.translateX, minX, 0),
+    translateX: normalizeTranslateX(view.translateX, nextScale),
     translateY: clamp(view.translateY, minY, 0),
   };
 }
@@ -375,6 +100,233 @@ function polygonPath(points: ReadonlyArray<CoordinatePair>) {
   commands.push("Z");
   return commands.join(" ");
 }
+
+function stripClosingPoint(ring: ReadonlyArray<Position>) {
+  if (ring.length <= 1) {
+    return [...ring];
+  }
+
+  const first = ring[0];
+  const last = ring[ring.length - 1];
+  if (first[0] === last[0] && first[1] === last[1]) {
+    return ring.slice(0, -1);
+  }
+
+  return [...ring];
+}
+
+function unwrapRingLongitudes(ring: ReadonlyArray<Position>) {
+  const openRing = stripClosingPoint(ring);
+  if (openRing.length === 0) {
+    return [] as Position[];
+  }
+
+  let longitudeOffset = 0;
+  let previousLongitude = Number(openRing[0][0]);
+  const unwrapped: Position[] = [[previousLongitude, Number(openRing[0][1])]];
+
+  for (let index = 1; index < openRing.length; index += 1) {
+    const [rawLongitude, rawLatitude] = openRing[index];
+    let longitude = Number(rawLongitude) + longitudeOffset;
+    const latitude = Number(rawLatitude);
+    const difference = longitude - previousLongitude;
+
+    if (difference > 180) {
+      longitudeOffset -= 360;
+      longitude = Number(rawLongitude) + longitudeOffset;
+    } else if (difference < -180) {
+      longitudeOffset += 360;
+      longitude = Number(rawLongitude) + longitudeOffset;
+    }
+
+    unwrapped.push([longitude, latitude]);
+    previousLongitude = longitude;
+  }
+
+  return unwrapped;
+}
+
+function recenterRingLongitudes(ring: ReadonlyArray<Position>) {
+  if (ring.length === 0) {
+    return [] as Position[];
+  }
+
+  const meanLongitude =
+    ring.reduce((sum, [longitude]) => sum + Number(longitude), 0) / ring.length;
+  const turns = Math.round(meanLongitude / 360);
+  if (turns === 0) {
+    return [...ring];
+  }
+
+  const shift = turns * 360;
+  return ring.map(([longitude, latitude]) => [Number(longitude) - shift, Number(latitude)]);
+}
+
+function averageLatitude(ring: ReadonlyArray<Position>) {
+  if (ring.length === 0) {
+    return 0;
+  }
+
+  let latitudeSum = 0;
+  for (const position of ring) {
+    latitudeSum += Number(position[1]);
+  }
+
+  return latitudeSum / ring.length;
+}
+
+function ringProjectedArea(ring: ReadonlyArray<Position>) {
+  if (ring.length < 3) {
+    return 0;
+  }
+
+  let areaTwice = 0;
+
+  for (let index = 0; index < ring.length; index += 1) {
+    const [longitudeA, latitudeA] = ring[index];
+    const [longitudeB, latitudeB] = ring[(index + 1) % ring.length];
+    const pointA = project(Number(latitudeA), Number(longitudeA));
+    const pointB = project(Number(latitudeB), Number(longitudeB));
+    areaTwice += pointA.x * pointB.y - pointB.x * pointA.y;
+  }
+
+  return Math.abs(areaTwice * 0.5);
+}
+
+function targetBlobVertexCount(area: number) {
+  if (area > 45_000) {
+    return 28;
+  }
+
+  if (area > 18_000) {
+    return 24;
+  }
+
+  if (area > 6_000) {
+    return 21;
+  }
+
+  if (area > 2_000) {
+    return 17;
+  }
+
+  if (area > 700) {
+    return 14;
+  }
+
+  return 11;
+}
+
+function sampleRingUniform(ring: ReadonlyArray<Position>, targetPointCount: number) {
+  const safeTargetCount = Math.max(3, targetPointCount);
+  if (ring.length <= safeTargetCount) {
+    return [...ring];
+  }
+
+  const step = ring.length / safeTargetCount;
+  const sampled: Position[] = [];
+  let previousIndex = -1;
+
+  for (let index = 0; index < safeTargetCount; index += 1) {
+    let ringIndex = Math.floor(index * step);
+    if (ringIndex <= previousIndex) {
+      ringIndex = previousIndex + 1;
+    }
+    if (ringIndex >= ring.length) {
+      ringIndex = ring.length - 1;
+    }
+
+    sampled.push(ring[ringIndex]);
+    previousIndex = ringIndex;
+  }
+
+  return sampled;
+}
+
+function smoothClosedRing(ring: ReadonlyArray<Position>, iterations: number) {
+  let current = [...ring];
+
+  for (let iteration = 0; iteration < iterations; iteration += 1) {
+    if (current.length < 3) {
+      break;
+    }
+
+    const next: Position[] = [];
+
+    for (let index = 0; index < current.length; index += 1) {
+      const [aLongitude, aLatitude] = current[index];
+      const [bLongitude, bLatitude] = current[(index + 1) % current.length];
+
+      next.push([
+        Number(aLongitude) * 0.75 + Number(bLongitude) * 0.25,
+        Number(aLatitude) * 0.75 + Number(bLatitude) * 0.25,
+      ]);
+      next.push([
+        Number(aLongitude) * 0.25 + Number(bLongitude) * 0.75,
+        Number(aLatitude) * 0.25 + Number(bLatitude) * 0.75,
+      ]);
+    }
+
+    current = next;
+  }
+
+  return current;
+}
+
+function toBlobCoordinates(ring: ReadonlyArray<Position>) {
+  return ring.map(([longitude, latitude]) => [Number(latitude), Number(longitude)] as const);
+}
+
+function createLandBlobs() {
+  const topology = land110m as unknown as Parameters<typeof feature>[0] & {
+    objects: { land: Parameters<typeof feature>[1] };
+  };
+  const landCollection = feature(topology, topology.objects.land) as FeatureCollection<LandGeometry>;
+
+  const blobEntries: Array<{ area: number; points: CoordinatePair[] }> = [];
+
+  for (const landFeature of landCollection.features) {
+    const geometry = landFeature.geometry;
+    if (!geometry) {
+      continue;
+    }
+
+    const polygons = geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
+
+    for (const polygon of polygons) {
+      const outerRing = polygon[0];
+      if (!outerRing || outerRing.length < 4) {
+        continue;
+      }
+
+      const unwrappedRing = unwrapRingLongitudes(outerRing);
+      const normalizedRing = recenterRingLongitudes(unwrappedRing);
+      const area = ringProjectedArea(normalizedRing);
+      if (area < LAND_AREA_MIN) {
+        continue;
+      }
+
+      const centroidLatitude = averageLatitude(normalizedRing);
+      if (
+        Math.abs(centroidLatitude) >= POLAR_LATITUDE_MIN &&
+        area < SMALL_POLAR_BLOB_AREA_MAX
+      ) {
+        continue;
+      }
+
+      const sampledRing = sampleRingUniform(normalizedRing, targetBlobVertexCount(area));
+      const smoothedRing = area > 120 ? smoothClosedRing(sampledRing, 1) : sampledRing;
+      blobEntries.push({
+        area,
+        points: toBlobCoordinates(smoothedRing),
+      });
+    }
+  }
+
+  return blobEntries.sort((a, b) => b.area - a.area).map((entry) => entry.points);
+}
+
+const LAND_BLOBS = createLandBlobs();
 
 function routeSegmentPieces(from: ResolvedWhereLocation, to: ResolvedWhereLocation): SegmentPiece[] {
   const startLat = from.latitude;
@@ -461,7 +413,10 @@ export function WhereMap({
   const panLastRef = useRef<PointerSample | null>(null);
   const pinchRef = useRef<PinchGesture | null>(null);
   const suppressClickUntilRef = useRef(0);
+  const interactionTimeoutRef = useRef<number | null>(null);
   const [isPanning, setIsPanning] = useState(false);
+  const [isInteracting, setIsInteracting] = useState(false);
+  const [hoveredLocationId, setHoveredLocationId] = useState<string | null>(null);
 
   const selectedPoint = selectedLocationId ? pointsById.get(selectedLocationId) : null;
 
@@ -488,6 +443,15 @@ export function WhereMap({
     viewRef.current = view;
   }, [view]);
 
+  useEffect(
+    () => () => {
+      if (interactionTimeoutRef.current !== null) {
+        window.clearTimeout(interactionTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
   const mapTransform = useMemo(
     () => `translate(${view.translateX} ${view.translateY}) scale(${view.scale})`,
     [view.scale, view.translateX, view.translateY],
@@ -505,6 +469,17 @@ export function WhereMap({
       unitsPerPixelX: MAP_WIDTH / rect.width,
       unitsPerPixelY: MAP_HEIGHT / rect.height,
     };
+  }
+
+  function markInteracting() {
+    setIsInteracting(true);
+    if (interactionTimeoutRef.current !== null) {
+      window.clearTimeout(interactionTimeoutRef.current);
+    }
+    interactionTimeoutRef.current = window.setTimeout(() => {
+      setIsInteracting(false);
+      interactionTimeoutRef.current = null;
+    }, INTERACTION_IDLE_MS);
   }
 
   useEffect(() => {
@@ -528,16 +503,25 @@ export function WhereMap({
       const unitsPerPixelX = MAP_WIDTH / rect.width;
       const unitsPerPixelY = MAP_HEIGHT / rect.height;
       const currentView = viewRef.current;
+      const horizontalIntent = Math.abs(event.deltaX) > Math.abs(event.deltaY) * 0.65;
+      const shouldPan =
+        !event.ctrlKey &&
+        !event.metaKey &&
+        (horizontalIntent || currentView.scale > MIN_CAMERA_SCALE + 0.01);
 
       event.preventDefault();
 
-      if (!event.ctrlKey && !event.metaKey && currentView.scale > MIN_CAMERA_SCALE + 0.01) {
+      if (shouldPan) {
         const nextView = clampView({
           scale: currentView.scale,
           translateX: currentView.translateX - event.deltaX * unitsPerPixelX,
-          translateY: currentView.translateY - event.deltaY * unitsPerPixelY,
+          translateY:
+            currentView.scale > MIN_CAMERA_SCALE + 0.01
+              ? currentView.translateY - event.deltaY * unitsPerPixelY
+              : currentView.translateY,
         });
 
+        markInteracting();
         viewRef.current = nextView;
         setView(nextView);
         return;
@@ -556,6 +540,7 @@ export function WhereMap({
         translateY: mapY - anchorY * nextScale,
       });
 
+      markInteracting();
       viewRef.current = nextView;
       setView(nextView);
     }
@@ -688,6 +673,7 @@ export function WhereMap({
       });
 
       suppressClickUntilRef.current = Date.now() + CLICK_SUPPRESS_MS;
+      markInteracting();
       viewRef.current = nextView;
       setView(nextView);
       setIsPanning(false);
@@ -714,6 +700,7 @@ export function WhereMap({
 
     panLastRef.current = { x: event.clientX, y: event.clientY };
 
+    markInteracting();
     setView((currentView) => {
       const nextView = clampView({
         scale: currentView.scale,
@@ -774,7 +761,12 @@ export function WhereMap({
 
       <div
         ref={mapRef}
-        className={classNames("where-map", "where-map--interactive", isPanning && "where-map--panning")}
+        className={classNames(
+          "where-map",
+          "where-map--interactive",
+          isPanning && "where-map--panning",
+          isInteracting && "where-map--interacting",
+        )}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
@@ -791,18 +783,6 @@ export function WhereMap({
               <stop offset="0%" stopColor="color-mix(in srgb, var(--paper) 92%, white)" />
               <stop offset="100%" stopColor="color-mix(in srgb, var(--bg) 82%, var(--paper))" />
             </linearGradient>
-            <marker
-              id="where-map-upcoming-arrow"
-              viewBox="0 0 9 9"
-              refX="7.5"
-              refY="4.5"
-              markerWidth="7"
-              markerHeight="7"
-              orient="auto"
-              markerUnits="strokeWidth"
-            >
-              <path d="M 0 0 L 9 4.5 L 0 9 z" fill="color-mix(in srgb, var(--ink) 88%, var(--muted))" />
-            </marker>
           </defs>
 
           <rect width={MAP_WIDTH} height={MAP_HEIGHT} fill="url(#where-map-bg)" />
@@ -819,108 +799,103 @@ export function WhereMap({
           </g>
 
           <g className="where-map__content" transform={mapTransform}>
-            <g className="where-map__land" aria-hidden="true">
-              {CONTINENT_POLYGONS.map((continent, index) => (
-                <path key={`continent-${index}`} d={polygonPath(continent)} />
-              ))}
-            </g>
-
-            {segments.flatMap((segment) =>
-              segment.pieces.map((piece, pieceIndex) => (
-                <line
-                  key={`${segment.key}-${pieceIndex}`}
-                  x1={piece.from.x}
-                  y1={piece.from.y}
-                  x2={piece.to.x}
-                  y2={piece.to.y}
-                  markerEnd={
-                    segment.isNextUpcoming && pieceIndex === segment.pieces.length - 1
-                      ? "url(#where-map-upcoming-arrow)"
-                      : undefined
-                  }
-                  className={classNames(
-                    "where-map__segment",
-                    segment.upcoming && "where-map__segment--upcoming",
-                    segment.selected && "where-map__segment--selected",
-                    segment.isLatestArrival && "where-map__segment--latest-arrival",
-                    segment.isNextUpcoming && "where-map__segment--next-upcoming",
-                  )}
-                  style={{
-                    opacity: String(0.22 + segment.intensity * 0.45 + (segment.selected ? 0.08 : 0)),
-                    strokeWidth: `${0.65 + segment.intensity * 1.35 + (segment.selected ? 0.35 : 0)}px`,
-                  }}
-                />
-              )),
-            )}
-
-            {locations.map((location) => {
-              const point = pointsById.get(location.id);
-              if (!point) {
-                return null;
-              }
-
-              const isSelected = selectedLocationId === location.id;
-              const isLatestPast = latestPastLocationId === location.id;
-              const isUpcomingDestination = nextUpcomingLocationId === location.id;
-
-              return (
-                <g key={location.id}>
-                  {isSelected ? (
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r={14.2}
-                      className="where-map__marker-halo"
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  {isUpcomingDestination ? (
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r={8.2}
-                      className="where-map__marker-ring where-map__marker-ring--upcoming-destination"
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  {isSelected ? (
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r={11}
-                      className="where-map__marker-ring where-map__marker-ring--selected"
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  {isSelected ? (
-                    <circle
-                      cx={point.x}
-                      cy={point.y}
-                      r={7.4}
-                      className="where-map__marker-ring where-map__marker-ring--selected-inner"
-                      aria-hidden="true"
-                    />
-                  ) : null}
-                  <circle
-                    cx={point.x}
-                    cy={point.y}
-                    r={isLatestPast ? 5.1 : isSelected ? 5.8 : 3.2}
-                    className={classNames(
-                      "where-map__marker",
-                      isSelected && "where-map__marker--selected",
-                      isLatestPast && "where-map__marker--latest",
-                      location.isFuture && "where-map__marker--future",
-                    )}
-                    onClick={() => {
-                      if (Date.now() < suppressClickUntilRef.current) {
-                        return;
-                      }
-                      onSelectLocation(location.id);
-                    }}
-                  />
+            {WORLD_X_OFFSETS.map((offset) => (
+              <g key={`where-world-${offset}`} transform={`translate(${offset} 0)`}>
+                <g className="where-map__land" aria-hidden="true">
+                  {LAND_BLOBS.map((blob, index) => (
+                    <path key={`land-${index}`} d={polygonPath(blob)} />
+                  ))}
                 </g>
-              );
-            })}
+
+                {segments.flatMap((segment) =>
+                  segment.pieces.map((piece, pieceIndex) => (
+                    <line
+                      key={`${segment.key}-${pieceIndex}`}
+                      x1={piece.from.x}
+                      y1={piece.from.y}
+                      x2={piece.to.x}
+                      y2={piece.to.y}
+                      className={classNames(
+                        "where-map__segment",
+                        segment.upcoming && "where-map__segment--upcoming",
+                        segment.selected && "where-map__segment--selected",
+                        segment.isLatestArrival && "where-map__segment--latest-arrival",
+                        segment.isNextUpcoming && "where-map__segment--next-upcoming",
+                      )}
+                      style={{
+                        opacity: String(0.22 + segment.intensity * 0.45 + (segment.selected ? 0.08 : 0)),
+                        strokeWidth: `${0.65 + segment.intensity * 1.35 + (segment.selected ? 0.35 : 0)}px`,
+                      }}
+                    />
+                  )),
+                )}
+
+                {locations.map((location) => {
+                  const point = pointsById.get(location.id);
+                  if (!point) {
+                    return null;
+                  }
+
+                  const isSelected = selectedLocationId === location.id;
+                  const isLatestPast = latestPastLocationId === location.id;
+                  const isUpcomingDestination = nextUpcomingLocationId === location.id;
+                  const isHovered = hoveredLocationId === location.id;
+                  const markerRadius = isLatestPast ? 4.8 : isSelected ? 4.6 : isHovered ? 3.9 : 3.2;
+
+                  return (
+                    <g key={location.id}>
+                      {isHovered && !isSelected ? (
+                        <circle
+                          cx={point.x}
+                          cy={point.y}
+                          r={6.6}
+                          className="where-map__marker-ring where-map__marker-ring--hovered"
+                          aria-hidden="true"
+                        />
+                      ) : null}
+                      {isUpcomingDestination ? (
+                        <circle
+                          cx={point.x}
+                          cy={point.y}
+                          r={8.2}
+                          className="where-map__marker-ring where-map__marker-ring--upcoming-destination"
+                          aria-hidden="true"
+                        />
+                      ) : null}
+                      {isSelected ? (
+                        <circle
+                          cx={point.x}
+                          cy={point.y}
+                          r={8}
+                          className="where-map__marker-ring where-map__marker-ring--selected"
+                          aria-hidden="true"
+                        />
+                      ) : null}
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r={markerRadius}
+                        className={classNames(
+                          "where-map__marker",
+                          isSelected && "where-map__marker--selected",
+                          isHovered && "where-map__marker--hovered",
+                          isLatestPast && "where-map__marker--latest",
+                          location.isFuture && "where-map__marker--future",
+                        )}
+                        onPointerEnter={() => setHoveredLocationId(location.id)}
+                        onPointerLeave={() => setHoveredLocationId((current) => (current === location.id ? null : current))}
+                        onClick={() => {
+                          if (Date.now() < suppressClickUntilRef.current) {
+                            return;
+                          }
+                          onSelectLocation(location.id);
+                        }}
+                      />
+                    </g>
+                  );
+                })}
+              </g>
+            ))}
           </g>
         </svg>
 

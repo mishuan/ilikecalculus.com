@@ -133,8 +133,10 @@ export function useWhereState({ initialLocations }: UseWhereStateInput) {
     () => resolvedLocations.filter((location) => location.isFuture).sort(byTimeAsc),
     [resolvedLocations],
   );
+  const currentLocation = pastCurrentLocations[0] ?? null;
+  const pastLocations = pastCurrentLocations.slice(1);
 
-  const latestPastLocationId = pastCurrentLocations[0]?.id ?? null;
+  const latestPastLocationId = currentLocation?.id ?? null;
   const defaultSelectedId = latestPastLocationId ?? upcomingLocations[0]?.id ?? null;
 
   useEffect(() => {
@@ -237,7 +239,8 @@ export function useWhereState({ initialLocations }: UseWhereStateInput) {
     error,
     selectedLocationId,
     setSelectedLocationId,
-    pastCurrentLocations,
+    currentLocation,
+    pastLocations,
     upcomingLocations,
     mapLocations,
     latestPastLocationId,

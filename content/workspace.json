@@ -95,11 +95,11 @@
     "locations": [
       {
         "id": "dc8310fa-5d26-4ec7-8380-4cb104de57db",
-        "label": "NYC",
+        "label": "New York City",
         "latitude": 40.718117449032434,
         "longitude": -73.95747908497457,
         "at": "2026-01-02T17:00:00.000Z",
-        "note": "Finally after in NYC after a month of traveling NYC"
+        "note": "Finally in NYC after a month of traveling"
       },
       {
         "id": "ecf5e8ba-d4da-4705-b6d5-5fffb50b8f22",
@@ -115,7 +115,15 @@
         "latitude": 25.03346844531645,
         "longitude": 121.56495420459811,
         "at": "2025-12-30T13:50:00.000Z",
-        "note": "NYE countddown in Taipei with DQ"
+        "note": "NYE countdown in Taipei with DQ"
+      },
+      {
+        "id": "3562c808-96dd-4ebf-96ea-b76e7a5cf38c",
+        "label": "Kanazawa",
+        "latitude": 36.57864660027996,
+        "longitude": 136.64766678471085,
+        "at": "2026-03-05T00:30:00.000Z",
+        "note": "Flew into Tokyo and trained straight to Kanazawa. This is the start of the road trip!"
       }
     ]
   },
