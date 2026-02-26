@@ -26,10 +26,6 @@ test("primary navigation routes work", async ({ page }) => {
   await expect(page).toHaveURL(/\/works$/);
   await expect(page.getByRole("heading", { name: "works" })).toBeVisible();
 
-  await page.getByRole("link", { name: "about" }).click();
-  await expect(page).toHaveURL(/\/about$/);
-  await expect(page.getByRole("heading", { name: "About" })).toBeVisible();
-
   await page.getByRole("link", { name: "contact" }).click();
   await expect(page).toHaveURL(/\/contact$/);
   await expect(page.getByRole("heading", { name: "Let's Talk" })).toBeVisible();
@@ -64,11 +60,11 @@ test("works project page slideshow advances into next project", async ({ page })
   await expect(page).toHaveURL(/\/works\/personal\/urban-courts$/);
 });
 
-test("slideshow next project button opens next project in slideshow view", async ({ page }) => {
-  await page.goto("/works/personal/the-bridge-reconstructed?photo=3");
-  await expect(page.locator(".slideshow__counter")).toContainText(/^3\s*\/\s*\d+$/);
+test("slideshow right tap on last photo opens next project in slideshow view", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed?photo=999");
+  await expect(page.locator(".slideshow__counter")).toContainText(/^\d+\s*\/\s*\d+$/);
 
-  await page.getByRole("button", { name: /next project:\s*urban courts/i }).click();
+  await page.locator(".slideshow__tap--right").click();
   await expect(page).toHaveURL(/\/works\/personal\/urban-courts$/);
 });
 
@@ -111,12 +107,12 @@ test("dev editor toggle does not block slideshow thumbnail link", async ({ page 
   await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\/thumbnails\?photo=2$/);
 });
 
-test("slideshow title opens thumbnails with current photo", async ({ page }) => {
+test("slideshow title is non-link text", async ({ page }) => {
   await page.goto("/works/personal/the-bridge-reconstructed?photo=4");
   await expect(page.locator(".slideshow__counter")).toContainText(/^4\s*\/\s*\d+$/);
 
-  await page.getByTestId("slideshow-title-thumbnails-link").click();
-  await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\/thumbnails\?photo=4$/);
+  await expect(page.locator(".viewer-topbar__title a")).toHaveCount(0);
+  await expect(page.locator(".viewer-topbar__title")).toHaveText(/the bridge/i);
 });
 
 test("project thumbnails page renders all project images", async ({ page }) => {
@@ -148,6 +144,26 @@ test("clicking a project thumbnail opens slideshow at the same photo", async ({ 
   await expect(page.locator(".slideshow__counter")).toContainText(/^5\s*\/\s*\d+$/);
 });
 
+test("slideshow close returns to works when opened from works list", async ({ page }) => {
+  await page.goto("/works");
+
+  await page.locator(".collage-row").first().locator(".collage-cell").first().click();
+  await expect(page).toHaveURL(/\/works\/[^/]+\/[^/]+\?photo=\d+$/);
+
+  await page.getByRole("button", { name: "Close slideshow" }).click();
+  await expect(page).toHaveURL(/\/works$/);
+});
+
+test("slideshow close returns to thumbnails when opened from thumbnails", async ({ page }) => {
+  await page.goto("/works/personal/the-bridge-reconstructed/thumbnails?photo=4");
+
+  await page.getByTestId("project-thumbnail-7").click();
+  await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\?photo=7$/);
+
+  await page.getByRole("button", { name: "Close slideshow" }).click();
+  await expect(page).toHaveURL(/\/works\/personal\/the-bridge-reconstructed\/thumbnails\?photo=4$/);
+});
+
 test("clicking a thumbnail opens slideshow at that photo", async ({ page }) => {
   await page.goto("/");
 
@@ -166,6 +182,14 @@ test("blog route redirects to Substack", async ({ request }) => {
 
   const location = response.headers()["location"];
   expect(location).toContain("ilikecalculus.substack.com");
+});
+
+test("about route permanently redirects to contact", async ({ request }) => {
+  const response = await request.get("/about", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+
+  const location = response.headers()["location"];
+  expect(location).toContain("/contact");
 });
 
 test("editor api is available in development", async ({ request }) => {
@@ -190,6 +214,14 @@ test("where page renders timeline and map", async ({ page }) => {
   const hasPastEmptyState = await page.getByText("No past locations yet.").count();
   const whereEntryCount = await page.locator(".where-entry").count();
   expect(hasPastEmptyState > 0 || whereEntryCount > 0).toBeTruthy();
+});
+
+test("contact page includes about and contact copy", async ({ page }) => {
+  await page.goto("/contact");
+  await expect(page.getByRole("heading", { name: "Let's Talk" })).toBeVisible();
+  await expect(page.getByText("Hey there! I’m Michael Yuan.")).toBeVisible();
+  await expect(page.getByText("By day, I’m a software engineer at Figma")).toBeVisible();
+  await expect(page.getByText("If you’re curious, I’ll also tell you the origin story behind ilikecalculus.")).toBeVisible();
 });
 
 test("where edit controls only appear in edit mode", async ({ page }) => {

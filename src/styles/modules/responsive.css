@@ -61,6 +61,7 @@
 
   .top-nav {
     position: static;
+    padding-inline: 0;
   }
 
   .top-nav__inner {
@@ -135,6 +136,10 @@
     gap: 1.25rem;
   }
 
+  .project-thumbnails .project-collage-grid {
+    --row-height: clamp(118px, 41vw, 176px);
+  }
+
   .project-thumbnails__actions {
     gap: 0.55rem 0.85rem;
   }
@@ -157,8 +162,9 @@
     gap: 0.85rem;
   }
 
-  .viewer-bottom__status {
+  .viewer-bottom__project {
     justify-content: flex-start;
+    justify-self: start;
     flex-wrap: wrap;
     gap: 0.65rem 0.85rem;
   }

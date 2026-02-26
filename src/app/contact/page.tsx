@@ -4,6 +4,8 @@ import { Reveal } from "@/components/reveal";
 import { siteData } from "@/data/site-content";
 
 export default function ContactPage() {
+  const mergedParagraphs = [...siteData.about.paragraphs, ...siteData.contact.paragraphs];
+
   return (
     <section className="page page--contact">
       <header className="page-header">
@@ -24,7 +26,7 @@ export default function ContactPage() {
 
       <div className="contact-grid">
         <div className="contact-copy">
-          {siteData.contact.paragraphs.map((paragraph) => (
+          {mergedParagraphs.map((paragraph) => (
             <Reveal key={paragraph}>
               <p className="body-copy contact-copy__paragraph">{paragraph}</p>
             </Reveal>

@@ -8,15 +8,17 @@
   position: sticky;
   top: 0;
   z-index: 30;
+  padding-inline: var(--space-content-x);
   border-bottom: 1px solid var(--surface-nav-border);
   background: var(--surface-nav-bg);
   backdrop-filter: blur(4px);
 }
 
 .top-nav__inner {
-  max-width: 1380px;
+  width: 100%;
+  max-width: var(--size-page-max-wide);
   margin: 0 auto;
-  padding: 0.78rem clamp(0.95rem, 2vw, 1.9rem);
+  padding: 0.78rem 0;
   display: flex;
   align-items: center;
   justify-content: space-between;

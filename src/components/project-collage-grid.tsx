@@ -55,8 +55,18 @@ export function ProjectCollageGrid({
 
       const width = currentNode.clientWidth;
       const styles = window.getComputedStyle(currentNode);
-      const resolvedRowHeight = Number.parseFloat(styles.getPropertyValue("--row-height"));
       const resolvedGap = Number.parseFloat(styles.rowGap || styles.columnGap || styles.gap || "");
+      const rowHeightProbe = document.createElement("div");
+      rowHeightProbe.style.position = "absolute";
+      rowHeightProbe.style.visibility = "hidden";
+      rowHeightProbe.style.pointerEvents = "none";
+      rowHeightProbe.style.blockSize = "var(--row-height)";
+      rowHeightProbe.style.inlineSize = "0";
+      rowHeightProbe.style.padding = "0";
+      rowHeightProbe.style.border = "0";
+      currentNode.append(rowHeightProbe);
+      const resolvedRowHeight = rowHeightProbe.getBoundingClientRect().height;
+      rowHeightProbe.remove();
 
       setContainerWidth(width);
       setRowHeight(Number.isFinite(resolvedRowHeight) ? resolvedRowHeight : 120);
@@ -86,7 +96,7 @@ export function ProjectCollageGrid({
     project.images.forEach((image, index) => {
       const ratio = image.width / image.height;
       const rawWidth = rowHeight * ratio;
-      const fittedWidth = Math.max(58, Math.min(rawWidth, containerWidth));
+      const fittedWidth = Math.max(1, Math.min(rawWidth, containerWidth));
       const nextWidth = currentRow.length === 0 ? fittedWidth : fittedWidth + gapPx;
 
       if (currentRow.length > 0 && usedWidth + nextWidth > containerWidth) {

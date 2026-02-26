@@ -249,12 +249,18 @@
   fill: var(--ink);
   stroke: color-mix(in srgb, var(--paper) 92%, white);
   stroke-width: 1.15;
-  cursor: pointer;
+  pointer-events: none;
   transition:
     r var(--motion-where-focus-duration) ease,
     fill var(--motion-where-focus-duration) ease,
     stroke-width var(--motion-where-focus-duration) ease,
     opacity var(--motion-where-focus-duration) ease;
+}
+
+.where-map__marker-hit {
+  fill: transparent;
+  cursor: pointer;
+  pointer-events: all;
 }
 
 .where-map__marker--selected {

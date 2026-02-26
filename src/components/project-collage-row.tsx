@@ -54,8 +54,18 @@ export function ProjectCollageRow({
 
       const width = currentNode.clientWidth;
       const styles = window.getComputedStyle(currentNode);
-      const resolvedRowHeight = Number.parseFloat(styles.getPropertyValue("--row-height"));
       const resolvedGap = Number.parseFloat(styles.columnGap || styles.gap || "");
+      const rowHeightProbe = document.createElement("div");
+      rowHeightProbe.style.position = "absolute";
+      rowHeightProbe.style.visibility = "hidden";
+      rowHeightProbe.style.pointerEvents = "none";
+      rowHeightProbe.style.blockSize = "var(--row-height)";
+      rowHeightProbe.style.inlineSize = "0";
+      rowHeightProbe.style.padding = "0";
+      rowHeightProbe.style.border = "0";
+      currentNode.append(rowHeightProbe);
+      const resolvedRowHeight = rowHeightProbe.getBoundingClientRect().height;
+      rowHeightProbe.remove();
 
       setContainerWidth(width);
       setRowHeight(Number.isFinite(resolvedRowHeight) ? resolvedRowHeight : currentNode.clientHeight);

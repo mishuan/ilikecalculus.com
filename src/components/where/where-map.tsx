@@ -21,6 +21,13 @@ type LandGeometry = Polygon | MultiPolygon;
 const LAND_AREA_MIN = 90;
 const SMALL_POLAR_BLOB_AREA_MAX = 220;
 const POLAR_LATITUDE_MIN = 70;
+const TAIWAN_BLOB_AREA_MIN = 18;
+const TAIWAN_BOUNDS = {
+  latitudeMin: 20.5,
+  latitudeMax: 26.8,
+  longitudeMin: 118.5,
+  longitudeMax: 123.8,
+} as const;
 
 type SegmentPiece = {
   from: ReturnType<typeof project>;
@@ -48,7 +55,6 @@ type PinchGesture = {
 const MIN_CAMERA_SCALE = 1;
 const MAX_CAMERA_SCALE = 6;
 const WHEEL_ZOOM_SPEED = 0.0034;
-const CLICK_SUPPRESS_MS = 160;
 const INTERACTION_IDLE_MS = 120;
 const WORLD_X_OFFSETS = [-MAP_WIDTH, 0, MAP_WIDTH] as const;
 
@@ -173,6 +179,37 @@ function averageLatitude(ring: ReadonlyArray<Position>) {
   }
 
   return latitudeSum / ring.length;
+}
+
+function averageLongitude(ring: ReadonlyArray<Position>) {
+  if (ring.length === 0) {
+    return 0;
+  }
+
+  let longitudeSum = 0;
+  for (const position of ring) {
+    longitudeSum += Number(position[0]);
+  }
+
+  return longitudeSum / ring.length;
+}
+
+function isWithinBounds(
+  latitude: number,
+  longitude: number,
+  bounds: {
+    latitudeMin: number;
+    latitudeMax: number;
+    longitudeMin: number;
+    longitudeMax: number;
+  },
+) {
+  return (
+    latitude >= bounds.latitudeMin &&
+    latitude <= bounds.latitudeMax &&
+    longitude >= bounds.longitudeMin &&
+    longitude <= bounds.longitudeMax
+  );
 }
 
 function ringProjectedArea(ring: ReadonlyArray<Position>) {
@@ -302,11 +339,15 @@ function createLandBlobs() {
       const unwrappedRing = unwrapRingLongitudes(outerRing);
       const normalizedRing = recenterRingLongitudes(unwrappedRing);
       const area = ringProjectedArea(normalizedRing);
-      if (area < LAND_AREA_MIN) {
+      const centroidLatitude = averageLatitude(normalizedRing);
+      const centroidLongitude = averageLongitude(normalizedRing);
+      const isTaiwanBlob = isWithinBounds(centroidLatitude, centroidLongitude, TAIWAN_BOUNDS);
+      const passesBaseArea = area >= LAND_AREA_MIN;
+      const passesTaiwanArea = isTaiwanBlob && area >= TAIWAN_BLOB_AREA_MIN;
+      if (!passesBaseArea && !passesTaiwanArea) {
         continue;
       }
 
-      const centroidLatitude = averageLatitude(normalizedRing);
       if (
         Math.abs(centroidLatitude) >= POLAR_LATITUDE_MIN &&
         area < SMALL_POLAR_BLOB_AREA_MAX
@@ -412,7 +453,6 @@ export function WhereMap({
   const panPointerIdRef = useRef<number | null>(null);
   const panLastRef = useRef<PointerSample | null>(null);
   const pinchRef = useRef<PinchGesture | null>(null);
-  const suppressClickUntilRef = useRef(0);
   const interactionTimeoutRef = useRef<number | null>(null);
   const [isPanning, setIsPanning] = useState(false);
   const [isInteracting, setIsInteracting] = useState(false);
@@ -672,7 +712,6 @@ export function WhereMap({
         translateY: midpointMap.y - pinchState.anchorY * nextScale,
       });
 
-      suppressClickUntilRef.current = Date.now() + CLICK_SUPPRESS_MS;
       markInteracting();
       viewRef.current = nextView;
       setView(nextView);
@@ -694,7 +733,6 @@ export function WhereMap({
     const deltaY = (event.clientY - panLastRef.current.y) * currentMapPoint.unitsPerPixelY;
 
     if (movementPx > 1.2) {
-      suppressClickUntilRef.current = Date.now() + CLICK_SUPPRESS_MS;
       setIsPanning(true);
     }
 
@@ -841,6 +879,7 @@ export function WhereMap({
                   const isUpcomingDestination = nextUpcomingLocationId === location.id;
                   const isHovered = hoveredLocationId === location.id;
                   const markerRadius = isLatestPast ? 4.8 : isSelected ? 4.6 : isHovered ? 3.9 : 3.2;
+                  const hitRadius = 9.5;
 
                   return (
                     <g key={location.id}>
@@ -882,12 +921,24 @@ export function WhereMap({
                           isLatestPast && "where-map__marker--latest",
                           location.isFuture && "where-map__marker--future",
                         )}
-                        onPointerEnter={() => setHoveredLocationId(location.id)}
-                        onPointerLeave={() => setHoveredLocationId((current) => (current === location.id ? null : current))}
-                        onClick={() => {
-                          if (Date.now() < suppressClickUntilRef.current) {
-                            return;
-                          }
+                      />
+                      <circle
+                        cx={point.x}
+                        cy={point.y}
+                        r={hitRadius}
+                        className="where-map__marker-hit"
+                        aria-hidden="true"
+                        onPointerEnter={() => {
+                          setHoveredLocationId(location.id);
+                        }}
+                        onPointerLeave={() => {
+                          setHoveredLocationId((current) => (current === location.id ? null : current));
+                        }}
+                        onPointerDown={(event) => {
+                          event.stopPropagation();
+                        }}
+                        onClick={(event) => {
+                          event.stopPropagation();
                           onSelectLocation(location.id);
                         }}
                       />

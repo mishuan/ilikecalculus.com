@@ -1,7 +1,6 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import {
@@ -42,7 +41,7 @@ export function ProjectSlideshow({
   const [index, setIndex] = useState(resolvedInitialIndex);
   const indexRef = useRef(resolvedInitialIndex);
   const navigatingRef = useRef(false);
-  const goHome = useCallback(() => router.push("/"), [router]);
+  const closeSlideshow = useCallback(() => router.back(), [router]);
   const thumbnailsHref = `${projectThumbnailsHref(project, activeCategory)}?photo=${index + 1}`;
 
   useEffect(() => {
@@ -108,13 +107,13 @@ export function ProjectSlideshow({
 
       if (event.key === "Escape") {
         event.preventDefault();
-        goHome();
+        closeSlideshow();
       }
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [goHome, goToNext, goToPrevious]);
+  }, [closeSlideshow, goToNext, goToPrevious]);
 
   if (!hasImages) {
     return (
@@ -126,7 +125,7 @@ export function ProjectSlideshow({
               <TextActionButton
                 className="viewer-text-link viewer-close"
                 underline="none"
-                onClick={goHome}
+                onClick={closeSlideshow}
                 aria-label="Close slideshow"
               >
                 x
@@ -138,7 +137,7 @@ export function ProjectSlideshow({
               <h1 className="viewer-bottom__title">{project.title}</h1>
               <p className="viewer-bottom__description">No photos yet for this project.</p>
             </div>
-            <div className="viewer-bottom__status">
+            <div className="viewer-bottom__left">
               <div className="viewer-bottom__view-toggle" aria-label="Project view">
                 <TextActionLabel className="viewer-bottom__mode-label">slideshow</TextActionLabel>
                 <span className="viewer-bottom__view-separator" aria-hidden="true">
@@ -161,51 +160,24 @@ export function ProjectSlideshow({
   }
 
   const activeImage = project.images[index];
+  const projectDescription = project.description
+    ? project.description
+    : `${project.images.length} photographs in this collection.`;
 
   return (
     <section className="page page--viewer">
       <article className="viewer-stage">
         <header className="viewer-topbar">
-          <div className="viewer-topbar__project">
-            {nextProject ? (
-              <TextActionButton
-                className="viewer-text-link viewer-text-link--project"
-                underline="hover"
-                onClick={() => pushOnce(nextProject.href)}
-              >
-                next project -&gt; {nextProject.title}
-              </TextActionButton>
-            ) : (
-              <TextActionLabel
-                className="viewer-text-link viewer-text-link--project"
-                aria-disabled="true"
-              >
-                next project -&gt;
-              </TextActionLabel>
-            )}
+          <div className="viewer-topbar__meta">
+            <h1 className="collage-row__title viewer-topbar__title">{project.title}</h1>
+            <p className="viewer-bottom__description viewer-topbar__description">{projectDescription}</p>
           </div>
 
           <div className="viewer-topbar__actions">
             <TextActionButton
-              className="viewer-text-link"
-              underline="hover"
-              onClick={goToPrevious}
-              disabled={index === 0 && !previousProject}
-            >
-              &lt; back
-            </TextActionButton>
-            <TextActionButton
-              className="viewer-text-link"
-              underline="hover"
-              onClick={goToNext}
-              disabled={index === total - 1 && !nextProject}
-            >
-              next &gt;
-            </TextActionButton>
-            <TextActionButton
               className="viewer-text-link viewer-close"
               underline="none"
-              onClick={goHome}
+              onClick={closeSlideshow}
               aria-label="Close slideshow"
             >
               x
@@ -240,40 +212,27 @@ export function ProjectSlideshow({
         </div>
 
         <footer className="viewer-bottom">
-          <div className="viewer-bottom__meta">
-            <h1 className="viewer-bottom__title">
-              <Link
-                href={thumbnailsHref}
-                className="viewer-bottom__title-link"
-                data-testid="slideshow-title-thumbnails-link"
-              >
-                {project.title}
-              </Link>
-            </h1>
-            {project.description ? (
-              <p className="viewer-bottom__description">{project.description}</p>
-            ) : (
-              <p className="viewer-bottom__description">
-                {project.images.length} photographs in this collection.
-              </p>
-            )}
-          </div>
-
-          <div className="viewer-bottom__status">
-            <div className="viewer-bottom__view-toggle" aria-label="Project view">
-              <TextActionLabel className="viewer-bottom__mode-label">slideshow</TextActionLabel>
-              <span className="viewer-bottom__view-separator" aria-hidden="true">
+          <div className="viewer-bottom__left">
+            <div className="viewer-bottom__view-toggle project-thumbnails__view-toggle" aria-label="Project view">
+              <TextActionLabel underline="underline">slideshow</TextActionLabel>
+              <span className="viewer-bottom__view-separator project-thumbnails__view-separator" aria-hidden="true">
                 /
               </span>
               <TextActionLink
                 href={thumbnailsHref}
                 underline="hover"
-                className="viewer-bottom__thumbnail-link"
                 data-testid="slideshow-thumbnail-view-link"
               >
                 thumbnails
               </TextActionLink>
             </div>
+          </div>
+          <div className="viewer-bottom__project">
+            {nextProject ? (
+              <TextActionLink href={nextProject.href} underline="hover">
+                next project -&gt; {nextProject.title}
+              </TextActionLink>
+            ) : null}
             <p className="slideshow__counter">
               {index + 1} / {total}
             </p>

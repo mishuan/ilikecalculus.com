@@ -23,10 +23,8 @@ export const generatedSiteData = {
   "about": {
     "title": "About",
     "paragraphs": [
-      "Hey there — I’m Michael Yuan.",
-      "You might be wondering about the name “ilikecalculus.” In school, math was my favorite subject, and 17-year-old me thought calculus was the pinnacle of it all (mostly because it looked intense). I also played a lot of video games and needed a handle that was unique, so one day — with my calculus homework open on my desk — “ilikecalculus” happened. It stuck, and I never had to worry about it being taken.",
-      "These days I split my time between building software and making art.",
-      "Feel free to reach out — I’d love to chat."
+      "Hey there! I’m Michael Yuan.",
+      "I split my time between building software and making art. By day, I’m a software engineer at Figma, working on tools that help teams design and build together."
     ],
     "image": {
       "src": "/media/about/about-20240831-dscf6193.jpg",
@@ -38,8 +36,8 @@ export const generatedSiteData = {
   "contact": {
     "title": "Contact",
     "paragraphs": [
-      "I am a visual artist working in the medium of photography. I am motivated by challenging common perspectives of our world. Through photography, I shrink, flatten, and contort the objects of our civilization to draw out the subtle presence of humanity and its relationship with the world. I am drawn to the quiet solitude and memories of places, things, and people that have become more invisible after shifts in time and culture.",
-      "Looking to collaborate? Got questions? Got suggestions? Or just want to say hi? Shoot me a message, I'd love to hear from you! Don't spam me, though."
+      "I’m a visual artist working in the medium of photography, motivated by reframing the familiar. I’m drawn to the overlooked surfaces and objects of the world we build—and the marks they accumulate. Through perspective play, I shrink, flatten, and contort the everyday to draw out the subtle presence of humanity as residue: wear, repair, intention, neglect. I search for quiet solitude—and for the memories of places, things, and people that have become more invisible as time and culture shift.",
+      "Looking to collaborate, share an idea, or ask a question? Send me a message—I’d love to hear from you. If you’re curious, I’ll also tell you the origin story behind ilikecalculus."
     ],
     "image": {
       "src": "/media/contact/banner.jpg",

@@ -94,7 +94,6 @@ export const navItems = [
   { label: "home", href: "/" },
   { label: "projects", href: "/works" },
   { label: "where is", href: "/where" },
-  { label: "about", href: "/about" },
   { label: "contact", href: "/contact" },
   { label: "press", href: "/press" },
   { label: "blog", href: siteData.site.blogUrl, external: true },

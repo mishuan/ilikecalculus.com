@@ -234,6 +234,10 @@
   gap: var(--space-work-row-gap);
 }
 
+.project-thumbnails .project-collage-grid {
+  --row-height: clamp(134px, 16.8vw, 198px);
+}
+
 .project-thumbnails__actions {
   display: inline-flex;
   align-items: baseline;
