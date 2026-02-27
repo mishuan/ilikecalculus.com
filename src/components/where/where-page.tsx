@@ -41,7 +41,7 @@ export function WherePage({ initialLocations }: WherePageProps) {
       <header className="page-header">
         <h1 className="page-title">where is michael?</h1>
         <p className="page-intro">
-          A running map of where I have been and where I am going next.
+          A running map of where I was and where I am going next.
         </p>
         {isEditMode && isLoadingEditorState ? <EditorStatus>loading edit state...</EditorStatus> : null}
         {isEditMode && isMutating ? <EditorStatus>saving...</EditorStatus> : null}

@@ -23,9 +23,7 @@ test("home filters rows by category", async ({ page }) => {
 test("primary navigation routes work", async ({ page }) => {
   await page.goto("/");
 
-  await page.getByRole("link", { name: "projects" }).click();
-  await expect(page).toHaveURL(/\/works$/);
-  await expect(page.getByRole("heading", { name: "works" })).toBeVisible();
+  await expect(page.getByRole("link", { name: "projects" })).toHaveCount(0);
 
   await page.getByRole("link", { name: "contact" }).click();
   await expect(page).toHaveURL(/\/contact$/);
@@ -199,6 +197,22 @@ test("about route permanently redirects to contact", async ({ request }) => {
 
   const location = response.headers()["location"];
   expect(location).toContain("/contact");
+});
+
+test("works route permanently redirects to home", async ({ request }) => {
+  const response = await request.get("/works", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+
+  const location = response.headers()["location"];
+  expect(location).toContain("/");
+});
+
+test("projects route permanently redirects to home", async ({ request }) => {
+  const response = await request.get("/projects", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+
+  const location = response.headers()["location"];
+  expect(location).toContain("/");
 });
 
 test("editor api is available in development", async ({ request }) => {

@@ -92,7 +92,6 @@ export function projectThumbnailsHref(project: Project, preferredCategory?: Proj
 
 export const navItems = [
   { label: "home", href: "/" },
-  { label: "projects", href: "/works" },
   { label: "where is", href: "/where" },
   { label: "contact", href: "/contact" },
   { label: "press", href: "/press" },

@@ -1,0 +1,100 @@
+{
+  "slug": "locke",
+  "title": "Locke",
+  "description": "The first and last rural Chinese settlement in North America, slowly getting reclaimed by nature.",
+  "categories": [
+    "personal"
+  ],
+  "coverImage": {
+    "src": "/media/projects/locke/20191125-DSCF7326.jpg",
+    "width": 3041,
+    "height": 2028,
+    "alt": "20191125-DSCF7326.jpg"
+  },
+  "images": [
+    {
+      "src": "/media/projects/locke/20191125-DSCF7264.jpg",
+      "width": 3360,
+      "height": 1890,
+      "alt": "20191125-DSCF7264.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7282.jpg",
+      "width": 3789,
+      "height": 2526,
+      "alt": "20191125-DSCF7282.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7275.jpg",
+      "width": 4233,
+      "height": 2822,
+      "alt": "20191125-DSCF7275.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7273.jpg",
+      "width": 3727,
+      "height": 2485,
+      "alt": "20191125-DSCF7273.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7271.jpg",
+      "width": 4320,
+      "height": 2880,
+      "alt": "20191125-DSCF7271.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7279.jpg",
+      "width": 3789,
+      "height": 2526,
+      "alt": "20191125-DSCF7279.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7320.jpg",
+      "width": 2662,
+      "height": 4732,
+      "alt": "20191125-DSCF7320.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7318.jpg",
+      "width": 2560,
+      "height": 3840,
+      "alt": "20191125-DSCF7318.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7317.jpg",
+      "width": 2304,
+      "height": 3456,
+      "alt": "20191125-DSCF7317.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7269.jpg",
+      "width": 4766,
+      "height": 2681,
+      "alt": "20191125-DSCF7269.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7276.jpg",
+      "width": 3137,
+      "height": 4706,
+      "alt": "20191125-DSCF7276.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7328.jpg",
+      "width": 3667,
+      "height": 2445,
+      "alt": "20191125-DSCF7328.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7326.jpg",
+      "width": 3041,
+      "height": 2028,
+      "alt": "20191125-DSCF7326.jpg"
+    },
+    {
+      "src": "/media/projects/locke/20191125-DSCF7323.jpg",
+      "width": 2000,
+      "height": 3000,
+      "alt": "20191125-DSCF7323.jpg"
+    }
+  ]
+}

@@ -16,7 +16,12 @@ const nextConfig: NextConfig = {
     return [
       {
         source: "/projects",
-        destination: "/works",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/works",
+        destination: "/",
         permanent: true,
       },
       {
@@ -31,7 +36,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/locke",
-        destination: "/works",
+        destination: "/",
         permanent: true,
       },
       {
@@ -66,7 +71,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/works/locke",
-        destination: "/works",
+        destination: "/",
         permanent: true,
       },
       {
@@ -91,7 +96,7 @@ const nextConfig: NextConfig = {
       },
       {
         source: "/shop",
-        destination: "/works",
+        destination: "/",
         permanent: true,
       },
     ];
