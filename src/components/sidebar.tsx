@@ -102,6 +102,7 @@ export function Sidebar() {
               {whereItem.label}
             </Link>
           ) : null}
+          <span className="top-nav__name">{siteData.site.name}</span>
           <a
             href={siteData.site.instagramUrl}
             target="_blank"

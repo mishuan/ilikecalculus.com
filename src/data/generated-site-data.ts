@@ -14,7 +14,7 @@ export const generatedCategoryLabels = {
 
 export const generatedSiteData = {
   "site": {
-    "name": "Michael Yuan | Photography",
+    "name": "Michael Yuan",
     "shortName": "Michael Yuan",
     "tagline": "Photography",
     "instagramUrl": "https://instagram.com/ilikecalculus",

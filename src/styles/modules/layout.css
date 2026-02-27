@@ -33,7 +33,16 @@
 }
 
 .top-nav__where {
-  margin-right: 0.28rem;
+  margin-right: 0;
+}
+
+.top-nav__name {
+  color: var(--ink);
+  font-size: var(--font-size-text-action);
+  font-weight: 600;
+  letter-spacing: var(--letter-spacing-text-action);
+  line-height: 1.08;
+  white-space: nowrap;
 }
 
 .top-nav__brand {
