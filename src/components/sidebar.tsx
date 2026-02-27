@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import Image from "next/image";
 import { useSyncExternalStore } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { navItems, siteData } from "@/data/site-content";
@@ -81,6 +82,17 @@ export function Sidebar() {
           })}
         </nav>
 
+        <Link href="/" className="top-nav__brand" aria-label="Go to homepage">
+          <Image
+            src="/branding/ilikecalculus-logo-no-text.png"
+            alt=""
+            width={1028}
+            height={420}
+            className="top-nav__logo-mark"
+            priority
+          />
+        </Link>
+
         <div className="top-nav__identity">
           {whereItem ? (
             <Link
@@ -90,9 +102,6 @@ export function Sidebar() {
               {whereItem.label}
             </Link>
           ) : null}
-          <Link href="/" className="top-nav__brand" aria-label="Go to homepage">
-            <span className="top-nav__name">{siteData.site.shortName}</span>
-          </Link>
           <a
             href={siteData.site.instagramUrl}
             target="_blank"

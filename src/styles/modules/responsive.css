@@ -39,9 +39,14 @@
   }
 
   .top-nav__inner {
+    display: flex;
     align-items: flex-start;
     flex-direction: column-reverse;
     gap: 0.8rem;
+  }
+
+  .top-nav__brand {
+    align-self: center;
   }
 
   .top-nav__links {
@@ -88,8 +93,8 @@
     gap: var(--space-nav-mobile-gap);
   }
 
-  .top-nav__name {
-    font-size: var(--font-size-nav-mobile-title);
+  .top-nav__logo-mark {
+    height: 1.75rem;
   }
 
   .top-nav__links {

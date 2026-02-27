@@ -19,9 +19,9 @@
   max-width: var(--size-page-max-wide);
   margin: 0 auto;
   padding: 0.78rem 0;
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
   align-items: center;
-  justify-content: space-between;
   gap: 1.2rem;
 }
 
@@ -29,6 +29,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.62rem;
+  justify-self: end;
 }
 
 .top-nav__where {
@@ -37,14 +38,15 @@
 
 .top-nav__brand {
   display: inline-flex;
+  align-items: center;
+  justify-self: center;
+  line-height: 0;
 }
 
-.top-nav__name {
-  font-family: var(--font-ui), "Segoe UI", sans-serif;
-  font-size: var(--font-size-title-sm);
-  font-weight: 700;
-  line-height: 1.05;
-  letter-spacing: 0.02em;
+.top-nav__logo-mark {
+  display: block;
+  width: auto;
+  height: clamp(1.56rem, 2.05vw, 2.12rem);
 }
 
 .top-nav__links {
@@ -52,6 +54,7 @@
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: 0.62rem 0.95rem;
+  min-width: 0;
 }
 
 .nav-link {
