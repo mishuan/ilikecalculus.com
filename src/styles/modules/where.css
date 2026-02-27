@@ -285,6 +285,7 @@
 .where-calendar__week {
   display: flex;
   gap: var(--space-where-calendar-grid-gap);
+  --where-calendar-week-base-cell: calc((100% - (var(--space-where-calendar-grid-gap) * 6)) / 7);
   min-width: 0;
 }
 
@@ -321,6 +322,9 @@
 
 .where-calendar__day--has-items {
   flex: 0 1 auto;
+  width: max-content;
+  min-width: var(--where-calendar-week-base-cell);
+  max-width: 100%;
   color: var(--ink);
 }
 
