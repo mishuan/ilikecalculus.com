@@ -239,7 +239,7 @@ test("where timeline toggles between list and calendar view", async ({ page }) =
   await expect(page.getByRole("heading", { level: 2, name: "current" })).toBeVisible();
 });
 
-test("where calendar hover previews details and click keeps selected detail", async ({ page }) => {
+test("where calendar list uses list row format and filters entries by month", async ({ page }) => {
   await page.goto("/where");
   await page.getByTestId("where-view-calendar").click();
   await expect(page.getByTestId("where-calendar")).toBeVisible();
@@ -256,17 +256,42 @@ test("where calendar hover previews details and click keeps selected detail", as
   }
 
   await firstInteractiveDay.hover();
-  const hoverDetail = page.getByTestId(`where-calendar-detail-${previewLocationId}`);
+  const hoverDetail = page.getByTestId(`where-calendar-entry-${previewLocationId}`);
   await expect(hoverDetail).toBeVisible();
 
   await firstInteractiveDay.click();
   await emptyDay.hover();
-  await expect(page.getByTestId(`where-calendar-detail-${previewLocationId}`)).toBeVisible();
+  const selectedDetail = page.getByTestId(`where-calendar-entry-${previewLocationId}`);
+  await expect(selectedDetail).toBeVisible();
+  await expect(selectedDetail).toHaveClass(/where-entry--selected/);
 
   const previewLocation = workspaceContent.where.locations.find((location) => location.id === previewLocationId);
-  if (previewLocation?.note) {
-    await expect(page.getByTestId(`where-calendar-detail-${previewLocationId}`)).toContainText(previewLocation.note);
+  if (previewLocation) {
+    const expectedDateTime = new Intl.DateTimeFormat(undefined, {
+      dateStyle: "medium",
+      timeStyle: "short",
+    }).format(new Date(previewLocation.at));
+    await expect(selectedDetail.locator(".where-entry__time")).toHaveText(expectedDateTime);
   }
+  if (previewLocation?.note) {
+    await expect(selectedDetail).toContainText(previewLocation.note);
+  }
+
+  const monthLabel = page.locator(".where-calendar__month-label");
+  for (let attempts = 0; attempts < 12; attempts += 1) {
+    const label = (await monthLabel.textContent())?.trim().toLowerCase() ?? "";
+    if (label === "december 2025") {
+      break;
+    }
+    await page.getByRole("button", { name: "Previous month" }).click();
+  }
+
+  await expect(monthLabel).toHaveText(/december 2025/i);
+  const expectedDecemberCount = workspaceContent.where.locations.filter((location) => {
+    const localDate = new Date(location.at);
+    return localDate.getFullYear() === 2025 && localDate.getMonth() === 11;
+  }).length;
+  await expect(page.locator("[data-testid^='where-calendar-entry-']")).toHaveCount(expectedDecemberCount);
 });
 
 test("where timeline and map panels keep equal desktop heights", async ({ page }) => {

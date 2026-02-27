@@ -3,6 +3,14 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { TextActionButton } from "@/components/ui/text-action";
+import {
+  addMonths,
+  fromDayKey,
+  startOfMonth,
+  toDayKey,
+  toMonthKey,
+} from "@/components/where/where-date-utils";
+import { createHoverIntent } from "@/components/where/where-hover-intent";
 import type { ResolvedWhereLocation } from "@/components/where/use-where-state";
 
 type WhereCalendarProps = {
@@ -15,31 +23,6 @@ type WhereCalendarProps = {
 };
 
 const WEEKDAY_LABELS = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"] as const;
-
-function pad(value: number) {
-  return String(value).padStart(2, "0");
-}
-
-function toDayKey(date: Date) {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
-}
-
-function toMonthKey(date: Date) {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}`;
-}
-
-function fromDayKey(dayKey: string) {
-  const [year, month, day] = dayKey.split("-").map((value) => Number(value));
-  return new Date(year, month - 1, day);
-}
-
-function startOfMonth(date: Date) {
-  return new Date(date.getFullYear(), date.getMonth(), 1);
-}
-
-function addMonths(date: Date, delta: number) {
-  return new Date(date.getFullYear(), date.getMonth() + delta, 1);
-}
 
 type CalendarCell = {
   key: string;
@@ -85,9 +68,10 @@ export function WhereCalendar({
       }),
     [],
   );
-  const timeFormatter = useMemo(
+  const rowDateFormatter = useMemo(
     () =>
       new Intl.DateTimeFormat(undefined, {
+        dateStyle: "medium",
         timeStyle: "short",
       }),
     [],
@@ -223,14 +207,19 @@ export function WhereCalendar({
     return rows;
   }, [gridCells]);
 
-  const activeDayLocations = activeDayKey ? locationsByDayKey.get(activeDayKey) ?? [] : [];
-  const activeDayDate = activeDayKey ? fromDayKey(activeDayKey) : null;
-  const hoveredDayLocations = hoveredDayKey ? locationsByDayKey.get(hoveredDayKey) ?? [] : [];
-  const hoveredDetailLocation = resolveDayLocation(hoveredDayLocations, hoveredLocationId ?? selectedLocationId);
-  const selectedDetailLocation =
-    selectedLocation ?? resolveDayLocation(activeDayLocations, selectedLocationId) ?? sortedLocations[sortedLocations.length - 1] ?? null;
-  const detailLocation = hoveredDetailLocation ?? selectedDetailLocation;
-  const detailDate = detailLocation ? new Date(detailLocation.at) : activeDayDate;
+  const monthLocations = useMemo(
+    () =>
+      sortedLocations
+        .filter((location) => toMonthKey(new Date(location.at)) === monthKey)
+        .slice()
+        .sort((a, b) => {
+          if (a.atMs === b.atMs) {
+            return a.id.localeCompare(b.id);
+          }
+          return b.atMs - a.atMs;
+        }),
+    [monthKey, sortedLocations],
+  );
 
   return (
     <div className="where-calendar" data-testid="where-calendar">
@@ -285,6 +274,20 @@ export function WhereCalendar({
               const isInteractive = dayLocations.length > 0;
               const primaryDayLocation = resolveDayLocation(dayLocations, selectedLocationId);
               const locationLabelText = dayLocations.map((location) => location.label).join(" · ");
+              const hoverIntent = createHoverIntent({
+                locationId: primaryDayLocation?.id ?? "",
+                hoveredLocationId,
+                onHoverLocation,
+                disabled: !isInteractive || !primaryDayLocation,
+                onActivate: () => {
+                  setHoveredDayKey(cell.dayKey);
+                },
+                onClear: () => {
+                  if (hoveredDayKey === cell.dayKey) {
+                    setHoveredDayKey(null);
+                  }
+                },
+              });
 
               return (
                 <button
@@ -299,36 +302,10 @@ export function WhereCalendar({
                     hasHovered && "where-calendar__day--hovered",
                   )}
                   disabled={!isInteractive}
-                  onPointerEnter={() => {
-                    if (!isInteractive || !primaryDayLocation) {
-                      return;
-                    }
-                    setHoveredDayKey(cell.dayKey);
-                    onHoverLocation(primaryDayLocation.id);
-                  }}
-                  onPointerLeave={() => {
-                    if (hoveredDayKey === cell.dayKey) {
-                      setHoveredDayKey(null);
-                    }
-                    if (hoveredLocationId === primaryDayLocation?.id) {
-                      onHoverLocation(null);
-                    }
-                  }}
-                  onFocus={() => {
-                    if (!isInteractive || !primaryDayLocation) {
-                      return;
-                    }
-                    setHoveredDayKey(cell.dayKey);
-                    onHoverLocation(primaryDayLocation.id);
-                  }}
-                  onBlur={() => {
-                    if (hoveredDayKey === cell.dayKey) {
-                      setHoveredDayKey(null);
-                    }
-                    if (hoveredLocationId === primaryDayLocation?.id) {
-                      onHoverLocation(null);
-                    }
-                  }}
+                  onPointerEnter={hoverIntent.activate}
+                  onPointerLeave={hoverIntent.clear}
+                  onFocus={hoverIntent.activate}
+                  onBlur={hoverIntent.clear}
                   onClick={() => {
                     setActiveDayKey(cell.dayKey);
                     if (primaryDayLocation) {
@@ -357,30 +334,60 @@ export function WhereCalendar({
       </div>
 
       <div className="where-calendar__drilldown">
-        <p className="where-calendar__drilldown-title">
-          {detailDate ? dayFormatter.format(detailDate) : "Select a day with locations"}
-        </p>
-
-        {!detailLocation ? (
-          <p className="where-calendar__empty">No locations on this day.</p>
+        {monthLocations.length === 0 ? (
+          <p className="where-calendar__empty">No locations in this month.</p>
         ) : (
-          <article
-            ref={(node) => {
-              registerEntryRef(detailLocation.id, node);
-            }}
-            className={classNames(
-              "where-calendar__drilldown-row",
-              selectedLocationId === detailLocation.id && "where-calendar__drilldown-row--selected",
-              hoveredLocationId === detailLocation.id && "where-calendar__drilldown-row--hovered",
-            )}
-            data-testid={`where-calendar-detail-${detailLocation.id}`}
-          >
-            <span className="where-calendar__drilldown-time">{timeFormatter.format(new Date(detailLocation.at))}</span>
-            <span className="where-calendar__drilldown-main">
-              <span className="where-calendar__drilldown-location">{detailLocation.label}</span>
-              {detailLocation.note ? <span className="where-calendar__drilldown-note">{detailLocation.note}</span> : null}
-            </span>
-          </article>
+          <div className="where-entry-list where-calendar__drilldown-list">
+            {monthLocations.map((location, index) => {
+              const isSelected = selectedLocationId === location.id;
+              const isHovered = hoveredLocationId === location.id;
+              const shouldShowSelectedPreview = Boolean(location.note) && isSelected;
+              const shouldShowHoverPreview = Boolean(location.note) && isHovered && !isSelected;
+              const hoverIntent = createHoverIntent({
+                locationId: location.id,
+                hoveredLocationId,
+                onHoverLocation,
+                onActivate: () => {
+                  setHoveredDayKey(toDayKey(new Date(location.at)));
+                },
+              });
+
+              return (
+                <article
+                  key={location.id}
+                  ref={(node) => {
+                    registerEntryRef(location.id, node);
+                  }}
+                  className={classNames(
+                    "where-entry",
+                    location.isFuture && "where-entry--future",
+                    isSelected && "where-entry--selected",
+                    isHovered && "where-entry--hovered",
+                    index === 0 && "where-entry--hover-note-below",
+                  )}
+                  data-testid={`where-calendar-entry-${location.id}`}
+                >
+                  <button
+                    type="button"
+                    className="where-entry__main"
+                    onPointerEnter={hoverIntent.activate}
+                    onPointerLeave={hoverIntent.clear}
+                    onFocus={hoverIntent.activate}
+                    onBlur={hoverIntent.clear}
+                    onClick={() => {
+                      onSelectLocation(location.id);
+                      setActiveDayKey(toDayKey(new Date(location.at)));
+                    }}
+                  >
+                    <p className="where-entry__label">{location.label}</p>
+                    <p className="where-entry__time">{rowDateFormatter.format(new Date(location.at))}</p>
+                    {shouldShowSelectedPreview ? <p className="where-entry__note">{location.note}</p> : null}
+                  </button>
+                  {shouldShowHoverPreview ? <p className="where-entry__hover-note">{location.note}</p> : null}
+                </article>
+              );
+            })}
+          </div>
         )}
       </div>
     </div>

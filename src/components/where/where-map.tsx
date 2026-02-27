@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { FeatureCollection, MultiPolygon, Polygon, Position } from "geojson";
 import { feature } from "topojson-client";
 import land110m from "world-atlas/land-110m.json";
+import { createHoverIntent } from "@/components/where/where-hover-intent";
 import type { ResolvedWhereLocation } from "@/components/where/use-where-state";
 import { classNames } from "@/components/ui/class-names";
 
@@ -75,6 +76,20 @@ const MARKER_RING_RADIUS = {
   selected: 8,
 } as const;
 const MARKER_HIT_RADIUS = 9.5;
+const SEGMENT_STYLE = {
+  opacity: {
+    base: 0.22,
+    intensityScale: 0.45,
+    selectedBoost: 0.08,
+    focusedBoost: 0.07,
+  },
+  strokeWidth: {
+    base: 0.65,
+    intensityScale: 1.35,
+    selectedBoost: 0.35,
+    focusedBoost: 0.25,
+  },
+} as const;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -445,6 +460,54 @@ function resolveMarkerRadius({
   return MARKER_RADIUS.base;
 }
 
+function resolveFocusedView(selectedPoint: { x: number; y: number } | null): MapView {
+  if (!selectedPoint) {
+    return { scale: 1, translateX: 0, translateY: 0 };
+  }
+
+  const targetX = MAP_WIDTH * 0.5 - selectedPoint.x * FOCUS_SCALE;
+  const targetY = MAP_HEIGHT * 0.5 - selectedPoint.y * FOCUS_SCALE;
+  return clampView({
+    scale: FOCUS_SCALE,
+    translateX: targetX,
+    translateY: targetY,
+  });
+}
+
+function resolveSegmentOpacity({
+  intensity,
+  selected,
+  focused,
+}: {
+  intensity: number;
+  selected: boolean;
+  focused: boolean;
+}) {
+  return (
+    SEGMENT_STYLE.opacity.base +
+    intensity * SEGMENT_STYLE.opacity.intensityScale +
+    (selected ? SEGMENT_STYLE.opacity.selectedBoost : 0) +
+    (focused && !selected ? SEGMENT_STYLE.opacity.focusedBoost : 0)
+  );
+}
+
+function resolveSegmentStrokeWidth({
+  intensity,
+  selected,
+  focused,
+}: {
+  intensity: number;
+  selected: boolean;
+  focused: boolean;
+}) {
+  return (
+    SEGMENT_STYLE.strokeWidth.base +
+    intensity * SEGMENT_STYLE.strokeWidth.intensityScale +
+    (selected ? SEGMENT_STYLE.strokeWidth.selectedBoost : 0) +
+    (focused && !selected ? SEGMENT_STYLE.strokeWidth.focusedBoost : 0)
+  );
+}
+
 export function WhereMap({
   locations,
   selectedLocationId,
@@ -504,23 +567,7 @@ export function WhereMap({
   const [isInteracting, setIsInteracting] = useState(false);
 
   const selectedPoint = selectedLocationId ? pointsById.get(selectedLocationId) : null;
-
-  const baseView = useMemo<MapView>(() => {
-    if (!selectedPoint) {
-      return { scale: 1, translateX: 0, translateY: 0 };
-    }
-
-    const targetX = MAP_WIDTH * 0.5 - selectedPoint.x * FOCUS_SCALE;
-    const targetY = MAP_HEIGHT * 0.5 - selectedPoint.y * FOCUS_SCALE;
-
-    return clampView({
-      scale: FOCUS_SCALE,
-      translateX: targetX,
-      translateY: targetY,
-    });
-  }, [selectedPoint]);
-
-  const [view, setView] = useState<MapView>(baseView);
+  const [view, setView] = useState<MapView>(() => resolveFocusedView(selectedPoint ?? null));
   const viewRef = useRef<MapView>(view);
 
   useEffect(() => {
@@ -929,12 +976,17 @@ export function WhereMap({
                       )}
                       style={{
                         opacity: String(
-                          0.22 +
-                            segment.intensity * 0.45 +
-                            (segment.selected ? 0.08 : 0) +
-                            (segment.focused && !segment.selected ? 0.07 : 0),
+                          resolveSegmentOpacity({
+                            intensity: segment.intensity,
+                            selected: segment.selected,
+                            focused: segment.focused,
+                          }),
                         ),
-                        strokeWidth: `${0.65 + segment.intensity * 1.35 + (segment.selected ? 0.35 : 0) + (segment.focused && !segment.selected ? 0.25 : 0)}px`,
+                        strokeWidth: `${resolveSegmentStrokeWidth({
+                          intensity: segment.intensity,
+                          selected: segment.selected,
+                          focused: segment.focused,
+                        })}px`,
                       }}
                     />
                   )),
@@ -956,6 +1008,11 @@ export function WhereMap({
                   const hoveredRingRadius = MARKER_RING_RADIUS.hovered * inverseViewScale;
                   const upcomingRingRadius = MARKER_RING_RADIUS.upcomingDestination * inverseViewScale;
                   const markerHitRadius = MARKER_HIT_RADIUS * inverseViewScale;
+                  const hoverIntent = createHoverIntent({
+                    locationId: location.id,
+                    hoveredLocationId,
+                    onHoverLocation,
+                  });
 
                   return (
                     <g key={location.id}>
@@ -1006,14 +1063,8 @@ export function WhereMap({
                         className="where-map__marker-hit"
                         aria-hidden="true"
                         data-testid={`where-map-node-hit-${location.id}`}
-                        onPointerEnter={() => {
-                          onHoverLocation(location.id);
-                        }}
-                        onPointerLeave={() => {
-                          if (hoveredLocationId === location.id) {
-                            onHoverLocation(null);
-                          }
-                        }}
+                        onPointerEnter={hoverIntent.activate}
+                        onPointerLeave={hoverIntent.clear}
                         onPointerDown={(event) => {
                           event.stopPropagation();
                         }}

@@ -3,6 +3,7 @@
 import { EditorButton } from "@/components/ui/editor-controls";
 import { classNames } from "@/components/ui/class-names";
 import { WhereEditor, type WhereLocationFormValue } from "@/components/where/where-editor";
+import { createHoverIntent } from "@/components/where/where-hover-intent";
 import type { ResolvedWhereLocation } from "@/components/where/use-where-state";
 
 type WhereTimelineSectionVariant = "current" | "upcoming" | "past";
@@ -77,6 +78,11 @@ export function WhereTimelineSection({
             const isEditing = editingLocationId === location.id;
             const shouldShowSelectedPreview = Boolean(location.note) && isSelected;
             const shouldShowHoverPreview = Boolean(location.note) && isHovered && !isSelected;
+            const hoverIntent = createHoverIntent({
+              locationId: location.id,
+              hoveredLocationId,
+              onHoverLocation,
+            });
 
             return (
               <article
@@ -96,22 +102,10 @@ export function WhereTimelineSection({
                 <button
                   type="button"
                   className="where-entry__main"
-                  onPointerEnter={() => {
-                    onHoverLocation(location.id);
-                  }}
-                  onPointerLeave={() => {
-                    if (hoveredLocationId === location.id) {
-                      onHoverLocation(null);
-                    }
-                  }}
-                  onFocus={() => {
-                    onHoverLocation(location.id);
-                  }}
-                  onBlur={() => {
-                    if (hoveredLocationId === location.id) {
-                      onHoverLocation(null);
-                    }
-                  }}
+                  onPointerEnter={hoverIntent.activate}
+                  onPointerLeave={hoverIntent.clear}
+                  onFocus={hoverIntent.activate}
+                  onBlur={hoverIntent.clear}
                   onClick={() => onSelectLocation(location.id)}
                 >
                   <p className="where-entry__label">{location.label}</p>

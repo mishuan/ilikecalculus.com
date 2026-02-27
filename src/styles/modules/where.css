@@ -35,6 +35,12 @@
   padding-right: var(--space-where-scroll-padding-right);
 }
 
+.where-timeline__content--calendar {
+  overflow: hidden;
+  padding-right: 0;
+  display: block;
+}
+
 .where-timeline__group {
   display: grid;
   gap: var(--space-where-group-gap);
@@ -65,6 +71,12 @@
 
 .where-timeline__view-item {
   font-size: var(--font-size-meta);
+}
+
+.where-timeline__view-item-wrap {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--space-where-view-toggle-gap);
 }
 
 .where-timeline__view-separator {
@@ -152,9 +164,9 @@
   font-size: var(--font-size-meta);
   color: color-mix(in srgb, var(--ink) 92%, transparent);
   line-height: var(--line-height-copy);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .where-entry__hover-note {
@@ -170,8 +182,8 @@
   padding: var(--space-where-entry-hover-note-padding-y) var(--space-where-entry-hover-note-padding-x);
   font-size: var(--font-size-caption);
   color: color-mix(in srgb, var(--ink) 94%, transparent);
-  line-height: 1.32;
-  box-shadow: 0 8px 16px -14px rgba(0, 0, 0, 0.46);
+  line-height: var(--line-height-where-hover-note);
+  box-shadow: var(--shadow-where-hover-note);
   pointer-events: none;
 }
 
@@ -239,6 +251,9 @@
   display: grid;
   gap: var(--space-where-calendar-gap);
   align-content: start;
+  height: 100%;
+  min-height: 0;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
 }
 
 .where-calendar__header {
@@ -299,7 +314,7 @@
   display: grid;
   justify-items: start;
   align-content: start;
-  gap: 0.26rem;
+  gap: var(--space-where-calendar-day-content-gap);
   text-align: left;
   color: var(--muted);
   position: relative;
@@ -311,7 +326,7 @@
 }
 
 .where-calendar__day:disabled {
-  opacity: 0.52;
+  opacity: var(--opacity-where-disabled);
 }
 
 .where-calendar__day--empty {
@@ -350,7 +365,7 @@
 .where-calendar__day-location {
   font-size: var(--font-size-caption);
   color: color-mix(in srgb, var(--ink) 92%, transparent);
-  line-height: 1.28;
+  line-height: var(--line-height-where-calendar-location);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -362,6 +377,10 @@
   padding-top: var(--space-where-calendar-drilldown-padding-top);
   display: grid;
   gap: var(--space-where-calendar-drilldown-gap);
+  min-height: 0;
+  overflow: auto;
+  scrollbar-gutter: stable;
+  padding-right: var(--space-where-scroll-padding-right);
 }
 
 .where-calendar__drilldown-title {
@@ -406,7 +425,7 @@
 
 .where-calendar__drilldown-main {
   display: grid;
-  gap: 0.14rem;
+  gap: var(--space-where-calendar-drilldown-main-gap);
   min-width: 0;
 }
 
@@ -420,7 +439,7 @@
 .where-calendar__drilldown-note {
   font-size: var(--font-size-caption);
   color: var(--muted);
-  line-height: 1.3;
+  line-height: var(--line-height-where-calendar-note);
 }
 
 .where-calendar__empty {
@@ -464,12 +483,14 @@
 .where-map__graticule line {
   stroke: var(--surface-where-map-line);
   stroke-width: 0.8;
+  vector-effect: non-scaling-stroke;
 }
 
 .where-map__land path {
   fill: color-mix(in srgb, var(--ink) 9%, var(--paper));
   stroke: color-mix(in srgb, var(--ink) 22%, var(--line));
   stroke-width: 0.72;
+  vector-effect: non-scaling-stroke;
 }
 
 .where-map__content {
@@ -484,6 +505,7 @@
   fill: none;
   stroke: color-mix(in srgb, var(--ink) 74%, var(--muted));
   stroke-linecap: round;
+  vector-effect: non-scaling-stroke;
 }
 
 .where-map__segment--focused {
@@ -506,7 +528,7 @@
 
 .where-map__segment--latest-arrival {
   opacity: 0.84 !important;
-  animation: where-latest-arrival-pulse 2.15s ease-in-out infinite;
+  animation: where-latest-arrival-pulse var(--motion-where-pulse-duration) ease-in-out infinite;
 }
 
 .where-map__segment--next-upcoming {

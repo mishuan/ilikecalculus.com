@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { TextActionButton, TextActionLabel } from "@/components/ui/text-action";
+import { classNames } from "@/components/ui/class-names";
 import { WhereCalendar } from "@/components/where/where-calendar";
+import { toLocalDateTimeValue } from "@/components/where/where-date-utils";
 import { WhereEditor, type WhereLocationFormValue } from "@/components/where/where-editor";
 import { WhereTimelineSection } from "@/components/where/where-timeline-section";
+import { WhereViewToggle, type WhereTimelineViewMode } from "@/components/where/where-view-toggle";
 import type {
   ResolvedWhereLocation,
   WhereLocationMutationInput,
@@ -30,18 +32,6 @@ type WhereTimelineProps = {
   onUpdateLocation: (id: string, input: WhereLocationMutationInput) => Promise<boolean>;
   onDeleteLocation: (id: string) => Promise<boolean>;
 };
-
-type WhereTimelineViewMode = "list" | "calendar";
-
-function pad(value: number) {
-  return String(value).padStart(2, "0");
-}
-
-function toLocalDateTimeValue(date: Date) {
-  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}T${pad(date.getHours())}:${pad(
-    date.getMinutes(),
-  )}`;
-}
 
 function createEmptyDraft(): WhereLocationFormValue {
   return {
@@ -218,43 +208,14 @@ export function WhereTimeline({
         </div>
       ) : null}
 
-      <div className="where-timeline__view-switch" data-testid="where-view-toggle" aria-label="Timeline view">
-        {viewMode === "list" ? (
-          <TextActionLabel className="where-timeline__view-item" underline="underline">
-            list
-          </TextActionLabel>
-        ) : (
-          <TextActionButton
-            type="button"
-            className="where-timeline__view-item"
-            underline="hover"
-            onClick={() => setViewMode("list")}
-            data-testid="where-view-list"
-          >
-            list
-          </TextActionButton>
-        )}
-        <span className="where-timeline__view-separator" aria-hidden="true">
-          /
-        </span>
-        {viewMode === "calendar" ? (
-          <TextActionLabel className="where-timeline__view-item" underline="underline">
-            calendar
-          </TextActionLabel>
-        ) : (
-          <TextActionButton
-            type="button"
-            className="where-timeline__view-item"
-            underline="hover"
-            onClick={() => setViewMode("calendar")}
-            data-testid="where-view-calendar"
-          >
-            calendar
-          </TextActionButton>
-        )}
-      </div>
+      <WhereViewToggle value={viewMode} onChange={setViewMode} />
 
-      <div className="where-timeline__content">
+      <div
+        className={classNames(
+          "where-timeline__content",
+          viewMode === "calendar" && "where-timeline__content--calendar",
+        )}
+      >
         {viewMode === "list" ? (
           timelineSections.map((section) => (
             <WhereTimelineSection
