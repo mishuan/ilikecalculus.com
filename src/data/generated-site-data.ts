@@ -118,7 +118,7 @@ export const generatedSiteData = {
         "label": "Hong Kong",
         "latitude": 22.28117547134755,
         "longitude": 114.18595157291284,
-        "at": "2026-03-01T00:45:00.000Z",
+        "at": "2026-02-28T00:45:00.000Z",
         "note": "Starting my sabbatical in Hong Kong"
       },
       {
@@ -134,7 +134,7 @@ export const generatedSiteData = {
         "label": "Kanazawa",
         "latitude": 36.57864660027996,
         "longitude": 136.64766678471085,
-        "at": "2026-03-05T00:30:00.000Z",
+        "at": "2026-03-04T11:30:00.000Z",
         "note": "Flew into Tokyo and trained straight to Kanazawa. This is the start of the road trip!"
       },
       {
@@ -142,7 +142,7 @@ export const generatedSiteData = {
         "label": "Taitung",
         "latitude": 22.755421688207196,
         "longitude": 121.1485379073298,
-        "at": "2025-12-25T01:30:00.000Z",
+        "at": "2025-12-24T11:30:00.000Z",
         "note": "Spending Christmas with DQ"
       }
     ]
@@ -725,7 +725,8 @@ export const generatedSiteData = {
     {
       "slug": "portraits",
       "categories": [
-        "portrait"
+        "portrait",
+        "personal"
       ],
       "title": "Portraits",
       "description": "A selection of portraits, in and out of studios.",
@@ -847,66 +848,215 @@ export const generatedSiteData = {
       ]
     },
     {
-      "slug": "dustin",
+      "slug": "figma-2025",
+      "title": "Figma 2025",
+      "description": "",
       "categories": [
+        "film",
         "portrait"
       ],
-      "title": "Dustin",
-      "description": "",
       "coverImage": {
-        "src": "/media/projects/dustin/01.jpg",
-        "width": 2500,
-        "height": 3750,
-        "alt": "20210508-DSCF4205.jpg"
+        "src": "/media/projects/figma-2025/20250814-000049550031.jpg",
+        "width": 2378,
+        "height": 3587,
+        "alt": "20250814-000049550031.jpg"
       },
       "images": [
         {
-          "src": "/media/projects/dustin/01.jpg",
+          "src": "/media/projects/figma-2025/20250814-000049550006.jpg",
+          "width": 2186,
+          "height": 3297,
+          "alt": "20250814-000049550006.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049500019.jpg",
+          "width": 2140,
+          "height": 3228,
+          "alt": "20250814-000049500019.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049550024.jpg",
+          "width": 3587,
+          "height": 2378,
+          "alt": "20250814-000049550024.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250811-000044020024.jpg",
+          "width": 2084,
+          "height": 3144,
+          "alt": "20250811-000044020024.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049510032.jpg",
+          "width": 1712,
+          "height": 2582,
+          "alt": "20250814-000049510032.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049550002.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049550002.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250811-000044010027.jpg",
+          "width": 2313,
+          "height": 3489,
+          "alt": "20250811-000044010027.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049530006.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049530006.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049550016.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049550016.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049530023.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049530023.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250811-000044010021.jpg",
+          "width": 2274,
+          "height": 3430,
+          "alt": "20250811-000044010021.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049530017.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049530017.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049530019.jpg",
+          "width": 2167,
+          "height": 3268,
+          "alt": "20250814-000049530019.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049530001.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049530001.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049550031.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049550031.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049510022.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049510022.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049510009.jpg",
+          "width": 2164,
+          "height": 3264,
+          "alt": "20250814-000049510009.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049500036.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049500036.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250814-000049500010.jpg",
+          "width": 2378,
+          "height": 3587,
+          "alt": "20250814-000049500010.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2025/20250811-000044020005.jpg",
+          "width": 2237,
+          "height": 3375,
+          "alt": "20250811-000044020005.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "figma-2023",
+      "categories": [
+        "portrait"
+      ],
+      "title": "Figma 2023",
+      "description": "",
+      "coverImage": {
+        "src": "/media/projects/figma-2023/01.jpg",
+        "width": 2500,
+        "height": 3750,
+        "alt": "20230808-DSCF3302.jpg"
+      },
+      "images": [
+        {
+          "src": "/media/projects/figma-2023/01.jpg",
           "width": 2500,
           "height": 3750,
-          "alt": "20210508-DSCF4205.jpg"
+          "alt": "20230808-DSCF3302.jpg"
         },
         {
-          "src": "/media/projects/dustin/02.jpg",
+          "src": "/media/projects/figma-2023/02.jpg",
           "width": 2500,
           "height": 3750,
-          "alt": "20210508-DSCF4188.jpg"
+          "alt": "20230808-DSCF3419.jpg"
         },
         {
-          "src": "/media/projects/dustin/04.jpg",
-          "width": 2500,
-          "height": 1406,
-          "alt": "20210508-DSCF4154.jpg"
-        },
-        {
-          "src": "/media/projects/dustin/05.jpg",
+          "src": "/media/projects/figma-2023/03.jpg",
           "width": 2500,
           "height": 3750,
-          "alt": "20210508-DSCF4138.jpg"
+          "alt": "20230809-DSCF3650.jpg"
         },
         {
-          "src": "/media/projects/dustin/06.jpg",
-          "width": 2500,
-          "height": 3125,
-          "alt": "20210508-DSCF4106.jpg"
-        },
-        {
-          "src": "/media/projects/dustin/07.jpg",
+          "src": "/media/projects/figma-2023/04.jpg",
           "width": 2500,
           "height": 3750,
-          "alt": "20210508-DSCF4327.jpg"
+          "alt": "20230726-DSCF2482.jpg"
         },
         {
-          "src": "/media/projects/dustin/08.jpg",
+          "src": "/media/projects/figma-2023/05.jpg",
           "width": 2500,
           "height": 3750,
-          "alt": "20210508-DSCF4264.jpg"
+          "alt": "20230726-DSCF2619.jpg"
         },
         {
-          "src": "/media/projects/dustin/09.jpg",
+          "src": "/media/projects/figma-2023/06.jpg",
           "width": 2500,
           "height": 3750,
-          "alt": "20210508-DSCF4257.jpg"
+          "alt": "20230809-DSCF3637.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2023/07.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20230809-DSCF3540.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2023/08.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20230726-DSCF2565.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2023/09.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20230726-DSCF2424.jpg"
+        },
+        {
+          "src": "/media/projects/figma-2023/10.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20230726-DSCF2519.jpg"
         }
       ]
     },
@@ -1013,82 +1163,6 @@ export const generatedSiteData = {
           "width": 2500,
           "height": 1667,
           "alt": "20220608-DSCF7458.jpg"
-        }
-      ]
-    },
-    {
-      "slug": "figma-2023",
-      "categories": [
-        "portrait"
-      ],
-      "title": "Figma 2023",
-      "description": "",
-      "coverImage": {
-        "src": "/media/projects/figma-2023/01.jpg",
-        "width": 2500,
-        "height": 3750,
-        "alt": "20230808-DSCF3302.jpg"
-      },
-      "images": [
-        {
-          "src": "/media/projects/figma-2023/01.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230808-DSCF3302.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/02.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230808-DSCF3419.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/03.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230809-DSCF3650.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/04.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230726-DSCF2482.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/05.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230726-DSCF2619.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/06.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230809-DSCF3637.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/07.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230809-DSCF3540.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/08.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230726-DSCF2565.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/09.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230726-DSCF2424.jpg"
-        },
-        {
-          "src": "/media/projects/figma-2023/10.jpg",
-          "width": 2500,
-          "height": 3750,
-          "alt": "20230726-DSCF2519.jpg"
         }
       ]
     },
@@ -1322,6 +1396,70 @@ export const generatedSiteData = {
           "width": 1873,
           "height": 2826,
           "alt": "20250708-86835_MYA_004_29.jpg"
+        }
+      ]
+    },
+    {
+      "slug": "dustin",
+      "categories": [
+        "portrait"
+      ],
+      "title": "Dustin",
+      "description": "",
+      "coverImage": {
+        "src": "/media/projects/dustin/01.jpg",
+        "width": 2500,
+        "height": 3750,
+        "alt": "20210508-DSCF4205.jpg"
+      },
+      "images": [
+        {
+          "src": "/media/projects/dustin/01.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20210508-DSCF4205.jpg"
+        },
+        {
+          "src": "/media/projects/dustin/02.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20210508-DSCF4188.jpg"
+        },
+        {
+          "src": "/media/projects/dustin/04.jpg",
+          "width": 2500,
+          "height": 1406,
+          "alt": "20210508-DSCF4154.jpg"
+        },
+        {
+          "src": "/media/projects/dustin/05.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20210508-DSCF4138.jpg"
+        },
+        {
+          "src": "/media/projects/dustin/06.jpg",
+          "width": 2500,
+          "height": 3125,
+          "alt": "20210508-DSCF4106.jpg"
+        },
+        {
+          "src": "/media/projects/dustin/07.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20210508-DSCF4327.jpg"
+        },
+        {
+          "src": "/media/projects/dustin/08.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20210508-DSCF4264.jpg"
+        },
+        {
+          "src": "/media/projects/dustin/09.jpg",
+          "width": 2500,
+          "height": 3750,
+          "alt": "20210508-DSCF4257.jpg"
         }
       ]
     }
