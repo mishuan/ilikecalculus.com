@@ -91,6 +91,14 @@ export function Sidebar() {
             className="top-nav__logo-mark"
             priority
           />
+          <Image
+            src="/branding/ilikecalculus-website-logo.png"
+            alt=""
+            width={620}
+            height={620}
+            className="top-nav__logo-icon"
+            priority
+          />
         </Link>
 
         <div className="top-nav__identity">

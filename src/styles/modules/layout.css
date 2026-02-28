@@ -58,6 +58,12 @@
   height: clamp(1.56rem, 2.05vw, 2.12rem);
 }
 
+.top-nav__logo-icon {
+  display: none;
+  width: auto;
+  height: clamp(1.56rem, 2.05vw, 2.12rem);
+}
+
 .top-nav__links {
   display: flex;
   flex-wrap: wrap;

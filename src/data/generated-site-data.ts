@@ -144,6 +144,22 @@ export const generatedSiteData = {
         "longitude": 121.1485379073298,
         "at": "2025-12-24T11:30:00.000Z",
         "note": "Spending Christmas with DQ"
+      },
+      {
+        "id": "eb43a1c1-bd23-44af-95dc-b0a5e7fab99f",
+        "label": "Taipei",
+        "latitude": 25.03346844531645,
+        "longitude": 121.56495420459811,
+        "at": "2025-12-23T08:15:00.000Z",
+        "note": "Taipei layover for Taitung"
+      },
+      {
+        "id": "0a7321fb-21d3-4b4d-9005-4358fe5b3555",
+        "label": "Tokyo",
+        "latitude": 35.68906097726562,
+        "longitude": 139.71508499653592,
+        "at": "2025-12-01T14:30:00.000Z",
+        "note": "Working remotely in Tokyo for a month"
       }
     ]
   },
