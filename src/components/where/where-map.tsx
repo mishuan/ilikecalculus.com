@@ -12,7 +12,6 @@ type WhereMapProps = {
   locations: ResolvedWhereLocation[];
   selectedLocationId: string | null;
   hoveredLocationId: string | null;
-  focusedLocationId: string | null;
   latestPastLocationId: string | null;
   onSelectLocation: (id: string) => void;
   onHoverLocation: (id: string | null) => void;
@@ -34,11 +33,6 @@ const TAIWAN_BOUNDS = {
   longitudeMin: 118.5,
   longitudeMax: 123.8,
 } as const;
-
-type SegmentPiece = {
-  from: ReturnType<typeof project>;
-  to: ReturnType<typeof project>;
-};
 
 type MapView = {
   scale: number;
@@ -76,20 +70,6 @@ const MARKER_RING_RADIUS = {
   selected: 8,
 } as const;
 const MARKER_HIT_RADIUS = 9.5;
-const SEGMENT_STYLE = {
-  opacity: {
-    base: 0.22,
-    intensityScale: 0.45,
-    selectedBoost: 0.08,
-    focusedBoost: 0.07,
-  },
-  strokeWidth: {
-    base: 0.65,
-    intensityScale: 1.35,
-    selectedBoost: 0.35,
-    focusedBoost: 0.25,
-  },
-} as const;
 
 function clamp(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -402,40 +382,6 @@ function createLandBlobs() {
 
 const LAND_BLOBS = createLandBlobs();
 
-function routeSegmentPieces(from: ResolvedWhereLocation, to: ResolvedWhereLocation): SegmentPiece[] {
-  const startLat = from.latitude;
-  const startLon = from.longitude;
-  const endLat = to.latitude;
-  const endLon = to.longitude;
-  const rawDiff = endLon - startLon;
-
-  if (Math.abs(rawDiff) <= 180) {
-    return [
-      {
-        from: project(startLat, startLon),
-        to: project(endLat, endLon),
-      },
-    ];
-  }
-
-  const wrappedEndLon = rawDiff > 0 ? endLon - 360 : endLon + 360;
-  const boundaryLon = rawDiff > 0 ? -180 : 180;
-  const interpolation = clamp((boundaryLon - startLon) / (wrappedEndLon - startLon), 0, 1);
-  const boundaryLat = startLat + (endLat - startLat) * interpolation;
-  const oppositeBoundaryLon = -boundaryLon;
-
-  return [
-    {
-      from: project(startLat, startLon),
-      to: project(boundaryLat, boundaryLon),
-    },
-    {
-      from: project(boundaryLat, oppositeBoundaryLon),
-      to: project(endLat, endLon),
-    },
-  ];
-}
-
 function resolveMarkerRadius({
   isLatestPast,
   isSelected,
@@ -474,72 +420,32 @@ function resolveFocusedView(selectedPoint: { x: number; y: number } | null): Map
   });
 }
 
-function resolveSegmentOpacity({
-  intensity,
-  selected,
-  focused,
-}: {
-  intensity: number;
-  selected: boolean;
-  focused: boolean;
-}) {
-  return (
-    SEGMENT_STYLE.opacity.base +
-    intensity * SEGMENT_STYLE.opacity.intensityScale +
-    (selected ? SEGMENT_STYLE.opacity.selectedBoost : 0) +
-    (focused && !selected ? SEGMENT_STYLE.opacity.focusedBoost : 0)
-  );
-}
-
-function resolveSegmentStrokeWidth({
-  intensity,
-  selected,
-  focused,
-}: {
-  intensity: number;
-  selected: boolean;
-  focused: boolean;
-}) {
-  return (
-    SEGMENT_STYLE.strokeWidth.base +
-    intensity * SEGMENT_STYLE.strokeWidth.intensityScale +
-    (selected ? SEGMENT_STYLE.strokeWidth.selectedBoost : 0) +
-    (focused && !selected ? SEGMENT_STYLE.strokeWidth.focusedBoost : 0)
-  );
-}
-
 export function WhereMap({
   locations,
   selectedLocationId,
   hoveredLocationId,
-  focusedLocationId,
   latestPastLocationId,
   onSelectLocation,
   onHoverLocation,
 }: WhereMapProps) {
-  const { latestArrivalKey, nextUpcomingKey, nextUpcomingLocationId } = useMemo(() => {
+  const nextUpcomingLocationId = useMemo(() => {
     if (!latestPastLocationId) {
-      return { latestArrivalKey: null, nextUpcomingKey: null, nextUpcomingLocationId: null } as const;
+      return null;
     }
 
     const latestIndex = locations.findIndex((location) => location.id === latestPastLocationId);
     if (latestIndex < 0) {
-      return { latestArrivalKey: null, nextUpcomingKey: null, nextUpcomingLocationId: null } as const;
+      return null;
     }
 
     const latestLocation = locations[latestIndex];
-    const previousLocation = latestIndex > 0 ? locations[latestIndex - 1] : null;
     const nextLocation = latestIndex < locations.length - 1 ? locations[latestIndex + 1] : null;
 
-    return {
-      latestArrivalKey:
-        previousLocation && latestLocation ? `${previousLocation.id}-${latestLocation.id}` : null,
-      nextUpcomingKey:
-        latestLocation && nextLocation && nextLocation.isFuture
-          ? `${latestLocation.id}-${nextLocation.id}`
-          : null,
-      nextUpcomingLocationId: nextLocation?.isFuture ? nextLocation.id : null,
-    } as const;
+    if (!latestLocation || !nextLocation || !nextLocation.isFuture) {
+      return null;
+    }
+
+    return nextLocation.id;
   }, [latestPastLocationId, locations]);
 
   const pointsById = useMemo(
@@ -868,37 +774,6 @@ export function WhereMap({
     releasePointer(event.pointerId);
   }
 
-  const segments = useMemo(() => {
-    const totalSegments = Math.max(locations.length - 1, 1);
-
-    return locations.slice(0, -1).map((from, index) => {
-      const to = locations[index + 1];
-      const fromPoint = pointsById.get(from.id);
-      const toPoint = pointsById.get(to.id);
-      if (!fromPoint || !toPoint) {
-        return null;
-      }
-
-      const intensity = totalSegments <= 1 ? 1 : (index + 1) / totalSegments;
-      const selected = selectedLocationId === from.id || selectedLocationId === to.id;
-      const focused = focusedLocationId === from.id || focusedLocationId === to.id;
-      const segmentKey = `${from.id}-${to.id}`;
-
-      return {
-        key: segmentKey,
-        from: fromPoint,
-        to: toPoint,
-        intensity,
-        selected,
-        focused,
-        upcoming: from.isFuture || to.isFuture,
-        pieces: routeSegmentPieces(from, to),
-        isLatestArrival: latestArrivalKey === segmentKey,
-        isNextUpcoming: nextUpcomingKey === segmentKey,
-      };
-    }).filter((segment): segment is NonNullable<typeof segment> => Boolean(segment));
-  }, [focusedLocationId, latestArrivalKey, locations, nextUpcomingKey, pointsById, selectedLocationId]);
-
   return (
     <section className="where-map-panel">
       <header className="where-map-panel__header">
@@ -927,7 +802,7 @@ export function WhereMap({
           viewBox={`0 0 ${MAP_WIDTH} ${MAP_HEIGHT}`}
           preserveAspectRatio="xMidYMid slice"
           role="img"
-          aria-label="Map of visited and upcoming locations"
+          aria-label="Map of locations"
         >
           <defs>
             <linearGradient id="where-map-bg" x1="0" y1="0" x2="1" y2="1">
@@ -957,40 +832,6 @@ export function WhereMap({
                     <path key={`land-${index}`} d={polygonPath(blob)} />
                   ))}
                 </g>
-
-                {segments.flatMap((segment) =>
-                  segment.pieces.map((piece, pieceIndex) => (
-                    <line
-                      key={`${segment.key}-${pieceIndex}`}
-                      x1={piece.from.x}
-                      y1={piece.from.y}
-                      x2={piece.to.x}
-                      y2={piece.to.y}
-                      className={classNames(
-                        "where-map__segment",
-                        segment.upcoming && "where-map__segment--upcoming",
-                        segment.selected && "where-map__segment--selected",
-                        segment.focused && "where-map__segment--focused",
-                        segment.isLatestArrival && "where-map__segment--latest-arrival",
-                        segment.isNextUpcoming && "where-map__segment--next-upcoming",
-                      )}
-                      style={{
-                        opacity: String(
-                          resolveSegmentOpacity({
-                            intensity: segment.intensity,
-                            selected: segment.selected,
-                            focused: segment.focused,
-                          }),
-                        ),
-                        strokeWidth: `${resolveSegmentStrokeWidth({
-                          intensity: segment.intensity,
-                          selected: segment.selected,
-                          focused: segment.focused,
-                        })}px`,
-                      }}
-                    />
-                  )),
-                )}
 
                 {locations.map((location) => {
                   const point = pointsById.get(location.id);
@@ -1082,7 +923,7 @@ export function WhereMap({
         </svg>
 
         {locations.length === 0 ? (
-          <p className="where-map__empty">Add locations to start drawing your route.</p>
+          <p className="where-map__empty">Add locations to start plotting your map.</p>
         ) : null}
       </div>
     </section>

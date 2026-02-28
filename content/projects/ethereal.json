@@ -1,0 +1,70 @@
+{
+  "slug": "ethereal",
+  "title": "Ethereal",
+  "description": "Ethereal dance movements of jellyfish",
+  "categories": [
+    "personal"
+  ],
+  "coverImage": {
+    "src": "/media/projects/ethereal/20191123-DSCF7045.jpg",
+    "width": 4000,
+    "height": 5000,
+    "alt": "20191123-DSCF7045.jpg"
+  },
+  "images": [
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7045.jpg",
+      "width": 4000,
+      "height": 5000,
+      "alt": "20191123-DSCF7045.jpg"
+    },
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7048.jpg",
+      "width": 3223,
+      "height": 4029,
+      "alt": "20191123-DSCF7048.jpg"
+    },
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7047.jpg",
+      "width": 3641,
+      "height": 4551,
+      "alt": "20191123-DSCF7047.jpg"
+    },
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7090.jpg",
+      "width": 3802,
+      "height": 5703,
+      "alt": "20191123-DSCF7090.jpg"
+    },
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7071.jpg",
+      "width": 5774,
+      "height": 3849,
+      "alt": "20191123-DSCF7071.jpg"
+    },
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7084.jpg",
+      "width": 3657,
+      "height": 5485,
+      "alt": "20191123-DSCF7084.jpg"
+    },
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7076.jpg",
+      "width": 5346,
+      "height": 3564,
+      "alt": "20191123-DSCF7076.jpg"
+    },
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7087.jpg",
+      "width": 6000,
+      "height": 4000,
+      "alt": "20191123-DSCF7087.jpg"
+    },
+    {
+      "src": "/media/projects/ethereal/20191123-DSCF7092.jpg",
+      "width": 3887,
+      "height": 5830,
+      "alt": "20191123-DSCF7092.jpg"
+    }
+  ]
+}

@@ -75,7 +75,6 @@ export function WherePage({ initialLocations }: WherePageProps) {
           locations={mapLocations}
           selectedLocationId={selectedLocationId}
           hoveredLocationId={hoveredLocationId}
-          focusedLocationId={focusedLocationId}
           latestPastLocationId={latestPastLocationId}
           onSelectLocation={setSelectedLocationId}
           onHoverLocation={setHoveredLocationId}

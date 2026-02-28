@@ -343,8 +343,7 @@
   color: var(--ink);
 }
 
-.where-calendar__day--hovered,
-.where-calendar__day--active {
+.where-calendar__day--hovered {
   border-color: color-mix(in srgb, var(--ink) 42%, var(--line));
 }
 
