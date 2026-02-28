@@ -1,7 +1,27 @@
+import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact-form";
 import Image from "next/image";
 import { Reveal } from "@/components/reveal";
 import { siteData } from "@/data/site-content";
+
+const description = "Get in touch with Michael Yuan for photography projects, collaborations, or print inquiries.";
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description,
+  alternates: {
+    canonical: "/contact",
+  },
+  openGraph: {
+    url: "/contact",
+    title: "Contact",
+    description,
+  },
+  twitter: {
+    title: "Contact",
+    description,
+  },
+};
 
 export default function ContactPage() {
   const mergedParagraphs = [...siteData.about.paragraphs, ...siteData.contact.paragraphs];
