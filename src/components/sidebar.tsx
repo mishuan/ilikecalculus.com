@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { useSyncExternalStore } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { navItems, siteData } from "@/data/site-content";
 
@@ -29,6 +29,7 @@ function InstagramIcon() {
 
 export function Sidebar() {
   const pathname = usePathname() ?? "";
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const isHydrated = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -39,6 +40,41 @@ export function Sidebar() {
   const topLinks = navItems.filter((item) => ("external" in item && item.external) || item.href !== "/where");
   const isWhereActive = isHydrated && (pathname === "/where" || pathname.startsWith("/where/"));
 
+  const renderTopLinks = (onNavigate?: () => void) =>
+    topLinks.map((item) => {
+      const isExternal = "external" in item && item.external;
+      const isActive =
+        !isExternal &&
+        isHydrated &&
+        (item.href === "/" ? pathname === "/" : pathname === item.href || pathname.startsWith(`${item.href}/`));
+
+      if (isExternal) {
+        return (
+          <a
+            key={item.label}
+            href={item.href}
+            className="nav-link"
+            target="_blank"
+            rel="noreferrer noopener"
+            onClick={onNavigate}
+          >
+            {item.label}
+          </a>
+        );
+      }
+
+      return (
+        <Link
+          key={item.href}
+          href={item.href}
+          className={classNames("nav-link", isActive && "nav-link--active")}
+          onClick={onNavigate}
+        >
+          {item.label}
+        </Link>
+      );
+    });
+
   if (isSlideshowView) {
     return null;
   }
@@ -47,40 +83,31 @@ export function Sidebar() {
     <header className="top-nav">
       <div className="top-nav__inner">
         <nav aria-label="Main navigation" className="top-nav__links">
-          {topLinks.map((item) => {
-            const isExternal = "external" in item && item.external;
-            const isActive =
-              !isExternal &&
-              isHydrated &&
-              (item.href === "/"
-                ? pathname === "/"
-                : pathname === item.href || pathname.startsWith(`${item.href}/`));
-
-            if (isExternal) {
-              return (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="nav-link"
-                  target="_blank"
-                  rel="noreferrer noopener"
-                >
-                  {item.label}
-                </a>
-              );
-            }
-
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={classNames("nav-link", isActive && "nav-link--active")}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
+          {renderTopLinks()}
         </nav>
+
+        <div className="top-nav__mobile-menu">
+          <button
+            type="button"
+            className="top-nav__menu-button"
+            aria-expanded={isMobileMenuOpen}
+            aria-controls="mobile-main-nav"
+            onClick={() => setIsMobileMenuOpen((current) => !current)}
+          >
+            <span className="top-nav__menu-icon" aria-hidden="true">
+              <span />
+              <span />
+              <span />
+            </span>
+            <span className="top-nav__menu-label">{isMobileMenuOpen ? "close" : "menu"}</span>
+          </button>
+
+          {isMobileMenuOpen ? (
+            <nav id="mobile-main-nav" aria-label="Mobile navigation" className="top-nav__mobile-panel">
+              {renderTopLinks(() => setIsMobileMenuOpen(false))}
+            </nav>
+          ) : null}
+        </div>
 
         <Link href="/" className="top-nav__brand" aria-label="Go to homepage">
           <Image

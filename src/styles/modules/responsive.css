@@ -126,7 +126,21 @@
   }
 
   .top-nav__links {
-    gap: var(--space-nav-mobile-links-gap);
+    display: none;
+  }
+
+  .top-nav__mobile-menu {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  .top-nav__menu-label {
+    font-size: var(--font-size-nav-mobile-link);
+    letter-spacing: var(--letter-spacing-nav-mobile-link);
+  }
+
+  .top-nav__mobile-panel {
+    min-width: 9.5rem;
   }
 
   .nav-link {
