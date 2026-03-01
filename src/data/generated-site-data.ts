@@ -168,6 +168,22 @@ export const generatedSiteData = {
         "longitude": -122.38251453291625,
         "at": "2025-11-26T12:00:00.000Z",
         "note": "Friendsgiving"
+      },
+      {
+        "id": "83d22273-651b-4267-887f-9bfbac33a8aa",
+        "label": "Ine",
+        "latitude": 35.67573145950988,
+        "longitude": 135.2868706731373,
+        "at": "2026-03-07T04:00:00.000Z",
+        "note": "Staying overnight at a quaint fishing village"
+      },
+      {
+        "id": "bf17b376-b072-4af6-9484-bf80345dc59f",
+        "label": "Tottori",
+        "latitude": 35.41206474296221,
+        "longitude": 133.89358911549002,
+        "at": "2026-03-08T09:00:00.000Z",
+        "note": "Staying at a hot spring hotel with a beautiful garden (Izanro Iwasaki)."
       }
     ]
   },

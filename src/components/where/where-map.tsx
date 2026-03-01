@@ -61,7 +61,6 @@ const WORLD_X_OFFSETS = [-MAP_WIDTH, 0, MAP_WIDTH] as const;
 const MARKER_RADIUS = {
   base: 3.2,
   hovered: 3.9,
-  selected: 4.6,
   latest: 4.8,
 } as const;
 const MARKER_RING_RADIUS = {
@@ -395,11 +394,7 @@ function resolveMarkerRadius({
     return MARKER_RADIUS.latest;
   }
 
-  if (isSelected) {
-    return MARKER_RADIUS.selected;
-  }
-
-  if (isHovered) {
+  if (isHovered && !isSelected) {
     return MARKER_RADIUS.hovered;
   }
 
