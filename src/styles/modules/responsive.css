@@ -11,6 +11,14 @@
     grid-template-columns: 1fr;
   }
 
+  .where-map-panel {
+    order: 1;
+  }
+
+  .where-timeline {
+    order: 2;
+  }
+
   .where-timeline,
   .where-map-panel {
     height: auto;

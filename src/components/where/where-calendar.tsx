@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { TextActionButton } from "@/components/ui/text-action";
 import {
@@ -53,28 +53,36 @@ export function WhereCalendar({
   onHoverLocation,
   registerEntryRef,
 }: WhereCalendarProps) {
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
   const monthFormatter = useMemo(
     () =>
       new Intl.DateTimeFormat(undefined, {
         month: "long",
         year: "numeric",
+        ...(isHydrated ? {} : { timeZone: "UTC" }),
       }),
-    [],
+    [isHydrated],
   );
   const dayFormatter = useMemo(
     () =>
       new Intl.DateTimeFormat(undefined, {
         dateStyle: "full",
+        ...(isHydrated ? {} : { timeZone: "UTC" }),
       }),
-    [],
+    [isHydrated],
   );
   const rowDateFormatter = useMemo(
     () =>
       new Intl.DateTimeFormat(undefined, {
         dateStyle: "medium",
         timeStyle: "short",
+        ...(isHydrated ? {} : { timeZone: "UTC" }),
       }),
-    [],
+    [isHydrated],
   );
 
   const sortedLocations = useMemo(

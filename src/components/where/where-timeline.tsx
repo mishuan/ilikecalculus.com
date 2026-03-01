@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { WhereCalendar } from "@/components/where/where-calendar";
 import { toLocalDateTimeValue } from "@/components/where/where-date-utils";
@@ -77,6 +77,11 @@ export function WhereTimeline({
   const [editFormError, setEditFormError] = useState("");
   const [viewMode, setViewMode] = useState<WhereTimelineViewMode>("list");
   const entryRefMap = useRef<Map<string, HTMLElement>>(new Map());
+  const isHydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   const isMutating = isCreatingLocation || updatingLocationId !== null || deletingLocationId !== null;
   const isBusy = isLoadingEditorState || isMutating;
@@ -97,8 +102,9 @@ export function WhereTimeline({
       new Intl.DateTimeFormat(undefined, {
         dateStyle: "medium",
         timeStyle: "short",
+        ...(isHydrated ? {} : { timeZone: "UTC" }),
       }),
-    [],
+    [isHydrated],
   );
 
   useEffect(() => {

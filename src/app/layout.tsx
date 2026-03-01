@@ -6,6 +6,7 @@ import { Sidebar } from "@/components/sidebar";
 import { ACTIVE_UI_SKIN } from "@/config/ui-skin";
 import { siteData } from "@/data/site-content";
 import {
+  ASSET_VERSION,
   DEFAULT_OG_IMAGE,
   SITE_DESCRIPTION,
   SITE_NAME,
@@ -26,6 +27,8 @@ const displayFont = Cormorant_Garamond({
   variable: "--font-display",
   display: "swap",
 });
+
+const faviconUrl = `/favicon.ico?v=${ASSET_VERSION}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -64,9 +67,9 @@ export const metadata: Metadata = {
     },
   },
   icons: {
-    icon: [{ url: "/favicon.ico" }],
-    shortcut: [{ url: "/favicon.ico" }],
-    apple: [{ url: "/favicon.ico" }],
+    icon: [{ url: faviconUrl }],
+    shortcut: [{ url: faviconUrl }],
+    apple: [{ url: faviconUrl }],
   },
 };
 

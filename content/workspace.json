@@ -146,6 +146,14 @@
         "longitude": 139.71508499653592,
         "at": "2025-12-01T14:30:00.000Z",
         "note": "Working remotely in Tokyo for a month"
+      },
+      {
+        "id": "df073ae0-2e02-4e23-9a3b-a49a72ce31b0",
+        "label": "San Francisco",
+        "latitude": 37.62193970897527,
+        "longitude": -122.38251453291625,
+        "at": "2025-11-26T12:00:00.000Z",
+        "note": "Friendsgiving"
       }
     ]
   },

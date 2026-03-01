@@ -1,5 +1,11 @@
 import { siteData } from "@/data/site-content";
 
+export const ASSET_VERSION = "20260301-1";
+
+export function versionedAsset(path: string) {
+  return `${path}?v=${ASSET_VERSION}`;
+}
+
 export const SITE_URL = "https://ilikecalculus.com";
 export const SITE_NAME = siteData.site.name;
 export const SITE_TAGLINE = siteData.site.tagline;
