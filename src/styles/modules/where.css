@@ -174,16 +174,8 @@
   left: var(--space-where-entry-padding-x);
   bottom: calc(100% + var(--space-where-entry-hover-note-offset-y));
   z-index: 10;
-  margin: 0;
   width: max-content;
   max-width: min(var(--size-where-entry-hover-note-max-width), calc(100% - (var(--space-where-entry-padding-x) * 2)));
-  border: 1px solid color-mix(in srgb, var(--ink) 46%, var(--line));
-  background: var(--surface-where-panel);
-  padding: var(--space-where-entry-hover-note-padding-y) var(--space-where-entry-hover-note-padding-x);
-  font-size: var(--font-size-caption);
-  color: color-mix(in srgb, var(--ink) 94%, transparent);
-  line-height: var(--line-height-where-hover-note);
-  box-shadow: var(--shadow-where-hover-note);
   pointer-events: none;
 }
 

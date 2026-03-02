@@ -14,7 +14,16 @@ export function SurfaceButton({
   return (
     <button
       type={type}
-      className={classNames("surface-button", selected && "surface-button--selected", className)}
+      className={classNames(
+        "control",
+        "control--interactive",
+        "control--text-ui",
+        "control--size-sm",
+        "surface-button",
+        "interactive-lift",
+        selected && "surface-button--selected",
+        className,
+      )}
       {...props}
     />
   );

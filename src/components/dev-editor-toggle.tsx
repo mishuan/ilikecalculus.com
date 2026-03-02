@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SurfaceButton } from "@/components/ui/surface-button";
 import { isClientEditorAvailable } from "@/lib/editor-client";
+import { isWorksSlideshowPath } from "@/lib/route-utils";
 
 function isEditableTarget(target: EventTarget | null) {
   if (!(target instanceof HTMLElement)) {
@@ -27,7 +28,7 @@ export function DevEditorToggle() {
   const searchParams = useSearchParams();
   const isEditorAvailable = isClientEditorAvailable();
   const isEditing = useMemo(() => searchParams?.get("edit") === "1", [searchParams]);
-  const isSlideshowView = /^\/works\/[^/]+\/[^/]+\/?$/.test(pathname);
+  const isSlideshowView = isWorksSlideshowPath(pathname);
 
   const onToggle = useCallback(() => {
     if (!isEditorAvailable) {

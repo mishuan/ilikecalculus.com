@@ -6,6 +6,7 @@ import Image from "next/image";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { navItems, siteData } from "@/data/site-content";
+import { isWorksSlideshowPath } from "@/lib/route-utils";
 
 function InstagramIcon() {
   return (
@@ -36,7 +37,7 @@ export function Sidebar() {
     () => true,
     () => false,
   );
-  const isSlideshowView = /^\/works\/[^/]+\/[^/]+\/?$/.test(pathname);
+  const isSlideshowView = isWorksSlideshowPath(pathname);
   const whereItem = navItems.find((item) => !("external" in item && item.external) && item.href === "/where");
   const topLinks = navItems.filter((item) => ("external" in item && item.external) || item.href !== "/where");
   const isWhereActive = isHydrated && (pathname === "/where" || pathname.startsWith("/where/"));
@@ -89,7 +90,7 @@ export function Sidebar() {
           <a
             key={item.label}
             href={item.href}
-            className="nav-link"
+            className="nav-link interactive-lift"
             target="_blank"
             rel="noreferrer noopener"
             onClick={onNavigate}
@@ -103,7 +104,7 @@ export function Sidebar() {
         <Link
           key={item.href}
           href={item.href}
-          className={classNames("nav-link", isActive && "nav-link--active")}
+          className={classNames("nav-link", "interactive-lift", isActive && "nav-link--active")}
           onClick={onNavigate}
         >
           {item.label}
@@ -125,7 +126,7 @@ export function Sidebar() {
         <div className="top-nav__mobile-menu" ref={mobileMenuRef}>
           <button
             type="button"
-            className="top-nav__menu-button"
+            className="top-nav__menu-button interactive-lift"
             aria-expanded={isMobileMenuOpen}
             aria-controls="mobile-main-nav"
             onClick={() => setIsMobileMenuOpen((current) => !current)}
@@ -168,7 +169,7 @@ export function Sidebar() {
           {whereItem ? (
             <Link
               href={whereItem.href}
-              className={classNames("nav-link", "top-nav__where", isWhereActive && "nav-link--active")}
+              className={classNames("nav-link", "interactive-lift", "top-nav__where", isWhereActive && "nav-link--active")}
             >
               {whereItem.label}
             </Link>
@@ -177,9 +178,9 @@ export function Sidebar() {
           <a
             href={siteData.site.instagramUrl}
             target="_blank"
-            rel="noreferrer"
+            rel="noreferrer noopener"
             aria-label="Open Instagram"
-            className="instagram-link"
+            className="instagram-link interactive-lift"
           >
             <InstagramIcon />
           </a>

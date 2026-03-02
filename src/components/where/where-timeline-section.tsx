@@ -113,7 +113,7 @@ export function WhereTimelineSection({
                   {shouldShowSelectedPreview ? <p className="where-entry__note">{location.note}</p> : null}
                 </button>
 
-                {shouldShowHoverPreview ? <p className="where-entry__hover-note">{location.note}</p> : null}
+                {shouldShowHoverPreview ? <p className="where-entry__hover-note hover-note">{location.note}</p> : null}
 
                 {isEditMode ? (
                   <div className="where-entry__actions">

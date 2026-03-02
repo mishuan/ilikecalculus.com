@@ -5,7 +5,7 @@ import { classNames } from "@/components/ui/class-names";
 import { siteData } from "@/data/site-content";
 import { ExternalTextLink } from "@/components/ui/text-action";
 import { SurfaceButton } from "@/components/ui/surface-button";
-import { parseContactSubmission } from "@/lib/contact-schema";
+import { isValidContactEmail, parseContactSubmission } from "@/lib/contact-schema";
 
 type ContactState = {
   name: string;
@@ -15,6 +15,13 @@ type ContactState = {
   website: string;
 };
 
+type ContactField = "name" | "email" | "subject" | "message";
+type ContactFieldErrors = Partial<Record<ContactField, string>>;
+
+const CONTACT_FIELDS: ContactField[] = ["name", "email", "subject", "message"];
+const REQUIRED_FIELD_MESSAGE = "Please fill out this field.";
+const INVALID_EMAIL_MESSAGE = "Please enter a valid email address.";
+
 const INITIAL_STATE: ContactState = {
   name: "",
   email: "",
@@ -23,10 +30,44 @@ const INITIAL_STATE: ContactState = {
   website: "",
 };
 
+function validateContactField(field: ContactField, form: ContactState) {
+  const value = form[field].trim();
+
+  if (!value) {
+    return REQUIRED_FIELD_MESSAGE;
+  }
+
+  if (field === "email" && !isValidContactEmail(value)) {
+    return INVALID_EMAIL_MESSAGE;
+  }
+
+  return null;
+}
+
+function validateContactFields(form: ContactState): ContactFieldErrors {
+  const errors: ContactFieldErrors = {};
+
+  for (const field of CONTACT_FIELDS) {
+    const message = validateContactField(field, form);
+    if (message) {
+      errors[field] = message;
+    }
+  }
+
+  return errors;
+}
+
 export function ContactForm() {
   const [form, setForm] = useState<ContactState>(INITIAL_STATE);
+  const [fieldErrors, setFieldErrors] = useState<ContactFieldErrors>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [status, setStatus] = useState<{ ok: boolean; message: string } | null>(null);
+  const fieldRefs = useRef<Record<ContactField, HTMLInputElement | HTMLTextAreaElement | null>>({
+    name: null,
+    email: null,
+    subject: null,
+    message: null,
+  });
   const messageRef = useRef<HTMLTextAreaElement | null>(null);
 
   function resizeMessageField(target: HTMLTextAreaElement) {
@@ -40,10 +81,55 @@ export function ContactForm() {
     }
   }, [form.message]);
 
+  function updateField(field: ContactField, value: string) {
+    setForm((current) => {
+      const next = {
+        ...current,
+        [field]: value,
+      };
+
+      setFieldErrors((currentErrors) => {
+        if (!currentErrors[field]) {
+          return currentErrors;
+        }
+
+        const nextFieldMessage = validateContactField(field, next);
+        if (!nextFieldMessage) {
+          const nextErrors = { ...currentErrors };
+          delete nextErrors[field];
+          return nextErrors;
+        }
+
+        if (currentErrors[field] === nextFieldMessage) {
+          return currentErrors;
+        }
+
+        return {
+          ...currentErrors,
+          [field]: nextFieldMessage,
+        };
+      });
+
+      return next;
+    });
+  }
+
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setIsSubmitting(true);
     setStatus(null);
+
+    const validationErrors = validateContactFields(form);
+    if (Object.keys(validationErrors).length > 0) {
+      setFieldErrors(validationErrors);
+      const firstInvalidField = CONTACT_FIELDS.find((field) => validationErrors[field]);
+      if (firstInvalidField) {
+        fieldRefs.current[firstInvalidField]?.focus();
+      }
+      return;
+    }
+
+    setFieldErrors({});
+    setIsSubmitting(true);
 
     const parsed = parseContactSubmission(form);
     if (!parsed.ok) {
@@ -61,6 +147,7 @@ export function ContactForm() {
         message: "Message sent.",
       });
       setForm(INITIAL_STATE);
+      setFieldErrors({});
       setIsSubmitting(false);
       return;
     }
@@ -89,6 +176,7 @@ export function ContactForm() {
         message: payload.message || "Message sent. Thanks for reaching out.",
       });
       setForm(INITIAL_STATE);
+      setFieldErrors({});
     } catch {
       setStatus({
         ok: false,
@@ -119,57 +207,97 @@ export function ContactForm() {
         </ExternalTextLink>
         .
       </p>
-      <form className="contact-form" onSubmit={onSubmit}>
+      <form className="contact-form" onSubmit={onSubmit} noValidate>
         <div className="contact-form__row">
-          <label className="contact-form__field">
+          <label className={classNames("contact-form__field", fieldErrors.name && "contact-form__field--error")}>
             <span>name</span>
             <input
+              ref={(node) => {
+                fieldRefs.current.name = node;
+              }}
               type="text"
               name="name"
               value={form.name}
-              onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))}
+              onChange={(event) => updateField("name", event.target.value)}
               autoComplete="name"
+              aria-invalid={fieldErrors.name ? true : undefined}
+              aria-describedby={fieldErrors.name ? "contact-form-field-error-name" : undefined}
               required
             />
+            {fieldErrors.name ? (
+              <p id="contact-form-field-error-name" className="contact-form__field-note hover-note" role="alert">
+                {fieldErrors.name}
+              </p>
+            ) : null}
           </label>
 
-          <label className="contact-form__field">
+          <label className={classNames("contact-form__field", fieldErrors.email && "contact-form__field--error")}>
             <span>email</span>
             <input
+              ref={(node) => {
+                fieldRefs.current.email = node;
+              }}
               type="email"
               name="email"
               value={form.email}
-              onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))}
+              onChange={(event) => updateField("email", event.target.value)}
               autoComplete="email"
+              aria-invalid={fieldErrors.email ? true : undefined}
+              aria-describedby={fieldErrors.email ? "contact-form-field-error-email" : undefined}
               required
             />
+            {fieldErrors.email ? (
+              <p id="contact-form-field-error-email" className="contact-form__field-note hover-note" role="alert">
+                {fieldErrors.email}
+              </p>
+            ) : null}
           </label>
         </div>
 
-        <label className="contact-form__field">
+        <label className={classNames("contact-form__field", fieldErrors.subject && "contact-form__field--error")}>
           <span>subject</span>
           <input
+            ref={(node) => {
+              fieldRefs.current.subject = node;
+            }}
             type="text"
             name="subject"
             value={form.subject}
-            onChange={(event) => setForm((current) => ({ ...current, subject: event.target.value }))}
+            onChange={(event) => updateField("subject", event.target.value)}
+            aria-invalid={fieldErrors.subject ? true : undefined}
+            aria-describedby={fieldErrors.subject ? "contact-form-field-error-subject" : undefined}
             required
           />
+          {fieldErrors.subject ? (
+            <p id="contact-form-field-error-subject" className="contact-form__field-note hover-note" role="alert">
+              {fieldErrors.subject}
+            </p>
+          ) : null}
         </label>
 
-        <label className="contact-form__field">
+        <label className={classNames("contact-form__field", fieldErrors.message && "contact-form__field--error")}>
           <span>message</span>
           <textarea
-            ref={messageRef}
+            ref={(node) => {
+              messageRef.current = node;
+              fieldRefs.current.message = node;
+            }}
             name="message"
             rows={1}
             value={form.message}
             onChange={(event) => {
               resizeMessageField(event.currentTarget);
-              setForm((current) => ({ ...current, message: event.target.value }));
+              updateField("message", event.target.value);
             }}
+            aria-invalid={fieldErrors.message ? true : undefined}
+            aria-describedby={fieldErrors.message ? "contact-form-field-error-message" : undefined}
             required
           />
+          {fieldErrors.message ? (
+            <p id="contact-form-field-error-message" className="contact-form__field-note hover-note" role="alert">
+              {fieldErrors.message}
+            </p>
+          ) : null}
         </label>
 
         <label className="contact-form__honeypot" aria-hidden="true">

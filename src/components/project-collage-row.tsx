@@ -77,7 +77,9 @@ export function ProjectCollageRow({
     >
       <h3 className="collage-row__title">
         {editMode && reorderEnabled ? <span className="collage-row__drag-handle">::</span> : null}
-        <Link href={thumbnailsHref}>{project.title}</Link>
+        <Link href={thumbnailsHref} className="collage-row__title-link interactive-lift">
+          {project.title}
+        </Link>
       </h3>
 
       <div className="collage-track" ref={trackRef}>

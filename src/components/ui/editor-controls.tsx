@@ -34,6 +34,10 @@ export function EditorButton({
     <button
       type={type}
       className={classNames(
+        "control",
+        "control--interactive",
+        "control--text-ui",
+        "control--size-xs",
         "editor-button",
         variant === "danger" ? "editor-button--danger" : "editor-button--default",
         className,

@@ -20,6 +20,21 @@ const nextConfig: NextConfig = {
         permanent: true,
       },
       {
+        source: "/projects/:path*",
+        destination: "/works/:path*",
+        permanent: true,
+      },
+      {
+        source: "/project",
+        destination: "/",
+        permanent: true,
+      },
+      {
+        source: "/project/:path*",
+        destination: "/works/:path*",
+        permanent: true,
+      },
+      {
         source: "/works",
         destination: "/",
         permanent: true,

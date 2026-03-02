@@ -8,8 +8,11 @@ export default function NotFound() {
         <h1 className="page-title">Page Not Found</h1>
         <p className="page-intro">The requested page does not exist in this archive.</p>
       </header>
-      <Link href="/works" className="button-link">
-        Back to Projects
+      <Link
+        href="/"
+        className="button-link control control--interactive control--text-ui control--size-sm interactive-lift"
+      >
+        Back Home
       </Link>
     </section>
   );

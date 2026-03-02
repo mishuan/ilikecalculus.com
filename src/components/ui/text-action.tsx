@@ -17,6 +17,7 @@ export function textActionClassName({
 }: TextActionOptions = {}) {
   return classNames(
     "text-action",
+    "interactive-lift",
     tone === "muted" ? "text-action--muted" : "text-action--default",
     underline === "none"
       ? "text-action--plain"

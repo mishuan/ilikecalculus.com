@@ -37,6 +37,7 @@
   font-weight: 700;
   letter-spacing: var(--letter-spacing-page-title);
   line-height: var(--line-height-page-title);
+  text-transform: lowercase;
 }
 
 .contact-panel__description {
@@ -70,6 +71,7 @@
 .contact-form__field {
   display: grid;
   gap: 0.38rem;
+  align-content: start;
 }
 
 .contact-form__field span {
@@ -104,6 +106,18 @@
   outline: 2px solid color-mix(in srgb, var(--interactive-outline) 84%, transparent);
   outline-offset: 2px;
   border-color: var(--interactive-border-active);
+}
+
+.contact-form__field--error input,
+.contact-form__field--error textarea {
+  border-color: var(--interactive-border-active);
+}
+
+.contact-form__field-note {
+  width: max-content;
+  max-width: min(100%, 24rem);
+  margin-top: 0.28rem;
+  pointer-events: none;
 }
 
 .contact-form__honeypot {

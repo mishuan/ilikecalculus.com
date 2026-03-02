@@ -1,8 +1,4 @@
 @media (max-width: 1180px) {
-  .split-layout {
-    grid-template-columns: 1fr;
-  }
-
   .contact-grid {
     grid-template-columns: 1fr;
   }
@@ -50,7 +46,7 @@
     display: grid;
     grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
     align-items: center;
-    gap: 0.72rem;
+    gap: var(--space-nav-tablet-gap);
     min-width: 0;
     width: 100%;
   }
@@ -58,7 +54,7 @@
   .top-nav__links {
     flex-wrap: nowrap;
     justify-content: flex-start;
-    gap: 0.48rem 0.72rem;
+    gap: var(--space-nav-links-tablet-gap);
     min-width: 0;
   }
 
@@ -70,39 +66,11 @@
   .top-nav__identity {
     justify-self: end;
     white-space: nowrap;
-    gap: 0.44rem;
+    gap: var(--space-nav-identity-tablet-gap);
   }
 }
 
 @media (max-width: 960px) {
-  .site-shell:has(.page--about) {
-    height: auto;
-    overflow: visible;
-  }
-
-  .site-shell:has(.page--about) .content-shell {
-    overflow: visible;
-  }
-
-  .page--about {
-    height: auto;
-    display: block;
-  }
-
-  .split-layout--about {
-    height: auto;
-  }
-
-  .split-layout--about .split-layout__content {
-    overflow: visible;
-    padding-right: 0;
-  }
-
-  .split-layout--about .portrait-image {
-    width: 100%;
-    max-height: none;
-  }
-
   .top-nav {
     position: static;
     padding-inline: 0;
@@ -114,11 +82,11 @@
   }
 
   .top-nav__logo-mark {
-    height: 1.75rem;
+    height: var(--size-nav-logo-mobile);
   }
 
   .top-nav__logo-icon {
-    height: 1.75rem;
+    height: var(--size-nav-logo-mobile);
   }
 
   .top-nav__name {
@@ -149,9 +117,9 @@
   }
 
   .content-shell {
-    --space-content-top: 1.05rem;
-    --space-content-bottom: 2.2rem;
-    padding: var(--space-content-top) 0.95rem var(--space-content-bottom);
+    --space-content-top: var(--space-content-mobile-top);
+    --space-content-bottom: var(--space-content-mobile-bottom);
+    padding: var(--space-content-top) var(--space-content-mobile-inline) var(--space-content-bottom);
   }
 
   .contact-grid {
@@ -185,12 +153,12 @@
   }
 
   .category-section__rows {
-    gap: 1.85rem;
+    gap: var(--space-work-row-gap-mobile);
   }
 
   .collage-track {
-    --row-height: clamp(78px, 32vw, 112px);
-    gap: 0.82rem;
+    --row-height: var(--size-collage-row-height-mobile);
+    gap: var(--space-photo-gap-mobile);
   }
 
   .project-thumbnails {
@@ -198,12 +166,12 @@
   }
 
   .project-collage-grid {
-    --row-height: clamp(78px, 32vw, 112px);
+    --row-height: var(--size-collage-row-height-mobile);
     gap: 1.25rem;
   }
 
   .project-thumbnails .project-collage-grid {
-    --row-height: clamp(118px, 41vw, 176px);
+    --row-height: var(--size-collage-thumbnail-row-height-mobile);
   }
 
   .project-thumbnails__actions {
@@ -211,7 +179,7 @@
   }
 
   .project-collage-grid__row {
-    gap: 0.82rem;
+    gap: var(--space-photo-gap-mobile);
   }
 
   .viewer-stage {
@@ -236,10 +204,10 @@
   }
 
   .content-shell:has(.page--viewer) {
-    --space-content-top: 0.75rem;
-    --space-content-bottom: 0.75rem;
-    padding-left: 0.95rem;
-    padding-right: 0.95rem;
+    --space-content-top: var(--space-content-viewer-mobile-top);
+    --space-content-bottom: var(--space-content-viewer-mobile-bottom);
+    padding-left: var(--space-content-mobile-inline);
+    padding-right: var(--space-content-mobile-inline);
     height: 100dvh;
     overflow: hidden;
   }
@@ -260,6 +228,6 @@
 
   .top-nav__logo-icon {
     display: block;
-    height: 1.6rem;
+    height: var(--size-nav-logo-mobile-compact);
   }
 }

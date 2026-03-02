@@ -58,14 +58,24 @@
   --space-nav-mobile-padding-y: 0.9rem;
   --space-nav-mobile-padding-x: 0.95rem;
   --space-nav-mobile-gap: 0.7rem;
+  --space-nav-tablet-gap: 0.72rem;
+  --space-nav-links-tablet-gap: 0.48rem 0.72rem;
+  --space-nav-identity-tablet-gap: 0.44rem;
   --font-size-nav-mobile-title: 0.92rem;
   --space-nav-mobile-links-gap: 0.42rem 0.64rem;
   --font-size-nav-mobile-link: 0.68rem;
   --letter-spacing-nav-mobile-link: 0.07em;
+  --size-nav-logo-mobile: 1.75rem;
+  --size-nav-logo-mobile-compact: 1.6rem;
 
   --space-content-x: clamp(1.4rem, 3.3vw, 3.1rem);
   --space-content-top: 1.55rem;
   --space-content-bottom: 3.2rem;
+  --space-content-mobile-top: 1.05rem;
+  --space-content-mobile-bottom: 2.2rem;
+  --space-content-mobile-inline: 0.95rem;
+  --space-content-viewer-mobile-top: 0.75rem;
+  --space-content-viewer-mobile-bottom: 0.75rem;
   --size-page-max: 1024px;
   --size-page-max-wide: 1280px;
   --size-where-timeline-width: clamp(280px, 32vw, 390px);
@@ -133,8 +143,10 @@
 
   --space-home-intro-bottom: 2.2rem;
   --space-work-row-gap: 2.45rem;
+  --space-work-row-gap-mobile: 1.85rem;
   --space-work-title-gap: 0.7rem;
   --space-photo-gap: 1.16rem;
+  --space-photo-gap-mobile: 0.82rem;
 
   --space-header-bottom: 2rem;
   --space-viewer-header-bottom: 2.6rem;
@@ -144,6 +156,8 @@
   --size-viewer-max-height: 930px;
 
   --size-collage-row-height: clamp(90px, 11vw, 132px);
+  --size-collage-row-height-mobile: clamp(78px, 32vw, 112px);
+  --size-collage-thumbnail-row-height-mobile: clamp(118px, 41vw, 176px);
   --space-contact-split-gap: clamp(1.4rem, 2.8vw, 2.6rem);
   --size-contact-message-min-height: 118px;
 }

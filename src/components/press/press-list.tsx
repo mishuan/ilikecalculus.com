@@ -23,7 +23,7 @@ export function PressList({ items }: PressListProps) {
         const faviconUrl = getFaviconUrl(item.url);
 
         return (
-          <article key={item.url} className="press-item">
+          <article key={item.url} className="press-item interactive-lift">
             <div className="press-item__row">
               <div className="press-item__meta">
                 {faviconUrl ? (

@@ -11,7 +11,6 @@
   transition: transform var(--interactive-duration) ease;
 }
 
-.press-item:hover,
 .press-item:focus-within {
   transform: translateY(var(--interactive-raise-y));
 }
@@ -55,6 +54,7 @@
 .press-item__outlet {
   font-size: var(--font-size-meta);
   letter-spacing: 0.08em;
+  text-transform: lowercase;
 }
 
 .press-item__separator {

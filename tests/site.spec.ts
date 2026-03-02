@@ -151,14 +151,14 @@ test("clicking a project thumbnail opens slideshow at the same photo", async ({ 
   await expect(page.locator(".slideshow__counter")).toContainText(/^5\s*\/\s*\d+$/);
 });
 
-test("slideshow close returns to works when opened from works list", async ({ page }) => {
-  await page.goto("/works");
+test("slideshow close returns to home when opened from home list", async ({ page }) => {
+  await page.goto("/");
 
   await page.locator(".collage-row").first().locator(".collage-cell").first().click();
   await expect(page).toHaveURL(/\/works\/[^/]+\/[^/]+\?photo=\d+$/);
 
   await page.getByRole("button", { name: "Close slideshow" }).click();
-  await expect(page).toHaveURL(/\/works$/);
+  await expect(page).toHaveURL(/\/$/);
 });
 
 test("slideshow close returns to thumbnails when opened from thumbnails", async ({ page }) => {
@@ -207,12 +207,44 @@ test("works route permanently redirects to home", async ({ request }) => {
   expect(location).toContain("/");
 });
 
+test("works trailing slash route permanently redirects to home", async ({ request }) => {
+  const response = await request.get("/works/", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+
+  const location = response.headers()["location"];
+  expect(location).toContain("/");
+});
+
 test("projects route permanently redirects to home", async ({ request }) => {
   const response = await request.get("/projects", { maxRedirects: 0 });
   expect(response.status()).toBe(308);
 
   const location = response.headers()["location"];
   expect(location).toContain("/");
+});
+
+test("projects trailing slash route permanently redirects to home", async ({ request }) => {
+  const response = await request.get("/projects/", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+
+  const location = response.headers()["location"];
+  expect(location).toContain("/");
+});
+
+test("legacy projects detail route permanently redirects to works route", async ({ request }) => {
+  const response = await request.get("/projects/personal/the-bridge-reconstructed", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+
+  const location = response.headers()["location"];
+  expect(location).toContain("/works/personal/the-bridge-reconstructed");
+});
+
+test("legacy project detail route permanently redirects to works route", async ({ request }) => {
+  const response = await request.get("/project/personal/the-bridge-reconstructed", { maxRedirects: 0 });
+  expect(response.status()).toBe(308);
+
+  const location = response.headers()["location"];
+  expect(location).toContain("/works/personal/the-bridge-reconstructed");
 });
 
 test("editor api is available in development", async ({ request }) => {
@@ -223,7 +255,7 @@ test("editor api is available in development", async ({ request }) => {
 });
 
 test("edit mode toggle is visible in development", async ({ page }) => {
-  await page.goto("/works");
+  await page.goto("/");
   await expect(page.locator(".dev-editor-toggle")).toHaveCount(1);
 });
 
@@ -394,6 +426,19 @@ test("contact page includes about and contact copy", async ({ page }) => {
   await expect(page.getByText("Hey there! I’m Michael Yuan.")).toBeVisible();
   await expect(page.getByText("By day, I’m a software engineer at Figma")).toBeVisible();
   await expect(page.getByText("If you’re curious, I’ll also tell you the origin story behind ilikecalculus.")).toBeVisible();
+});
+
+test("contact form shows shared hover-note errors instead of browser popups", async ({ page }) => {
+  await page.goto("/contact");
+
+  await page.getByRole("button", { name: "send message" }).click();
+
+  const nameField = page.locator("input[name='name']");
+  const nameErrorNote = page.locator("#contact-form-field-error-name");
+  await expect(nameField).toBeFocused();
+  await expect(nameErrorNote).toBeVisible();
+  await expect(nameErrorNote).toHaveClass(/hover-note/);
+  await expect(nameErrorNote).toHaveText("Please fill out this field.");
 });
 
 test("where edit controls only appear in edit mode", async ({ page }) => {

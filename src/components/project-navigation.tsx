@@ -1,7 +1,7 @@
 "use client";
 
-import { classNames } from "@/components/ui/class-names";
-import { TextActionLabel, TextActionLink } from "@/components/ui/text-action";
+import { SegmentedTextToggle } from "@/components/ui/segmented-text-toggle";
+import { TextActionLink } from "@/components/ui/text-action";
 
 export type NeighborProject = {
   href: string;
@@ -32,27 +32,29 @@ export function ProjectViewToggle({
   ariaLabel = "Project view",
 }: ProjectViewToggleProps) {
   const otherView = activeView === "slideshow" ? "thumbnails" : "slideshow";
+  const options: Array<{ value: ProjectViewMode; label: string; href?: string; testId?: string }> = [
+    {
+      value: activeView,
+      label: activeView,
+    },
+    {
+      value: otherView,
+      label: otherView,
+      href: otherHref,
+      testId: linkTestId,
+    },
+  ];
 
   return (
-    <div className={classNames(className)} aria-label={ariaLabel}>
-      <TextActionLabel
-        className={activeLabelClassName}
-        underline="underline"
-      >
-        {activeView}
-      </TextActionLabel>
-      <span className={classNames(separatorClassName)} aria-hidden="true">
-        /
-      </span>
-      <TextActionLink
-        href={otherHref}
-        underline="hover"
-        className={linkClassName}
-        data-testid={linkTestId}
-      >
-        {otherView}
-      </TextActionLink>
-    </div>
+    <SegmentedTextToggle
+      value={activeView}
+      options={options}
+      ariaLabel={ariaLabel}
+      className={className}
+      itemClassName={linkClassName}
+      selectedItemClassName={activeLabelClassName}
+      separatorClassName={separatorClassName}
+    />
   );
 }
 
