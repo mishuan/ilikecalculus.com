@@ -43,7 +43,7 @@
 .banner-image {
   width: 100%;
   height: auto;
-  border-radius: 12px;
+  border-radius: var(--radius-sharp);
   border: 1px solid var(--line);
   background: var(--paper);
 }
@@ -73,7 +73,7 @@
   width: fit-content;
   display: inline-block;
   border: 1px solid var(--line);
-  border-radius: 999px;
+  border-radius: var(--radius-sharp);
   padding: 0.5rem 0.95rem;
   background: var(--paper);
   color: var(--ink);
@@ -124,31 +124,4 @@
   right: 1rem;
   bottom: 1rem;
   z-index: 70;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: color-mix(in srgb, var(--paper) 90%, white);
-  color: var(--ink);
-  padding: 0.4rem 0.75rem;
-  font-size: var(--font-size-caption);
-  letter-spacing: var(--letter-spacing-caption);
-  text-transform: lowercase;
-  cursor: pointer;
-  transition: border-color var(--interactive-duration) ease, background-color var(--interactive-duration) ease,
-    transform var(--interactive-duration) ease;
-}
-
-.dev-editor-toggle:hover {
-  border-color: var(--interactive-border-hover);
-  background: var(--interactive-surface-hover);
-  transform: translateY(var(--interactive-raise-y));
-}
-
-.dev-editor-toggle--active {
-  border-color: var(--interactive-border-active);
-  color: var(--ink);
-  background: var(--interactive-surface-selected);
-}
-
-.dev-editor-toggle--active:hover {
-  border-color: var(--interactive-border-active);
 }

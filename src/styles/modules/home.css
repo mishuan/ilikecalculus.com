@@ -86,7 +86,7 @@
   flex: 0 0 auto;
   display: flex;
   height: var(--row-height);
-  border-radius: 0;
+  border-radius: var(--radius-sharp);
   overflow: hidden;
   background: var(--surface-gallery-cell);
   transform-origin: center center;
@@ -377,7 +377,7 @@
   width: 1.28rem;
   height: 1.28rem;
   border: 0;
-  border-radius: 999px;
+  border-radius: var(--radius-sharp);
   background: var(--surface-overlay);
   color: var(--color-on-overlay);
   font-size: var(--font-size-ui-sm);

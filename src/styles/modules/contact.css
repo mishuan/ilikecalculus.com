@@ -23,7 +23,7 @@
 .contact-panel {
   border: 0;
   border-left: 1px solid var(--line);
-  border-radius: 0;
+  border-radius: var(--radius-sharp);
   background: transparent;
   padding: 0 0 0 clamp(1.1rem, 2.3vw, 2rem);
   display: grid;
@@ -84,7 +84,7 @@
   width: 100%;
   border: 0;
   border-bottom: 1px solid color-mix(in srgb, var(--line) 94%, transparent);
-  border-radius: 0;
+  border-radius: var(--radius-sharp);
   padding: 0.4rem 0.05rem 0.52rem;
   background: transparent;
   color: var(--ink);
@@ -123,37 +123,6 @@
   margin-top: 0.15rem;
 }
 
-.contact-form__submit {
-  border: 1px solid var(--ink);
-  border-radius: 999px;
-  background: var(--ink);
-  color: var(--paper);
-  padding: 0.52rem 1rem;
-  font-size: var(--font-size-ui-sm);
-  letter-spacing: var(--letter-spacing-label);
-  text-transform: lowercase;
-  cursor: pointer;
-  transition: transform var(--interactive-duration) ease, background-color var(--interactive-duration) ease,
-    color var(--interactive-duration) ease, border-color var(--interactive-duration) ease;
-}
-
-.contact-form__submit:hover {
-  transform: translateY(var(--interactive-raise-y));
-  background: transparent;
-  color: var(--ink);
-}
-
-.contact-form__submit:active {
-  transform: none;
-  background: var(--interactive-surface-active);
-}
-
-.contact-form__submit[disabled] {
-  opacity: 0.55;
-  cursor: not-allowed;
-  transform: none;
-}
-
 .contact-form__status {
   font-size: var(--font-size-meta);
   text-align: right;
@@ -161,7 +130,7 @@
 }
 
 .contact-form__status.is-success {
-  color: var(--color-success);
+  color: var(--muted);
 }
 
 .contact-form__status.is-error {

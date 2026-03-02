@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { navItems, siteData } from "@/data/site-content";
 
@@ -30,6 +30,7 @@ function InstagramIcon() {
 export function Sidebar() {
   const pathname = usePathname() ?? "";
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const mobileMenuRef = useRef<HTMLDivElement | null>(null);
   const isHydrated = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -39,6 +40,41 @@ export function Sidebar() {
   const whereItem = navItems.find((item) => !("external" in item && item.external) && item.href === "/where");
   const topLinks = navItems.filter((item) => ("external" in item && item.external) || item.href !== "/where");
   const isWhereActive = isHydrated && (pathname === "/where" || pathname.startsWith("/where/"));
+
+  useEffect(() => {
+    if (!isMobileMenuOpen) {
+      return;
+    }
+
+    const handlePointerDown = (event: PointerEvent) => {
+      const mobileMenu = mobileMenuRef.current;
+      if (!mobileMenu) {
+        return;
+      }
+
+      const target = event.target;
+      if (!(target instanceof Node)) {
+        return;
+      }
+
+      if (!mobileMenu.contains(target)) {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("pointerdown", handlePointerDown);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("pointerdown", handlePointerDown);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [isMobileMenuOpen]);
 
   const renderTopLinks = (onNavigate?: () => void) =>
     topLinks.map((item) => {
@@ -86,7 +122,7 @@ export function Sidebar() {
           {renderTopLinks()}
         </nav>
 
-        <div className="top-nav__mobile-menu">
+        <div className="top-nav__mobile-menu" ref={mobileMenuRef}>
           <button
             type="button"
             className="top-nav__menu-button"

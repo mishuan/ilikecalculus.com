@@ -30,6 +30,11 @@
   - `--size-page-max`
   - `--size-page-max-wide`
   - `--space-contact-split-gap`
+- corners:
+  - `--radius-sharp`
+  - `--radius-sm`
+  - `--radius-md`
+  - `--radius-pill`
 
 ## reusable component
 

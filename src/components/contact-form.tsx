@@ -4,6 +4,7 @@ import { FormEvent, useEffect, useRef, useState } from "react";
 import { classNames } from "@/components/ui/class-names";
 import { siteData } from "@/data/site-content";
 import { ExternalTextLink } from "@/components/ui/text-action";
+import { SurfaceButton } from "@/components/ui/surface-button";
 import { parseContactSubmission } from "@/lib/contact-schema";
 
 type ContactState = {
@@ -184,9 +185,9 @@ export function ContactForm() {
         </label>
 
         <div className="contact-form__footer">
-          <button className="contact-form__submit" type="submit" disabled={isSubmitting}>
+          <SurfaceButton type="submit" disabled={isSubmitting}>
             {isSubmitting ? "sending..." : "send message"}
-          </button>
+          </SurfaceButton>
           {status ? (
             <p className={classNames("contact-form__status", status.ok ? "is-success" : "is-error")}>
               {status.message}

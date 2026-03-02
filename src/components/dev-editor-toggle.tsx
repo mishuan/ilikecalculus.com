@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { classNames } from "@/components/ui/class-names";
+import { SurfaceButton } from "@/components/ui/surface-button";
 import { isClientEditorAvailable } from "@/lib/editor-client";
 
 function isEditableTarget(target: EventTarget | null) {
@@ -84,12 +84,8 @@ export function DevEditorToggle() {
   }
 
   return (
-    <button
-      type="button"
-      className={classNames("dev-editor-toggle", isEditing && "dev-editor-toggle--active")}
-      onClick={onToggle}
-    >
+    <SurfaceButton className="dev-editor-toggle" selected={isEditing} onClick={onToggle}>
       {isEditing ? "exit edit mode" : "edit mode"} (cmd/ctrl+shift+e)
-    </button>
+    </SurfaceButton>
   );
 }
