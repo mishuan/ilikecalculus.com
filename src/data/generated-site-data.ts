@@ -184,6 +184,14 @@ export const generatedSiteData = {
         "longitude": 133.89358911549002,
         "at": "2026-03-08T09:00:00.000Z",
         "note": "Staying at a hot spring hotel with a beautiful garden (Izanro Iwasaki)."
+      },
+      {
+        "id": "fb8591b5-90db-41c7-9144-f7bf74fcfa7c",
+        "label": "Shenzhen",
+        "latitude": 22.53819,
+        "longitude": 114.059852,
+        "at": "2026-03-03T04:00:00.000Z",
+        "note": "Visiting a mega spa in Shenzhen"
       }
     ]
   },
